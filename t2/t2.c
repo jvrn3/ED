@@ -1,5 +1,8 @@
 #include "../modules/Lista/static_ist.h"
 #include "../modules/String/mystr.h"
+#include "../modules/Circle/circle.h"
+#include "../modules/Rect/rect.h"
+#include "../modules/Svg/svg.h"
 
 #define MAXSIZE 1000
 
@@ -12,7 +15,7 @@ main(int argc, char *argv[]){
 
 	char *path, *dir, *escrita, *leitura;
 
-	double r, x, y;
+	double r, x, y, w, h;
 
 	FILE *fWrite, *fRead;
 
@@ -41,6 +44,7 @@ main(int argc, char *argv[]){
 		}
 		i++;
 	}
+
 	if(path==NULL){
 		path = aloca_tamanho(path, 1);
 		path[0] = '\0';
@@ -50,7 +54,10 @@ main(int argc, char *argv[]){
 		exit(-1);
 	}
 	concatena(path, leitura);
+
 	fRead = fopen(path, "r");
+
+	fWrite = fopen(dir, "w");
 	if(fRead == NULL){
 		fprintf(stderr, "Can't find file to read\nCheck if it exists\n");
 		exit(-1);
@@ -61,6 +68,10 @@ main(int argc, char *argv[]){
 		switch(line[0]){
 			case 'c':
 				sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
+				break;
+			case 'r':
+				sscanf(line, "r %d %s %s %lf %lf %lf", &id, border, inside, &w, &x, &y);
+
 		}
 	}
 	printf("%d", id);
