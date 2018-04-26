@@ -4,9 +4,7 @@
 #include "../Circle/circle.h"
 #include "../Rect/rect.h"
 
-Circle createCircle(FILE fname, Circle c);
-Rect createRect(FILE fname, Rect *r);
-
+void drawCircle(FILE *fname, Circle c);
 #endif
 
 

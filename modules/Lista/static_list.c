@@ -45,12 +45,12 @@ Lista insert(Lista l, void *data, int id){
 	}
 }
 Lista search_id(Lista l, int id){
-	Node *n = (Node *n) l;
+	Node *n = (Node *) l;
 	Node *aux = n;
 	while(aux->id != id && aux->next != NULL){
 		aux = aux->next;
 	}
-	if(aux->next != NUL)
+	if(aux->next != NULL)
 		return aux;
 	return NULL;
 }

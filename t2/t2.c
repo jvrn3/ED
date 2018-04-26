@@ -9,9 +9,15 @@
 int
 main(int argc, char *argv[]){
 	int id, i;
+
 	char border[MAXSIZE];
 	char inside[MAXSIZE];
 	char buffer[MAXSIZE];
+
+	//
+	Lista list = createList();
+	Circle c;
+	Rect rect;
 
 	char *path, *dir, *escrita, *leitura;
 
@@ -61,16 +67,25 @@ main(int argc, char *argv[]){
 	if(fRead == NULL){
 		fprintf(stderr, "Can't find file to read\nCheck if it exists\n");
 		exit(-1);
-	
+	}
+	if(fWrite == NULL){
+		fprintf(stderr, "Error dir");
+		exit(-1);
 	}
 	/* //line variable is where file line is stored */
 	while((read = getline(&line, &len, fRead)) != -1){
 		switch(line[0]){
 			case 'c':
 				sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
+				c = createCircle(id, border, inside, r, x, y);
+				list = insert(list, c, id);
+				drawCircle(fWrite, c);
+				
 				break;
 			case 'r':
-				sscanf(line, "r %d %s %s %lf %lf %lf", &id, border, inside, &w, &x, &y);
+				sscanf(line, "r %d %s %s %lf %lf %lf %lf", &id, border, inside, &w, &h, &x, &y);
+
+				break;
 
 		}
 	}
@@ -80,5 +95,7 @@ main(int argc, char *argv[]){
 	free(line);
 	free(leitura);
 	fclose(fRead);
+	fclose(fWrite);
+	//free circle
 
 }
