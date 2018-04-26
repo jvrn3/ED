@@ -1,7 +1,8 @@
 TARGET = t2
 DEPS = t2.o mystr.o circle.o rect.o static_list.o svg.o 
 CC = gcc
-FLAGS = -g -lm -Wall 
+FLAGS = -g -lm -Wall -pedantic-errors
+
 
 SOURCEDIR = ../modules
 t2 : $(DEPS)

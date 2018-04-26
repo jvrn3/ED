@@ -24,6 +24,7 @@ int length(Lista l){
 
 	while(aux->next != NULL){
 		count++;
+		aux = aux->next;
 	}
 	return count; 
 }
@@ -33,16 +34,32 @@ Lista insert(Lista l, void *data, int id){
 	Node *tmp;
 	aux->data = data;
 	aux->id = id;
-	if(n == NULL)
-		n = aux;
-	else{
-		tmp = n;
+	/* if(n == NULL) */
+	/* 	n = aux; */
+	/* else{ */
+	/* 	tmp = n; */
+  /*  */
+	/* 	while(tmp->next != NULL) */
+	/* 		tmp = tmp->next; */
+  /*  */
+	/* 	tmp->next = aux; */
+	/* } */
+	aux->next = n;
+	n = aux;
+	return n;
+}
 
-		while(tmp->next != NULL)
-			tmp = tmp->next;
+void display(Lista l, FILE *fname, void (*f)(FILE *, void *)){
+	Node *n = (Node *) l;
+	Node *aux;
+	aux = n;
+	while(aux->next != NULL){
+		f(fname, aux->data);
 
-		tmp->next = aux;
+		aux = aux->next;
 	}
+
+
 }
 Lista search_id(Lista l, int id){
 	Node *n = (Node *) l;
@@ -53,5 +70,14 @@ Lista search_id(Lista l, int id){
 	if(aux->next != NULL)
 		return aux;
 	return NULL;
+}
+void destroy(Lista l){
+	Node *n = (Node *) l;
+	Node *next;
+	while(n != NULL){
+		next = n->next;
+		free(n);
+		n = next;
+	}
 }
 

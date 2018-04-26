@@ -13,9 +13,11 @@ main(int argc, char *argv[]){
 	char border[MAXSIZE];
 	char inside[MAXSIZE];
 	char buffer[MAXSIZE];
+	char suffix[MAXSIZE];
 
 	//
-	Lista list = createList();
+	Lista listC = createList();
+	Lista listR = createList();
 	Circle c;
 	Rect rect;
 
@@ -47,6 +49,7 @@ main(int argc, char *argv[]){
 			i++;
 			dir = aloca_tamanho(dir, strlen(argv[i]));
 			strcpy(dir, arruma_path(argv[i]));
+			/* strcpy(dir, argv[i]); */
 		}
 		i++;
 	}
@@ -61,15 +64,11 @@ main(int argc, char *argv[]){
 	}
 	concatena(path, leitura);
 
+
 	fRead = fopen(path, "r");
 
-	fWrite = fopen(dir, "w");
 	if(fRead == NULL){
 		fprintf(stderr, "Can't find file to read\nCheck if it exists\n");
-		exit(-1);
-	}
-	if(fWrite == NULL){
-		fprintf(stderr, "Error dir");
 		exit(-1);
 	}
 	/* //line variable is where file line is stored */
@@ -77,25 +76,41 @@ main(int argc, char *argv[]){
 		switch(line[0]){
 			case 'c':
 				sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
-				c = createCircle(id, border, inside, r, x, y);
-				list = insert(list, c, id);
-				drawCircle(fWrite, c);
+				c = createCircle(border, inside, r, x, y);
+				listC = insert(listC, c, id);
+				/* drawCircle(fWrite, c); */
 				
 				break;
 			case 'r':
 				sscanf(line, "r %d %s %s %lf %lf %lf %lf", &id, border, inside, &w, &h, &x, &y);
+				rect = createRect(border, inside, w, h, x, y);
+				listR = insert(listR, rect, id);
+				/* drawRect(fWrite, rect); */
+				break;
+			case 'a':
+				sscanf(line, "a %d %s", &id, suffix);
+				concatena(dir, suffix);
+				concatena(dir, ".svg");
 
+				fWrite = fopen(dir, "w");
+				fprintf(fWrite, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+
+				display(listC, fWrite, drawCircle);
+				display(listR, fWrite, drawRect);
+				fprintf(fWrite, "</xml>");
+				fclose(fWrite);
+				destroy(listR);
+				destroy(listC);
+								
 				break;
 
 		}
 	}
-	printf("%d", id);
 	free(path);
 	free(dir);
 	free(line);
 	free(leitura);
 	fclose(fRead);
-	fclose(fWrite);
 	//free circle
 
 }

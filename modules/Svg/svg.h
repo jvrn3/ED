@@ -4,7 +4,12 @@
 #include "../Circle/circle.h"
 #include "../Rect/rect.h"
 
-void drawCircle(FILE *fname, Circle c);
+
+/* functions to draw in svg format */ 
+
+void drawCircle(FILE *fname, Lista c);
+void drawRect(FILE *fname, Rect r);
 #endif
+
 
 
