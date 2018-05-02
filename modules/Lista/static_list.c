@@ -31,7 +31,6 @@ int length(Lista l){
 Lista insert(Lista l, void *data, int id){
 	Node *n = (Node *) l;
 	Node *aux = createList();
-	Node *tmp;
 	aux->data = data;
 	aux->id = id;
 	/* if(n == NULL) */
@@ -55,10 +54,20 @@ void display(Lista l, FILE *fname, void (*f)(FILE *, void *)){
 	aux = n;
 	while(aux->next != NULL){
 		f(fname, aux->data);
-
 		aux = aux->next;
 	}
 
+
+}
+void manipulate(Lista l, Lista l2, FILE *fname, void (*f)(FILE *, void *, void *)){
+	Node *n = (Node *) l;
+	Node *n2 = (Node *) l2;
+	Node *aux = n2;
+	while(aux->next != NULL){
+		if(n->id != aux->id)
+			f(fname, n->data, aux->data);
+		aux = aux->next;
+	}
 
 }
 Lista search_id(Lista l, int id){
@@ -71,6 +80,7 @@ Lista search_id(Lista l, int id){
 		return aux;
 	return NULL;
 }
+
 void destroy(Lista l){
 	Node *n = (Node *) l;
 	Node *next;

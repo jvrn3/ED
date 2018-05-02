@@ -4,7 +4,7 @@
 #include "../modules/Rect/rect.h"
 #include "../modules/Svg/svg.h"
 
-#define MAXSIZE 1000
+#define MAXSIZE 256
 
 int
 main(int argc, char *argv[]){
@@ -12,16 +12,18 @@ main(int argc, char *argv[]){
 
 	char border[MAXSIZE];
 	char inside[MAXSIZE];
-	char buffer[MAXSIZE];
 	char suffix[MAXSIZE];
+	char *token;
 
 	//
 	Lista listC = createList();
 	Lista listR = createList();
+	Lista linha = createList();
+
 	Circle c;
 	Rect rect;
 
-	char *path, *dir, *escrita, *leitura;
+	char *path, *dir, *leitura;
 
 	double r, x, y, w, h;
 
@@ -53,7 +55,7 @@ main(int argc, char *argv[]){
 		}
 		i++;
 	}
-
+///
 	if(path==NULL){
 		path = aloca_tamanho(path, 1);
 		path[0] = '\0';
@@ -62,8 +64,8 @@ main(int argc, char *argv[]){
 		fprintf(stderr, "siguel usage: siguel [-e path] -f arq.geo -o dir");
 		exit(-1);
 	}
-	concatena(path, leitura);
 
+	concatena(path, leitura);
 
 	fRead = fopen(path, "r");
 
@@ -78,30 +80,41 @@ main(int argc, char *argv[]){
 				sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
 				c = createCircle(border, inside, r, x, y);
 				listC = insert(listC, c, id);
-				/* drawCircle(fWrite, c); */
 				
 				break;
 			case 'r':
 				sscanf(line, "r %d %s %s %lf %lf %lf %lf", &id, border, inside, &w, &h, &x, &y);
 				rect = createRect(border, inside, w, h, x, y);
+
 				listR = insert(listR, rect, id);
-				/* drawRect(fWrite, rect); */
 				break;
 			case 'a':
+				token = strtok(leitura, ".");
 				sscanf(line, "a %d %s", &id, suffix);
+				concatena(dir, token);
+				concatena(dir, "-");
 				concatena(dir, suffix);
 				concatena(dir, ".svg");
 
 				fWrite = fopen(dir, "w");
-				fprintf(fWrite, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+				fprintf(fWrite, "<svg>\n");
 
-				display(listC, fWrite, drawCircle);
+				
+
 				display(listR, fWrite, drawRect);
-				fprintf(fWrite, "</xml>");
+				display(listC, fWrite, drawCircle);
+				if((linha = search_id(listC, id)) != NULL){
+					/* manipulate(listC, getX(linha), getY(linha), drawLine); */
+					manipulate(listC, linha, fWrite, drawLineCToC);
+					manipulate(listC, linha, fWrite, drawLineCToR);
+					
+				
+				}
+				else{
+				}
+					fprintf(fWrite, "</svg>");
+
 				fclose(fWrite);
-				destroy(listR);
-				destroy(listC);
-								
 				break;
 
 		}

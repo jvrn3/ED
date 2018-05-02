@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<circle r="30.00" cx="2.00" cy="1.10"  stroke="yellow" fill="red" />
-<circle r="50.00" cx="50.00" cy="30.00"  stroke="yellow" fill="red" />
-<rect x="2.00" y="2.00" width="2.00" height="2.00" fill="red" strtok="yellow"/>
-</xml>
