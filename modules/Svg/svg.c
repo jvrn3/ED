@@ -39,7 +39,26 @@ void drawLineCToR(FILE *svgName, Circle c, Rect r){
 	fprintf(svgName, "<line x1=\"%.2lf\" y1=\"%.2lf\" x2=\"%.2lf\" y2=\"%.2lf\" stroke=\"black\"/>\n",
 			sc->x,
 			sc->y,
-			sr->w,
-			sr->h);
+			sr->x + sr->w/2,
+			sr->y + sr->h/2);
 
+}
+void drawLineRToC(FILE *svgName, Rect r, Circle c){
+	StCircle *sc = (StCircle *) c;
+	StRect *sr = (StRect *) r;
+	fprintf(svgName, "<line x1=\"%.2lf\" y1=\"%.2lf\" x2=\"%.2lf\" y2=\"%.2lf\" stroke=\"%s\"/>\n",
+			sr->x + sr->w/2,
+			sr->y + sr->h/2,
+			sc->x,
+			sc->y, 
+			sr->inside);
+}
+void drawLineRToR(FILE *svgName, Rect r, Rect r2){
+	StRect *sr = (StRect *) r;
+	StRect *sr2 = (StRect *) r2;
+	fprintf(svgName, "<line x1=\"%.2lf\" y1=\"%.2lf\" x2=\"%.2lf\" y2=\"%.2lf\" stroke=\"%s\"/>\n",
+			sr->x + sr->w/2,
+			sr->y + sr->h/2,
+			sr2->x + sr2->w/2,
+			sr2->y + sr2->h/2, sr->inside);
 }

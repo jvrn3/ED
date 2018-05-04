@@ -104,10 +104,14 @@ main(int argc, char *argv[]){
 				display(listR, fWrite, drawRect);
 				display(listC, fWrite, drawCircle);
 				if((linha = search_id(listC, id)) != NULL){
-					/* manipulate(listC, getX(linha), getY(linha), drawLine); */
-					manipulate(listC, linha, fWrite, drawLineCToC);
-					manipulate(listC, linha, fWrite, drawLineCToR);
-					
+
+					manipulate(linha, listC, fWrite, drawLineCToC);
+					manipulate(linha, listR, fWrite, drawLineCToR);
+				}
+				if((linha = search_id(listR, id)) != NULL){
+					manipulate(linha, listC, fWrite, drawLineRToC);
+					manipulate(linha, listR, fWrite, drawLineRToR);
+
 				
 				}
 				else{
