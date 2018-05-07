@@ -1,15 +1,15 @@
-TARGET = t2
-DEPS = t2.o mystr.o circle.o rect.o static_list.o svg.o 
+TARGET = siguel
+DEPS = siguel.o mystr.o circle.o rect.o static_list.o svg.o 
 CC = gcc
-FLAGS = -g -lm -Wall -pedantic-errors -O2
+FLAGS = -g -lm -Wall -pedantic-errors -ansi -O2
 
 
 SOURCEDIR = ../modules
-t2 : $(DEPS)
-	$(CC) $(FLAGS) $(DEPS) -o $(TARGET)
+siguel : $(DEPS)
+	$(CC) $(FLAGS) $(DEPS) -o siguel
 
-t2.o : t2.c
-	$(CC) -c t2.c
+siguel.o : siguel.c
+	$(CC) -c siguel.c
 
 mystr.o : $(SOURCEDIR)/String/mystr.c
 	$(CC) -c $(SOURCEDIR)/String/mystr.c
