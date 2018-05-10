@@ -2,4 +2,6 @@
 *.o
 *.svg
 t2/siguel
-vgcore*
+t2/vgcore*
+t2/*.geo
+
