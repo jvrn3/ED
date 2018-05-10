@@ -1,7 +1,7 @@
 TARGET = siguel
 DEPS = siguel.o mystr.o circle.o rect.o static_list.o svg.o geometry.o palmeiras.o
 CC = gcc
-FLAGS = -g -Wall -pedantic-errors -ansi -lm -O2
+FLAGS = -g -Wall -pedantic-errors -ansi -lm  -fbounds-check -O2
 
 
 SOURCEDIR = ../modules

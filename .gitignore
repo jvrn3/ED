@@ -1,4 +1,5 @@
 *.txt
 *.o
-vgcore.*
 *.svg
+t2/siguel
+vgcore*

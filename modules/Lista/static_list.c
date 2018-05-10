@@ -12,6 +12,7 @@ Lista createList(){
 	Node *n = (Node *) l;
 
 	n->next = NULL;
+	n->data = NULL;
 
 	return l;
 }
@@ -33,16 +34,7 @@ Lista insert(Lista l, void *data, int id){
 	Node *aux = createList();
 	aux->data = data;
 	aux->id = id;
-	/* if(n == NULL) */
-	/* 	n = aux; */
-	/* else{ */
-	/* 	tmp = n; */
-  /*  */
-	/* 	while(tmp->next != NULL) */
-	/* 		tmp = tmp->next; */
-  /*  */
-	/* 	tmp->next = aux; */
-	/* } */
+	
 	aux->next = n;
 	n = aux;
 	return n;
@@ -72,24 +64,34 @@ void manipulate(Lista l, Lista l2, FILE *fname, void (*f)(FILE *, void *, void *
 }
 Lista search_id(Lista l, int id, int data){
 	Node *n = (Node *) l;
-	Node *aux = n;
-	while(aux->id != id && aux->next != NULL){
-		aux = aux->next;
-	}
-	if(aux->next != NULL){
+	if(n == NULL)
+		return NULL;
+	if(n->id == id){
 		if(data)
-			return aux->data;
+			return n->data;
 		else
-			return aux;
+			return n;
 	}
-
-	return NULL;
+	else
+		return search_id(n->next, id, data);
+	/* while(aux->id != id && aux->next != NULL){ */
+	/* 	aux = aux->next; */
+	/* } */
+	/* if(aux->next != NULL){ */
+	/* 	if(data) */
+	/* 		return aux->data; */
+	/* 	else */
+	/* 		return aux; */
+	/* } */
+  /*  */
+	/* return NULL; */
 }
 void destroy(Lista l){
 	Node *n = (Node *) l;
 	Node *next;
 	while(n != NULL){
 		next = n->next;
+		free(n->data);
 		free(n);
 		n = next;
 	}

@@ -5,5 +5,6 @@ c 2 grey magenta 120.0 45.0 15.0
 c 5 grey magenta 230 180 13
 i 1 200 50
 o 5 4
+o 2 6
 a 2 lnhs2
 #

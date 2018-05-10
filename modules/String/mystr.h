@@ -1,5 +1,5 @@
 #ifndef MAXSIZE
-#define MAXSIZE 1000
+#define MAXSIZE 256
 #endif
 #ifndef MYSTR_H
 #define MYSTR_H
@@ -9,7 +9,7 @@
 #include <string.h>
 
 char *criaString(char *dir, char *nome, char *ext);
-char *aloca_tamanho(char *str, size_t len);
+char *aloca_tamanho(char *str, int len);
 char *arruma_path(char *str);
 char *concatena(char *str, char *str2);
 

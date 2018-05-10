@@ -1,5 +1,5 @@
 #ifndef MAXSIZE
-#define MAXSIZE 1000
+#define MAXSIZE 256
 #endif
 #ifndef RECT_H
 #define RECT_H
@@ -9,7 +9,7 @@
 
 typedef void *Rect;
 typedef struct stRect{
-	char *border;
+	char border[MAXSIZE];
 	char inside[MAXSIZE];
 	double w,
 				 h,

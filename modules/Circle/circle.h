@@ -1,5 +1,5 @@
 #ifndef MAXSIZE
-#define MAXSIZE 1000
+#define MAXSIZE 256
 #endif
 #ifndef CIRCLE_H
 #define CIRCLE_H

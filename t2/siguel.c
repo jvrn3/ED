@@ -5,7 +5,7 @@
 #include "../modules/Svg/svg.h"
 #include "../modules/Geometry/geometry.h"
 #include "palmeiras.h"
-
+/* fix arruma_path */
 
 int
 main(int argc, char *argv[]){
@@ -14,7 +14,6 @@ main(int argc, char *argv[]){
 	char border[MAXSIZE];
 	char inside[MAXSIZE];
 	char suffix[MAXSIZE];
-	/* char *token; */
 	char line[MAXSIZE];
 
 	Lista listC = createList();
@@ -25,7 +24,7 @@ main(int argc, char *argv[]){
 	Circle c;
 	Rect rect;
 
-	char *path, *dir, *leitura;
+	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath;
 
 	double r, x, y, w, h;
 
@@ -39,7 +38,8 @@ main(int argc, char *argv[]){
 		if(strcmp("-e", argv[i]) == 0){
 			i++;
 			path = aloca_tamanho(path, strlen(argv[i]));
-			strcpy(path, arruma_path(argv[i]));
+			strcpy(path,arruma_path(argv[i]));
+			printf("PATH=%s\n", path);
 		}
 		if(strcmp("-f", argv[i]) == 0){
 			i++;
@@ -57,26 +57,30 @@ main(int argc, char *argv[]){
 		i++;
 	}
 	if(path==NULL){
-		path = aloca_tamanho(path, 0);
-		path[0] = '\0';
+		path = aloca_tamanho(path, 3);
+		strcpy(path, "./");
 	}
 	if(leitura == NULL || dir == NULL){
 		fprintf(stderr, "siguel usage: siguel [-e path] -f arq.geo -o dir");
 		exit(-1);
 	}
 
-	concatena(path, leitura);
-	printf("Dir:%s\n", dir);
-	printf("path:%s", path);
-	path[strlen(path) -4] = 0;
+	leitura[strlen(leitura) -4] = 0;
 
-	fRead = fopen(criaString(dir, path, ".geo"), "r");
+	nomeTxt = criaString(dir, leitura, ".txt");
+	nomeSvg = criaString(dir, leitura, ".svg");
 
-	fTxt  = fopen(criaString(dir, path, ".txt"), "w");
+	nomePath = criaString(path, leitura, ".geo");
+	printf("NOME LEITURA=%s\n", nomePath);
+
+	fRead = fopen(nomePath, "r");
+	printf("NOME ESCRITA=%s\n", nomeTxt);
+
+	fTxt  = fopen(nomeTxt, "w");
 	if(fTxt == NULL)
 		fprintf(stderr, "cant open");
 
-	fDraw = fopen(criaString(dir, path, ".svg"), "w");
+	fDraw = fopen(nomeSvg, "w");
 	if(fDraw == NULL)
 		fprintf(stderr, "cant open");
 	fprintf(fDraw,"<svg>\n");
@@ -171,10 +175,10 @@ main(int argc, char *argv[]){
 
 			case 'a':
 				sscanf(line, "a %d %s", &id, suffix);
-				concatena(path, "-");
-				concatena(path, suffix);
+				leitura = criaString(leitura, "-", suffix);
+				leitura = criaString(dir, leitura, ".svg");
 				printf("end: %s", path);
-				fWrite = fopen(criaString(dir, path, ".svg"), "w");
+				fWrite = fopen(leitura, "w");
 				if(fWrite == NULL)
 					fprintf(stderr, "cant open file");
 				fprintf(fWrite, "<svg>\n");
@@ -207,6 +211,10 @@ main(int argc, char *argv[]){
 	free(path);
 	free(dir);
 	free(leitura);
+	free(nomeSvg);
+	free(nomeTxt);
+	free(nomePath);
+
 
 
 	fclose(fRead);
