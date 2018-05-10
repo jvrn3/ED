@@ -1,10 +1,12 @@
+#ifndef MAXSIZE
+#define MAXSIZE 1000
+#endif
 #ifndef RECT_H
 #define RECT_H
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MAXSIZE 256
 typedef void *Rect;
 typedef struct stRect{
 	char *border;

@@ -1,8 +1,10 @@
+#ifndef MAXSIZE
+#define MAXSIZE 1000
+#endif
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
 typedef void *Circle;
-#define MAXSIZE 256
 #include <stdlib.h>
 #include <string.h>
 

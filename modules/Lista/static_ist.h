@@ -10,7 +10,7 @@ int length(Lista l);
 
 Lista insert(Lista l, void *data, int id);
 
-Lista search_id(Lista l, int id);
+Lista search_id(Lista l, int id, int data);
 
 void display(Lista l, FILE *fname,  void (*f)(FILE *, void *));
 

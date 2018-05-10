@@ -70,17 +70,21 @@ void manipulate(Lista l, Lista l2, FILE *fname, void (*f)(FILE *, void *, void *
 	}
 
 }
-Lista search_id(Lista l, int id){
+Lista search_id(Lista l, int id, int data){
 	Node *n = (Node *) l;
 	Node *aux = n;
 	while(aux->id != id && aux->next != NULL){
 		aux = aux->next;
 	}
-	if(aux->next != NULL)
-		return aux;
+	if(aux->next != NULL){
+		if(data)
+			return aux->data;
+		else
+			return aux;
+	}
+
 	return NULL;
 }
-
 void destroy(Lista l){
 	Node *n = (Node *) l;
 	Node *next;
