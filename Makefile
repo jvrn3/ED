@@ -8,8 +8,8 @@ SOURCEDIR = src/modules
 siguel : $(DEPS)
 	$(CC)  $(FLAGS) $(DEPS) -o siguel 
 
-siguel.o : siguel.c
-	$(CC) $(FLAGS) -c siguel.c
+siguel.o : src/siguel.c
+	$(CC) $(FLAGS) -c src/siguel.c
 
 mystr.o : $(SOURCEDIR)/String/mystr.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/String/mystr.c
@@ -28,7 +28,7 @@ svg.o : $(SOURCEDIR)/Svg/svg.c
 
 geometry.o : $(SOURCEDIR)/Geometry/geometry.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Geometry/geometry.c
-palmeiras.o : palmeiras.c
-	$(CC) $(FLAGS) -c palmeiras.c
+palmeiras.o : src/palmeiras.c
+	$(CC) $(FLAGS) -c src/palmeiras.c
 clean: 
 	rm *.o
