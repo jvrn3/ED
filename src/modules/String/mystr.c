@@ -5,7 +5,6 @@ char *criaString(char *dir, char *nome, char *ext){
 	strcpy(aux, dir);
 	aux = concatena(aux, nome);
 	aux = concatena(aux, ext);
-		printf("%s\n", aux);
 	return aux;
 
 }

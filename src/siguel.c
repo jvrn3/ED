@@ -1,9 +1,9 @@
-#include "modules/Lista/static_ist.h"
 #include "modules/String/mystr.h"
 #include "modules/Circle/circle.h"
 #include "modules/Rect/rect.h"
 #include "modules/Svg/svg.h"
 #include "modules/Geometry/geometry.h"
+#include "modules/Cidade/cidade.h"
 #include "palmeiras.h"
 /* fix arruma_path */
 
@@ -15,14 +15,21 @@ main(int argc, char *argv[]){
 	char inside[MAXSIZE];
 	char suffix[MAXSIZE];
 	char line[MAXSIZE];
-
+	char cep[MAXSIZE];
+	char fill_q[MAXSIZE], strk_q[MAXSIZE];
+	char fill_h[MAXSIZE], strk_h[MAXSIZE];
+	char fill_t[MAXSIZE], strk_t[MAXSIZE];
+	char fill_s[MAXSIZE], strk_s[MAXSIZE];
 	Lista listC = createList();
 	Lista listR = createList();
 	Lista linha = createList();
 	Lista linha2 = createList();
 
+	Cidade city = createCity();
+
 	Circle c;
 	Rect rect;
+	Quadra q;
 
 	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath;
 
@@ -77,29 +84,44 @@ main(int argc, char *argv[]){
 	printf("NOME ESCRITA=%s\n", nomeTxt);
 
 	fTxt  = fopen(nomeTxt, "w");
-	if(fTxt == NULL)
-		fprintf(stderr, "cant open");
+	if(fTxt == NULL){
+		fprintf(stderr, "cant open file ");
+		exit(-1);
+	}
 
 	fDraw = fopen(nomeSvg, "w");
-	if(fDraw == NULL)
-		fprintf(stderr, "cant open");
+	if(fDraw == NULL){
+		fprintf(stderr, "cant open file");
+		exit(-1);
+	}
 	fprintf(fDraw,"<svg>\n");
 
 	if(fRead == NULL){
 		fprintf(stderr, "Can't find file to read\nCheck if it exists\n");
 		exit(-1);
 	}
-	/* //line variable is where file line is stored */
-	/* while((read = getline(&line, &len, fRead)) != -1){ */
+	//read .geo file
 	while(!feof(fRead)){
 		fgets(line, MAXSIZE, fRead);
+
 		switch(line[0]){
 			case 'c':
-				sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
-				c = createCircle(border, inside, r, x, y);
-				listC = insert(listC, c, id);
-				break;
+				if(line[1] != 'q'){
+					sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
+					c = createCircle(border, inside, r, x, y);
+					listC = insert(listC, c, id);
+				}
+				if(line[1] == 'q'){
+					sscanf(line, "cq %s %s", fill_q, strk_q);
 
+				}
+				if(line[1] == 'h')
+					sscanf(line, "ch %s %s", fill_h, strk_h);
+				if(line[1] == 't')
+					sscanf(line, "ct %s %s", fill_t, strk_t);
+
+				break;
+				
 			case 'r':
 				sscanf(line, "r %d %s %s %lf %lf %lf %lf", &id, border, inside, &w, &h, &x, &y);
 				rect = createRect(border, inside, w, h, x, y);
@@ -187,6 +209,35 @@ main(int argc, char *argv[]){
 				}
 				break;
 
+				case 'h':
+				sscanf(line, "h %d %lf %lf", &id, &x, &y);
+				city = insert_hidrante(city, createHidrante(fill_h, strk_h, id, x, y));
+
+				break;
+
+
+				case 'q':
+				sscanf(line, "q %s %lf %lf %lf %lf", cep,&x, &y, &w,&h);
+				
+				
+				city = insert_quadra(city, createQuadra(fill_q, strk_q, cep, x, y, w, h));
+
+				q = get(city.lista_quadra, 0);
+
+				StQuadra *sss = (StQuadra* )q;
+				printf("\n\n\n %s",sss->fill);
+
+				break;
+
+				case 's':
+				sscanf(line, "s %d %lf %lf", &id, &x, &y);
+				city = insert_semaforo(city, createSemaforo(fill_s, strk_s, id, x, y));
+
+
+
+
+
+
 			case 'a':
 				sscanf(line, "a %d %s", &id, suffix);
 				leitura = criaString(leitura, "-", suffix);
@@ -215,6 +266,7 @@ main(int argc, char *argv[]){
 
 				fclose(fWrite);
 				break;
+
 		}
 
 	}

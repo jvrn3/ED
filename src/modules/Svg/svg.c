@@ -178,19 +178,12 @@ void drawOverlapCR(FILE *svgName, Circle c, Rect r){
 	double x, y, w, h;
 
 	x = MIN(sr->x, sc->x - sc->r);
-	if(sr->x > sc->x + sc->r){
-		printf("blababa");
-	
-	}
-	else
-		printf("bobobo\n");
 	y = MIN(sr->y, sc->y - sc->r);
 	h = MAX(sr->h + sr->y, sc->y + sc->r);
 	w = MAX(sr->w + sr->x, sc->x + sc->r);
 	if(sr->w + sr->x> sc->x + sc->r){
 		/* x = sc->x - sc->r; */
 		w = w+sc->r -sc->x;
-		printf("aea\n");
 	}
 	else{
 		/* x = sr->x + sr->w - sc->x ; */
@@ -200,19 +193,11 @@ void drawOverlapCR(FILE *svgName, Circle c, Rect r){
 		w = MAX(sc->x + sc->r , sr->x + sr->w) -abs(x) ;
 	}
 	if(sr->y + sr->h > sc->r + sc->y){
-		printf("doidimais");
 		h = sr->h + sr->y + sc->r - sc->y;
 	
 	}
 	else{
-		printf("aeaea");
-		/* if(y < sc->y - sc->r) */
-		/* 	h = sc->y +sc->r + sr->h - sr->y; */
-		/* 	 */
-		h = sc->y + sc->r - y;
-		/* } */
-		/* else */
-			/* h = MAX(sc->y + sc->r, sr->y + sr->h) - y; */
+			h = sc->y + sc->r - y;
 	}
 
 

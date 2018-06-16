@@ -7,7 +7,6 @@ double distanceCC(Circle c, Circle c2){
 
 	x1 = sc->x;
 	x2 = sc2->x;
-	printf("%f", x1);
 	y1 = sc->y;
 	y2 = sc2->y;
 	 d = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));

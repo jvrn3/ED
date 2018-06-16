@@ -29,6 +29,16 @@ int length(Lista l){
 	}
 	return count; 
 }
+void * get(Lista l, int pos){
+	Node *n = (Node *) l;
+	int count = 0;
+	while(count < pos){
+		n = n->next;
+		count++;
+	}
+	return n->data;
+}
+
 Lista insert(Lista l, void *data, int id){
 	Node *n = (Node *) l;
 	Node *aux = createList();
@@ -39,7 +49,33 @@ Lista insert(Lista l, void *data, int id){
 	n = aux;
 	return n;
 }
+Lista insertAfter(Lista l, int pos, void *data, int id){
+	int count = 0;
+	Node *n = (Node *) l;
+	Node *tracker = n;
+	Node *aux = createList();
+	Node *aux2 = createList();
 
+	aux->data = data;
+	aux->id = id;
+
+	if(n == NULL)
+		return n;
+	if(pos == 0)
+		return insert(l, data, id);
+
+	while(count < pos && n->next != NULL){
+		n = n->next;
+		count++;
+	}
+	aux2 = n->next;
+	n->next = aux;
+	n = n->next;
+	n->next = aux2;
+
+	return tracker;
+
+}
 void display(Lista l, FILE *fname, void (*f)(FILE *, void *)){
 	Node *n = (Node *) l;
 	Node *aux;
@@ -74,17 +110,7 @@ Lista search_id(Lista l, int id, int data){
 	}
 	else
 		return search_id(n->next, id, data);
-	/* while(aux->id != id && aux->next != NULL){ */
-	/* 	aux = aux->next; */
-	/* } */
-	/* if(aux->next != NULL){ */
-	/* 	if(data) */
-	/* 		return aux->data; */
-	/* 	else */
-	/* 		return aux; */
-	/* } */
-  /*  */
-	/* return NULL; */
+	
 }
 void destroy(Lista l){
 	Node *n = (Node *) l;
