@@ -1,5 +1,5 @@
 #ifndef MAXSIZE
-#define MAXSIZE 1000
+#define MAXSIZE 100
 #endif
 #ifndef MYSTR_H
 #define MYSTR_H

@@ -14,7 +14,7 @@ main(int argc, char *argv[]){
 	char border[MAXSIZE];
 	char inside[MAXSIZE];
 	char suffix[MAXSIZE];
-	char line[MAXSIZE];
+	char line[1000];
 	char cep[MAXSIZE];
 	char fill_q[MAXSIZE], strk_q[MAXSIZE];
 	char fill_h[MAXSIZE], strk_h[MAXSIZE];
@@ -119,6 +119,9 @@ main(int argc, char *argv[]){
 					sscanf(line, "ch %s %s", fill_h, strk_h);
 				if(line[1] == 't')
 					sscanf(line, "ct %s %s", fill_t, strk_t);
+
+				if(line[1] == 's')
+					sscanf(line, "cs %s %s", fill_s, strk_s);
 
 				break;
 				
@@ -233,10 +236,11 @@ main(int argc, char *argv[]){
 				sscanf(line, "s %d %lf %lf", &id, &x, &y);
 				city = insert_semaforo(city, createSemaforo(fill_s, strk_s, id, x, y));
 
-
-
-
-
+				break;
+				case 't':
+				sscanf(line, "t %d %lf %lf", &id, &x, &y);
+				city = insert_torre(city, createTorre(fill_t, strk_t, id, x, y));
+				break;
 
 			case 'a':
 				sscanf(line, "a %d %s", &id, suffix);
@@ -274,6 +278,7 @@ main(int argc, char *argv[]){
 	display(listR, fDraw, drawRect);
 	fprintf(fDraw, "</svg>");
 
+	//is there more allocated variables? 
 	free(path);
 	free(dir);
 	free(leitura);
@@ -287,6 +292,10 @@ main(int argc, char *argv[]){
 	fclose(fTxt);
 	fclose(fDraw);
 
+	//destroying lists
+	destroy(city.lista_semaforo);
+	destroy(city.lista_quadra);
+	destroy(city.lista_hidrante);
 	destroy(listC);
 	destroy(listR);
 	return 0;
