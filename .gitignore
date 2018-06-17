@@ -1,5 +1,10 @@
 *.o
 *.svg
 src/siguel
+*.py
+html/
+latex/
+
+
 
 

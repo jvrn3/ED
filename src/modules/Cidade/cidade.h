@@ -19,6 +19,7 @@ Cidade insert_quadra(Cidade c, Quadra q);
 Cidade insert_hidrante(Cidade c, Hidrante h);
 Cidade insert_semaforo(Cidade c, Semaforo s);
 Cidade insert_torre(Cidade c, Torre t);
+void remove_quadra(Cidade c, Quadra q);
 
 #endif
 

@@ -1,5 +1,20 @@
 #include "svg.h"
 /* need to create a geometry library */
+void displayRectToSvg(FILE *f, Lista l){
+	Node *n = (Node *)l;
+	while(n->next != NULL){
+		drawRect(f, (Rect) n->data);
+		n = n->next;
+	}
+}
+void displayCircleToSvg(FILE *f, Lista l){
+	Node *n = (Node *)l;
+	while(n->next != NULL){
+		drawCircle(f, (Circle) n->data);
+		n = n->next;
+	}
+}
+
 
 void drawCircle(FILE *svgName, Circle c){
 	StCircle *sc = (StCircle *) c;

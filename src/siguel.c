@@ -5,7 +5,6 @@
 #include "modules/Geometry/geometry.h"
 #include "modules/Cidade/cidade.h"
 #include "palmeiras.h"
-/* fix arruma_path */
 
 int
 main(int argc, char *argv[]){
@@ -31,13 +30,13 @@ main(int argc, char *argv[]){
 	Rect rect;
 	Quadra q;
 
-	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath;
+	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry ;
 
 	double r, x, y, w, h;
 
-	FILE *fWrite, *fRead, *fTxt, *fDraw;
+	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry;
 
-	leitura = path = dir = NULL;
+	leitura = path = dir = qry = NULL;
 	printaPalmeiras1();
 
 	i = 1;
@@ -61,6 +60,13 @@ main(int argc, char *argv[]){
 
 			printf("%s\n", dir);
 		}
+		if(strcmp("-q", argv[i]) == 0){
+			i++;
+			qry = aloca_tamanho(qry, strlen(argv[i]));
+			strcpy(qry, argv[i]);
+
+		
+		}
 		i++;
 	}
 	if(path==NULL){
@@ -68,9 +74,10 @@ main(int argc, char *argv[]){
 		strcpy(path, "./");
 	}
 	if(leitura == NULL || dir == NULL){
-		fprintf(stderr, "siguel usage: siguel [-e path] -f arq.geo -o dir");
+		fprintf(stderr, "siguel usage: siguel [-e path -q file.qry] -f arq.geo -o dir");
 		exit(-1);
 	}
+	
 
 	leitura[strlen(leitura) -4] = 0;
 
@@ -102,26 +109,24 @@ main(int argc, char *argv[]){
 	}
 	//read .geo file
 	while(!feof(fRead)){
-		fgets(line, MAXSIZE, fRead);
+		fgets(line, 1000, fRead);
 
 		switch(line[0]){
 			case 'c':
-				if(line[1] != 'q'){
+				if(line[1] == 'q')
+					sscanf(line, "cq %s %s", fill_q, strk_q);
+				else if(line[1] == 'h')
+					sscanf(line, "ch %s %s", fill_h, strk_h);
+				else if(line[1] == 't')
+					sscanf(line, "ct %s %s", fill_t, strk_t);
+
+				else if(line[1] == 's')
+					sscanf(line, "cs %s %s", fill_s, strk_s);
+				else{
 					sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
 					c = createCircle(border, inside, r, x, y);
 					listC = insert(listC, c, id);
 				}
-				if(line[1] == 'q'){
-					sscanf(line, "cq %s %s", fill_q, strk_q);
-
-				}
-				if(line[1] == 'h')
-					sscanf(line, "ch %s %s", fill_h, strk_h);
-				if(line[1] == 't')
-					sscanf(line, "ct %s %s", fill_t, strk_t);
-
-				if(line[1] == 's')
-					sscanf(line, "cs %s %s", fill_s, strk_s);
 
 				break;
 				
@@ -215,6 +220,10 @@ main(int argc, char *argv[]){
 				case 'h':
 				sscanf(line, "h %d %lf %lf", &id, &x, &y);
 				city = insert_hidrante(city, createHidrante(fill_h, strk_h, id, x, y));
+				c = createCircle(strk_h, fill_h, 10.0, x, y);
+
+				listC = insert(listC, c, -1);
+				
 
 				break;
 
@@ -224,6 +233,9 @@ main(int argc, char *argv[]){
 				
 				
 				city = insert_quadra(city, createQuadra(fill_q, strk_q, cep, x, y, w, h));
+
+				rect = createRect(fill_q, strk_q, w, h, x, y);
+				listR = insert(listR, rect, -1);
 
 				q = get(city.lista_quadra, 0);
 
@@ -236,10 +248,17 @@ main(int argc, char *argv[]){
 				sscanf(line, "s %d %lf %lf", &id, &x, &y);
 				city = insert_semaforo(city, createSemaforo(fill_s, strk_s, id, x, y));
 
+				rect = createRect(fill_s, strk_s, 10, 10, x, y);
+				listR = insert(listR, rect, -1);
+
 				break;
 				case 't':
 				sscanf(line, "t %d %lf %lf", &id, &x, &y);
 				city = insert_torre(city, createTorre(fill_t, strk_t, id, x, y));
+
+				c = createCircle(strk_t, fill_t, 15, x, y);
+				listC = insert(listC, c, -1);
+				
 				break;
 
 			case 'a':
@@ -254,6 +273,7 @@ main(int argc, char *argv[]){
 
 
 				display(listC, fWrite, drawCircle);
+
 				display(listR, fWrite, drawRect);
 
 				if((linha = search_id(listC, id, 0)) != NULL){
@@ -270,12 +290,66 @@ main(int argc, char *argv[]){
 
 				fclose(fWrite);
 				break;
+			default:
+				break;
+		}
+
+	}
+	//parsing and handling .qry files
+	if(qry != NULL){
+		qry[strlen(qry) -4] = 0;
+		qry = criaString(dir, qry, ".qry");
+		fQry = fopen(qry, "r");
+		if(!fQry){
+			fprintf(stdout, "Cant open file");
+			exit(-1);
+		
+		}
+	
+		while(!feof(fQry)){
+			fgets(line, 1000, fQry);
+			//dq command
+
+			if(strncmp(line, "dq", 2) == 0){
+				sscanf(line, "dq %lf %lf %lf %lf", &x, &y, &w, &h);
+
+				rect = createRect("white", "white", w, h, x, y);
+
+				for(int i = 0; i < length(city.lista_quadra); i++){
+					if(overlayRR((StRect *)get(city.lista_quadra, i), rect)){
+						printf("eita sô");
+						remove_quadra(city, get(city.lista_quadra, i));
+					}
+
+				}
+
+
+				break;
+			}
+			else if(strncmp(line, "Dq", 2) == 0){
+				sscanf(line, "Dq %lf %lf %lf", &r, &x, &y);
+
+				c = createCircle("white", "white", r, x, y);
+				for(int i = 0; i < length(city.lista_quadra); i++){
+					if(overlayCR(c, (StCircle *) get(city.lista_quadra, i))){
+						printf("bug");
+						remove_quadra(city, get(city.lista_quadra, i));
+					}
+				}
+
+			
+				break;
+			}
 
 		}
 
 	}
-	display(listC, fDraw, drawCircle);
-	display(listR, fDraw, drawRect);
+	if(length(listC) >0 )
+		displayCircleToSvg(fDraw, listC);
+
+	if(length(listR) > 0)
+		displayRectToSvg(fDraw, listR);
+
 	fprintf(fDraw, "</svg>");
 
 	//is there more allocated variables? 

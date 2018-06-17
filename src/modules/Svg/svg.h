@@ -4,7 +4,7 @@
 #include "../Rect/rect.h"
 #include "math.h"
 #include "../Geometry/geometry.h"
-
+#include "../Lista/static_ist.h"
 
 /* functions to draw in svg format */ 
 
@@ -17,6 +17,8 @@ void drawLineRToR(FILE *svgName, Rect r, Rect r2);
 void drawOverlapCC(FILE *fDraw, Circle c, Circle c2);
 void drawOverlapRR(FILE *svgName, Rect r, Rect r2);
 void drawOverlapCR(FILE *svgName, Circle c, Rect r);
+void displayRectToSvg(FILE *f, Lista l);
+void displayCircleToSvg(FILE *f, Lista l);
 
 #endif
 

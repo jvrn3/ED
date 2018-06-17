@@ -1,12 +1,5 @@
 #include "static_ist.h"
 
-typedef struct node{
-	void *data;
-	int id;
-	struct node *next;
-}Node;
-
-
 Lista createList(){
 	Lista l = malloc(sizeof(Node));
 	Node *n = (Node *) l;
@@ -38,7 +31,6 @@ void * get(Lista l, int pos){
 	}
 	return n->data;
 }
-
 Lista insert(Lista l, void *data, int id){
 	Node *n = (Node *) l;
 	Node *aux = createList();
@@ -78,11 +70,9 @@ Lista insertAfter(Lista l, int pos, void *data, int id){
 }
 void display(Lista l, FILE *fname, void (*f)(FILE *, void *)){
 	Node *n = (Node *) l;
-	Node *aux;
-	aux = n;
-	while(aux->next != NULL){
-		f(fname, aux->data);
-		aux = aux->next;
+	while(n->next != NULL){
+		f(fname, n->data);
+		n = n->next;
 	}
 
 
@@ -111,6 +101,28 @@ Lista search_id(Lista l, int id, int data){
 	else
 		return search_id(n->next, id, data);
 	
+}
+Lista del(Lista l, void *data){
+	Node *n = (Node *) l;
+	Node *tmp = n;
+	Node *prev = NULL;
+
+	if(l == NULL)
+		return NULL;
+
+	while(tmp->data != data && tmp->next != NULL){
+		prev = n;
+		tmp = tmp->next;
+	}
+	if(tmp->data == data){
+		if(prev)
+				prev->next = tmp->next;
+		else
+			n = tmp->next;
+	}
+	free(tmp);
+
+	return n;
 }
 void destroy(Lista l){
 	Node *n = (Node *) l;

@@ -1,7 +1,17 @@
+#ifndef LIST_H
+#define LIST_H
 #include <stdio.h>
 #include <stdlib.h>
 
 typedef void *Lista;
+
+typedef struct node{
+	void *data;
+	int id;
+	struct node *next;
+}Node;
+
+
 
 
 Lista createList();
@@ -18,4 +28,9 @@ void display(Lista l, FILE *fname,  void (*f)(FILE *, void *));
 
 void manipulate(Lista l, Lista l2, FILE *fname, void (*f) (FILE *, void *, void *));
 
+Lista del(Lista l, void *data);
+
+
 void destroy(Lista l);
+#endif
+

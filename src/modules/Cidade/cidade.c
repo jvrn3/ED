@@ -13,6 +13,7 @@ Cidade createCity(){
 	return city;
 }
 
+
 Cidade  insert_quadra(Cidade c,Quadra q){
 	c.lista_quadra = insert(c.lista_quadra, q, 0);
 	return c;
@@ -31,3 +32,6 @@ Cidade insert_torre(Cidade c, Torre t){
 	return c;
 }
 
+void remove_quadra(Cidade c, Quadra q){
+	c.lista_quadra = del(c.lista_quadra, q);
+}
