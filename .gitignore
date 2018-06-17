@@ -1,9 +1,15 @@
+siguel
 *.o
 *.svg
+*.geo
+*.txt
+*.qry
 src/siguel
 *.py
 html/
 latex/
+Doxy*
+
 
 
 
