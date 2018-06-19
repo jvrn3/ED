@@ -20,6 +20,8 @@ Cidade insert_hidrante(Cidade c, Hidrante h);
 Cidade insert_semaforo(Cidade c, Semaforo s);
 Cidade insert_torre(Cidade c, Torre t);
 void remove_quadra(Cidade c, Quadra q);
-
+Hidrante remove_hidrante(Cidade c, Hidrante h);
+Torre remove_torre(Cidade c, Torre t);
+Semaforo remove_semaforo(Cidade c, Semaforo s);
 #endif
 

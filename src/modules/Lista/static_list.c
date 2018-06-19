@@ -15,21 +15,25 @@ int length(Lista l){
 
 	Node *n = (Node *) l;
 	Node *aux = n;
+	if(n == NULL)
+		return 0;
 
-	while(aux->next != NULL){
-		count++;
+
+	while(aux){
+		++count;
 		aux = aux->next;
 	}
-	return count; 
+		return count;
 }
 void * get(Lista l, int pos){
 	Node *n = (Node *) l;
+	Node *tmp = n;
 	int count = 0;
 	while(count < pos){
-		n = n->next;
+		tmp = tmp->next;
 		count++;
 	}
-	return n->data;
+	return tmp->data;
 }
 Lista insert(Lista l, void *data, int id){
 	Node *n = (Node *) l;
@@ -107,11 +111,9 @@ Lista del(Lista l, void *data){
 	Node *tmp = n;
 	Node *prev = NULL;
 
-	if(l == NULL)
-		return NULL;
 
 	while(tmp->data != data && tmp->next != NULL){
-		prev = n;
+		prev = tmp;
 		tmp = tmp->next;
 	}
 	if(tmp->data == data){

@@ -33,5 +33,17 @@ Cidade insert_torre(Cidade c, Torre t){
 }
 
 void remove_quadra(Cidade c, Quadra q){
-	c.lista_quadra = del(c.lista_quadra, q);
+	del(c.lista_quadra, q);
 }
+Hidrante remove_hidrante(Cidade c, Hidrante h){
+	return del(c.lista_hidrante, h);
+}
+Torre remove_torre(Cidade c, Torre t){
+	return del(c.lista_torre, t);
+}
+Semaforo remove_semaforo(Cidade c, Semaforo s){
+	return del(c.lista_semaforo, s);
+}
+
+
+
