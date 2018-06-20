@@ -14,5 +14,8 @@ int overlayCR(Circle c, Rect r);
 int overlayRR(Rect r, Rect r2);
 int isInsideC(Circle c, double x, double y);
 int isInsideR(Rect r, double x, double y);
+int isRectInsideRect(Rect a, Rect b);
+int isRectInsideCircle(Circle c, Rect r);
+int isCircleInsideRect(Circle c, Rect r);
 
 #endif

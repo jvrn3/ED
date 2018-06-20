@@ -46,8 +46,6 @@ int overlayCC(Circle c, Circle c2){
 	StCircle *sc = (StCircle *) c;
 	StCircle *sc2 = (StCircle *) c2;
 
-	printf("\nDistancia : %f\n", distanceCC(c,c2));
-	printf("\nDistancia : %f\n", (sc->r + sc2->r));
 	if (distanceCC(c, c2) < (sc->r + sc2->r ))
 		return 1;
 	else return 0;
@@ -96,7 +94,7 @@ int isInsideC(Circle c, double x, double y){
 }
 int isInsideR(Rect r, double x, double y){
 	StRect *sr = (StRect *) r;
-	if((x < (sr->x + (.5 *sr->w))) && (x > (sr->x - (.5 * sr->w)))
+	if((x < (sr->x + (.5 * sr->w))) && (x > (sr->x - (.5 * sr->w)))
 				&& (y < (sr->y  +(sr->h))) && (y  > (sr->y -(.5 * sr->h))))
 		return 1;
 	else
@@ -104,3 +102,28 @@ int isInsideR(Rect r, double x, double y){
 }
 
 
+int isRectInsideRect(Rect a, Rect b){
+	StRect *sa = (StRect *)a;
+	if(isInsideR(b, sa->x, sa->y) && isInsideR(b, sa->x + sa->w, sa->y) && isInsideR(b, sa->x, sa->y + sa->h) && isInsideR(b, sa->x + sa->w, sa->y + sa->h))
+		return 1;
+	else return 0;
+}
+
+int isRectInsideCircle(Circle c, Rect r){
+	StRect *sr = (StRect *) r;
+	if(isInsideC(c, sr->x, sr->y) && isInsideC(c, sr->x + sr->w, sr->y) && isInsideC(c, sr->x, sr->y + sr->h) && isInsideC(c, sr->x + sr->w, sr->y + sr->h))
+		return 1;
+	else return 0;
+}
+int isCircleInsideRect(Circle c, Rect r){
+	StCircle *sc = (StCircle *) c;
+	if(isInsideR(r, sc->x + sc->r, sc->y) && isInsideR(r, sc->r -sc->r, sc->y) && isInsideR(r, sc->x, sc->y + sc->r) && isInsideR(r, sc->x, sc->y - sc->y))
+		return 1;
+	else
+		return 0;
+
+}
+/* int isCircleInsideRect(Circle c, Rect r){ */
+/* 	StCircle *sc - (StCircle ) */
+/*  */
+/* } */

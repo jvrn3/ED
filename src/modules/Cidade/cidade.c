@@ -1,4 +1,6 @@
 #include "cidade.h"
+#include <string.h>
+
 
 Cidade createCity(){
 	Cidade city;
@@ -44,6 +46,20 @@ Torre remove_torre(Cidade c, Torre t){
 Semaforo remove_semaforo(Cidade c, Semaforo s){
 	return del(c.lista_semaforo, s);
 }
+Quadra search_cep(char *cep, Cidade c){
+	Node *s = (Node *)c.lista_quadra;
+	int i = 0;
+	while(s->next != NULL){
+		StQuadra *sq = (StQuadra *) get(c.lista_quadra, i);
+		if(strcmp(sq->cep, cep) == 0){
+			return sq;
+		}
+		else
+			s = s->next;
+	i++;
+	}
+	return NULL;
+}
+void *search_id(char *id, Cidade c){
 
-
-
+}

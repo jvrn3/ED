@@ -90,7 +90,6 @@ void manipulate(Lista l, Lista l2, FILE *fname, void (*f)(FILE *, void *, void *
 			f(fname, n->data, aux->data);
 		aux = aux->next;
 	}
-
 }
 Lista search_id(Lista l, int id, int data){
 	Node *n = (Node *) l;

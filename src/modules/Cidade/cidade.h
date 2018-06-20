@@ -23,5 +23,6 @@ void remove_quadra(Cidade c, Quadra q);
 Hidrante remove_hidrante(Cidade c, Hidrante h);
 Torre remove_torre(Cidade c, Torre t);
 Semaforo remove_semaforo(Cidade c, Semaforo s);
+Quadra search_cep(char *cep, Cidade c);
 #endif
 
