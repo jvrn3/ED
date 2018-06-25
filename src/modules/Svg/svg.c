@@ -15,7 +15,6 @@ void displayCircleToSvg(FILE *f, Lista l){
 	}
 }
 
-
 void drawCircle(FILE *svgName, Circle c){
 	StCircle *sc = (StCircle *) c;
 
@@ -27,7 +26,57 @@ void drawCircle(FILE *svgName, Circle c){
 			sc->inside);
 
 }
+void drawQuadra(FILE *svgName, Quadra r){
+	StQuadra *sr = (StQuadra *) r;
+	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" fill=\"%s\" stroke=\"%s\"/>\n", 
+			sr->x,
+			sr->y,
+			sr->larg,
+			sr->alt,
+			sr->fill,
+			sr->strk);
+	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"black\" font-size=\"12\">%s</text>\n",
+			sr->x + sr->larg/2,
+			sr->y + sr->alt/2,
+			sr->cep);
+}
 
+void drawHidrante(FILE *svgName, Hidrante h){
+	StHidrante *sh = (StHidrante *) h;
+fprintf(svgName, "<circle r=\"10.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">H</text>\n", 
+			sh->x,
+			sh->y,
+			sh->strk,
+			sh->fill, 
+			sh->x - 5,
+			sh->y + 5
+			);
+
+}
+void drawSemaforo(FILE *svgName, Semaforo s){
+	StSemaforo *sh = (StSemaforo *) s;
+	printf("%lf %lf\n", sh->x, sh->y);
+	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"5\" height=\"15\" fill=\"%s\" stroke=\"%s\"/>\n", 
+			sh->x,
+			sh->y,
+			sh->fill,
+			sh->strk);
+}
+void drawTorre(FILE *svgName, Torre t){
+	StTorre *st = (StTorre *) t;
+	fprintf(svgName, "<circle r=\"10.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n", 
+			st->x,
+			st->y,
+			st->strk,
+			st->fill);
+fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">T</text>\n",
+		st->x - 5, 
+		st->y + 5
+		);
+
+	
+
+}
 void drawRect(FILE *svgName, Rect r){
 	StRect *sr = (StRect *) r;
 	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" fill=\"%s\" stroke=\"%s\"/>\n", 

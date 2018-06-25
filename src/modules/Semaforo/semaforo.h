@@ -7,10 +7,10 @@ typedef void *Semaforo;
 
 typedef struct stSemaforo{
   char fill[100], strk[100];
-  int id;
+  char id[100];
   double x, y;
 
 }StSemaforo;
 
-Semaforo createSemaforo(char *fill, char *strk, int id, double x, double y);
+Semaforo createSemaforo(char *fill, char *strk, char *id, double x, double y);
 #endif

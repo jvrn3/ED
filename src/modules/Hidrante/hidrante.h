@@ -6,10 +6,10 @@
 typedef void *Hidrante;
 typedef struct stHidrante{
   char fill[100], strk[100];
-  int id;
+  char id[100];
   double x, y;
 
 }StHidrante;
 
-Hidrante createHidrante(char *fill, char *strk, int id, double x, double y);
+Hidrante createHidrante(char *fill, char *strk, char *id, double x, double y);
 #endif

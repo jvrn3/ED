@@ -7,12 +7,11 @@ typedef void *Torre;
 typedef struct stTorre{
   char fill[100];
   char strk[100];
-
-  int id;
+  char id[100];
   double x, y;
 
 }StTorre;
 
-Torre createTorre(char *fill, char *strk, int id, double x, double y);
+Torre createTorre(char *fill, char *strk, char *id, double x, double y);
 
 #endif

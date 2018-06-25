@@ -60,6 +60,13 @@ Quadra search_cep(char *cep, Cidade c){
 	}
 	return NULL;
 }
-void *search_id(char *id, Cidade c){
-
-}
+/* void *search_id_sem(char *id, Cidade c){ */
+/* 	Node *s  = (Node *) c.lista_semaforo; */
+/* 	int i =0; */
+/* 	while(s->next != NULL){ */
+/* 		StSemaforo *ss = (StSemaforo *) get(c.lista_semaforo, i); */
+/* 		if(strcmp(ss->id, )) */
+/*  */
+/* 	} */
+/*  */
+/* } */

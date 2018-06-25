@@ -17,5 +17,6 @@ int isInsideR(Rect r, double x, double y);
 int isRectInsideRect(Rect a, Rect b);
 int isRectInsideCircle(Circle c, Rect r);
 int isCircleInsideRect(Circle c, Rect r);
+int isCircleInsideCircle(Circle a, Circle b);
 
 #endif
