@@ -101,7 +101,7 @@ int isInsideR(Rect r, double x, double y){
 		return 0;
 }
 
-
+// is the rect a inside b?
 int isRectInsideRect(Rect a, Rect b){
 	StRect *sa = (StRect *)a;
 	if(isInsideR(b, sa->x, sa->y) && isInsideR(b, sa->x + sa->w, sa->y) && isInsideR(b, sa->x, sa->y + sa->h) && isInsideR(b, sa->x + sa->w, sa->y + sa->h))
@@ -123,6 +123,7 @@ int isCircleInsideRect(Circle c, Rect r){
 		return 0;
 
 }
+// is a inside b?
 int isCircleInsideCircle(Circle a, Circle b){
 	StCircle *sc = (StCircle *) a;
 	if(isInsideC(b, sc->x + sc->r, sc->y) && isInsideC(b, sc->x - sc-> r, sc-> y) && isInsideC(b, sc->x, sc->y + sc->y) && isInsideC(b, sc->x, sc->y - sc-> r))

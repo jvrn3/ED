@@ -51,6 +51,7 @@ fprintf(svgName, "<circle r=\"10.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fil
 			sh->x - 5,
 			sh->y + 5
 			);
+free(sh);
 
 }
 void drawSemaforo(FILE *svgName, Semaforo s){
@@ -61,6 +62,7 @@ void drawSemaforo(FILE *svgName, Semaforo s){
 			sh->y,
 			sh->fill,
 			sh->strk);
+	free(sh);
 }
 void drawTorre(FILE *svgName, Torre t){
 	StTorre *st = (StTorre *) t;
@@ -69,12 +71,11 @@ void drawTorre(FILE *svgName, Torre t){
 			st->y,
 			st->strk,
 			st->fill);
-fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">T</text>\n",
-		st->x - 5, 
-		st->y + 5
-		);
-
-	
+	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">T</text>\n",
+			st->x - 5, 
+			st->y + 5
+			);
+	free(st);
 
 }
 void drawRect(FILE *svgName, Rect r){
@@ -86,6 +87,7 @@ void drawRect(FILE *svgName, Rect r){
 			sr->h,
 			sr->inside,
 			sr->border);
+	free(sr);
 }
 
 void drawLineCToC(FILE *svgName, Circle c, Circle c2){
