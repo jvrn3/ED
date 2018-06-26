@@ -8,7 +8,7 @@ src/siguel
 *.py
 html/
 latex/
-Doxy*
+Doxyfile
 vgcore.*
 
 
