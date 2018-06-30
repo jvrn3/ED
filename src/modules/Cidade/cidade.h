@@ -24,5 +24,8 @@ Hidrante remove_hidrante(Cidade c, Hidrante h);
 Torre remove_torre(Cidade c, Torre t);
 Semaforo remove_semaforo(Cidade c, Semaforo s);
 Quadra search_cep(char *cep, Cidade c);
+Semaforo search_id_sem(char *id, Cidade c);
+Hidrante search_id_hi(char *id, Cidade c);
+Torre search_id_to(char *id, Cidade c);
 #endif
 

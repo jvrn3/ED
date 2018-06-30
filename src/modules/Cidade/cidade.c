@@ -1,4 +1,5 @@
 #include "cidade.h"
+
 #include <string.h>
 
 
@@ -37,36 +38,59 @@ Cidade insert_torre(Cidade c, Torre t){
 void remove_quadra(Cidade c, Quadra q){
 	del(c.lista_quadra, q);
 }
-Hidrante remove_hidrante(Cidade c, Hidrante h){
-	return del(c.lista_hidrante, h);
-}
+
 Torre remove_torre(Cidade c, Torre t){
 	return del(c.lista_torre, t);
 }
 Semaforo remove_semaforo(Cidade c, Semaforo s){
 	return del(c.lista_semaforo, s);
 }
+//could return the cep position and then use get function to access it
 Quadra search_cep(char *cep, Cidade c){
-	Node *s = (Node *)c.lista_quadra;
-	int i = 0;
-	while(s->next != NULL){
-		StQuadra *sq = (StQuadra *) get(c.lista_quadra, i);
+	Lista ss = c.lista_quadra;
+	int n = length(ss)-1;
+	for(int i = 0; i < n; i++){
+		StQuadra *sq = (StQuadra *) get(ss, 0);
 		if(strcmp(sq->cep, cep) == 0){
 			return sq;
 		}
-		else
-			s = s->next;
-	i++;
+
+		ss = pop(ss);
 	}
 	return NULL;
 }
-/* void *search_id_sem(char *id, Cidade c){ */
-/* 	Node *s  = (Node *) c.lista_semaforo; */
-/* 	int i =0; */
-/* 	while(s->next != NULL){ */
-/* 		StSemaforo *ss = (StSemaforo *) get(c.lista_semaforo, i); */
-/* 		if(strcmp(ss->id, )) */
-/*  */
-/* 	} */
-/*  */
-/* } */
+Semaforo search_id_sem(char *id, Cidade c){
+	Lista s = c.lista_semaforo;
+	int n = length(s) -1;
+	for(int i = 0; i < n; i++){
+		StSemaforo *ss = (StSemaforo *) get(c.lista_semaforo, 0);
+		if(strcmp(ss->id, id) == 0){
+			return ss;
+	}
+		s = pop(s);
+
+	}
+	return NULL;
+}
+Hidrante search_id_hi(char *id, Cidade c){
+	Lista s = c.lista_hidrante;
+	int n = length(s) -1;
+	for(int i = 0; i < n; i ++){
+		StHidrante *sh = (StHidrante *) get(c.lista_hidrante, 0);
+		if(strcmp(sh->id, id) == 0)
+			return sh;
+		s = pop(s);
+	}
+	return NULL;
+}
+Torre search_id_to(char *id, Cidade c){
+	Lista s = c.lista_torre;
+	int n = length(s) -1;
+	for(int i =0; i < n; i++){
+		StTorre *st = (StTorre *) get(c.lista_torre, 0);
+		if(strcmp(st->id, id) == 0)
+			return st;
+		s = pop(s);
+	}
+	return NULL;
+}

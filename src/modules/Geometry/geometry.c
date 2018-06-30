@@ -1,4 +1,5 @@
 #include "geometry.h"
+
 double distanceCC(Circle c, Circle c2){
 	StCircle *sc = (StCircle *) c;
 	StCircle *sc2 = (StCircle *) c2;
@@ -54,8 +55,10 @@ int overlayCR(Circle c, Rect r){
 	StCircle *sc = (StCircle *) c;
 	StRect *sr = (StRect *) r;
 	double d, d2, d3;
+	//x
 	d = abs(sc->x - sr->x);
-	d2 = abs(sc->y-sr->y);
+	//y
+	d2 = abs(sc->y- sr->y);
 
 	if(d > (sr->w/2 + sc->r)) return 0;
 	if(d2 > (sr->h/2 + sc->r)) return 0;
@@ -87,24 +90,29 @@ int isInsideC(Circle c, double x, double y){
 	x1 = sc->x;
 	y1 = sc->y;
 
-	d = sqrt(pow(x1 - x, 2) + pow(y1 - y, 2));
-	if(d < sc->r ) return 1;
+	d = pow(x-x1, 2) + pow(y-y1, 2);
+	if(d <= pow(sc->r,2) ) return 1;
 	else
 		return 0;
 }
+float area(int x1, int y1, int x2, int y2, int x3, int y3){
+	return abs((x1 * (y2-y3) + x2 *(y3-y1) + x3 *(y1-y2))/2.0);
+	}
 int isInsideR(Rect r, double x, double y){
 	StRect *sr = (StRect *) r;
-	if((x < (sr->x + (.5 * sr->w))) && (x > (sr->x - (.5 * sr->w)))
-				&& (y < (sr->y  +(sr->h))) && (y  > (sr->y -(.5 * sr->h))))
+	if(x <= sr->x + sr->w && x>= sr->x && y >= sr->y && y <= sr->y + sr->h)
 		return 1;
 	else
 		return 0;
 }
 
-// is the rect a inside b?
+// is the rect a inside b?vkk
 int isRectInsideRect(Rect a, Rect b){
 	StRect *sa = (StRect *)a;
-	if(isInsideR(b, sa->x, sa->y) && isInsideR(b, sa->x + sa->w, sa->y) && isInsideR(b, sa->x, sa->y + sa->h) && isInsideR(b, sa->x + sa->w, sa->y + sa->h))
+	if(isInsideR(b, sa->x, sa->y) && 
+			isInsideR(b, sa->x + sa->w, sa->y) &&
+			isInsideR(b, sa->x, sa->y + sa->h) &&
+			isInsideR(b, sa->x + sa->w, sa->y + sa->h))
 		return 1;
 	else return 0;
 }

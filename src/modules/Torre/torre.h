@@ -5,9 +5,9 @@
 typedef void *Torre;
 
 typedef struct stTorre{
-  char fill[100];
-  char strk[100];
-  char id[100];
+  char fill[50];
+  char strk[50];
+  char id[50];
   double x, y;
 
 }StTorre;

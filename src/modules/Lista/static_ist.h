@@ -17,6 +17,7 @@ typedef struct node{
 Lista createList();
 
 int length(Lista l);
+Lista del_posicao(Lista l, int i);
 
 Lista insert(Lista l, void *data, int id);
 Lista insertAfter(Lista l, int pos, void *data, int id);
@@ -30,6 +31,7 @@ void manipulate(Lista l, Lista l2, FILE *fname, void (*f) (FILE *, void *, void 
 
 Lista del(Lista l, void *data);
 
+void *pop(Lista l);
 
 void destroy(Lista l);
 #endif

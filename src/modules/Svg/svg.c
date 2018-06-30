@@ -56,7 +56,6 @@ free(sh);
 }
 void drawSemaforo(FILE *svgName, Semaforo s){
 	StSemaforo *sh = (StSemaforo *) s;
-	printf("%lf %lf\n", sh->x, sh->y);
 	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"5\" height=\"15\" fill=\"%s\" stroke=\"%s\"/>\n", 
 			sh->x,
 			sh->y,

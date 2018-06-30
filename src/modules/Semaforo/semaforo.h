@@ -6,8 +6,8 @@
 typedef void *Semaforo;
 
 typedef struct stSemaforo{
-  char fill[100], strk[100];
-  char id[100];
+  char fill[50], strk[50];
+  char id[50];
   double x, y;
 
 }StSemaforo;

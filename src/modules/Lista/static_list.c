@@ -1,5 +1,6 @@
 #include "static_ist.h"
 
+
 Lista createList(){
 	Lista l = malloc(sizeof(Node));
 	Node *n = (Node *) l;
@@ -29,7 +30,9 @@ void * get(Lista l, int pos){
 	Node *n = (Node *) l;
 	Node *tmp = n;
 	int count = 0;
-	while(count < pos){
+	while(count < pos ){
+		if(tmp->next == NULL)
+			return NULL;
 		tmp = tmp->next;
 		count++;
 	}
@@ -45,6 +48,14 @@ Lista insert(Lista l, void *data, int id){
 	n = aux;
 	return n;
 }
+Lista pop(Lista l){
+	Node *n = (Node *) l;
+	Node *a = n;
+	if(a)
+		n = n->next;
+	return n;
+}
+
 Lista insertAfter(Lista l, int pos, void *data, int id){
 	int count = 0;
 	Node *n = (Node *) l;
@@ -104,6 +115,26 @@ Lista search_id(Lista l, int id, int data){
 	else
 		return search_id(n->next, id, data);
 	
+}
+Lista del_posicao(Lista l, int i){
+	Node *n = (Node *) l;
+	Node *tmp = n;
+	Node *prev = NULL;
+	int j = 0;
+	while(i != j && tmp->next != NULL){
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	if(i == j){
+		if(prev)
+			prev->next = tmp->next;
+		else
+			n = n->next;
+	}
+	free(tmp);
+	return n;
+
+
 }
 Lista del(Lista l, void *data){
 	Node *n = (Node *) l;

@@ -4,6 +4,7 @@
 #include "modules/Svg/svg.h"
 #include "modules/Geometry/geometry.h"
 #include "modules/Cidade/cidade.h"
+#include "modules/Sort/sort.h"
 #include "palmeiras.h"
 
 int
@@ -25,6 +26,7 @@ main(int argc, char *argv[]){
 	Lista listR = createList();
 	Lista linha = createList();
 	Lista linha2 = createList();
+	Lista l;
 
 	Cidade city = createCity();
 
@@ -33,7 +35,9 @@ main(int argc, char *argv[]){
 
 	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry ;
 
+	double *array_torre_x;
 	double r, x, y, w, h;
+	int n;
 
 	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry;
 
@@ -180,6 +184,7 @@ main(int argc, char *argv[]){
 							fprintf(fTxt, "NAO\n");
 					}
 				}
+				//actually i have no idea what it is 28/06/2018
 				else if((linha = search_id(listR, id, 1)) != NULL){
 					if((linha2 = search_id(listC, id2, 1)) != NULL){
 						if(overlayCR(linha2, linha)){
@@ -306,26 +311,24 @@ main(int argc, char *argv[]){
 
 			//dq command ~ done?
 			if(strncmp(line, "dq", 2) == 0){
-				printf("%s", line);
 
 
 				sscanf(line, "dq %lf %lf %lf %lf", &x, &y, &w, &h);
 
-				rect = createRect("", "", w, h, x, y);
-				for(int i = 0; i < length(city.lista_quadra)-1; i++){
-					printf("%d\n", i);
-					StQuadra * sq =   (StQuadra *)get(city.lista_quadra, i);
-					printf("%s\n", sq->cep);
-
+				rect = createRect("black", "black", w, h, x, y);
+				n = 0;
+				while(n != length(city.lista_quadra)-1){
+					StQuadra * sq =   (StQuadra *)get(city.lista_quadra, n);
 
 					if(isRectInsideRect(createRect("", "", sq->larg, sq->alt, sq->x, sq->y), rect)){
+						fprintf(fTxt, "CEP REMOVIDO: %s\n", ((StQuadra * )get(city.lista_quadra, n))->cep);
 
-						fprintf(fTxt, "CEP REMOVIDO: %s\n", ((StQuadra * )get(city.lista_quadra, i))->cep);
-
-						city.lista_quadra = del(city.lista_quadra, get(city.lista_quadra, i));
+						city.lista_quadra = del(city.lista_quadra, get(city.lista_quadra, n));
+						n--;
 					}
+					n++;
+					
 				}
-
 
 			}
 			//done?
@@ -444,141 +447,195 @@ main(int argc, char *argv[]){
 
 				c = createCircle("", "", r, x, y);
 				// go through the entire list and remove the ones that overlap
-				for(int i = 0; i < length(city.lista_quadra)-1; i++){
-
-					StQuadra *sq = (StQuadra *) get(city.lista_quadra, i);
-
+				//
+				 l = city.lista_quadra;
+				 n = length(l)-1;
+				 for(int i = 0; i < n; i++){
+					StQuadra *sq = (StQuadra *) get(l, 0);
 					rect = createRect(sq->strk, sq->fill, sq->larg, sq->alt, sq->x, sq->y);
 
 					if(isRectInsideCircle(c, rect)){
 						fprintf(fTxt, "Dq %s\n", sq->cep);
-						city.lista_quadra = del(city.lista_quadra, get(city.lista_quadra, i));
+						city.lista_quadra = del(city.lista_quadra, sq);
 					}
-
+					l = pop(l);
 				}
 
 			}
 			//need to check
 			else if(strncmp(line, "dle", 3)==0){
-				printf("aee");
 				sscanf(line, "dle t %lf %lf %lf %lf ",&x, &y, &w, &h);
 
 				rect = createRect("", "", w, h, x, y);
 				if(line[4] == 't' || line[5] == 't' || line[6] == 't'){
 
-					for(int i =0; i < length(city.lista_torre)-1; i++){
-
-						StTorre *st = (StTorre *) get(city.lista_torre, i);
+					l = city.lista_torre;
+					n = length(l) -1;
+					for(int i = 0; i < n; i++){
+						StTorre *st = (StTorre *) get(l, 0);
 						c = createCircle(st->strk, st->fill, 10, st->x, st->y);
 						if(isCircleInsideRect(c, rect)){
 							fprintf(fTxt, "dle t %s\n", st->id);
-							city.lista_torre = del(city.lista_torre, get(city.lista_torre, i));
+							city.lista_torre = del(city.lista_torre, st);
 						}
-
-					
+						l = pop(l);
 					}
 				}
+
 				if(line[4] == 'h' || line[5] == 'h' || line[6] == 'h'){
 					//remove h
-					for(int i = 0; i < length(city.lista_hidrante)-1; i++){
-						StHidrante *sh = (StHidrante *) get(city.lista_hidrante, i);
+					l = city.lista_hidrante;
+					n = length(l) -1;
+
+					 for(int i = 0; i < n; i++){
+						StHidrante *sh = (StHidrante *) get(l, 0);
 						c = createCircle(sh->strk, sh->fill, 10, sh->x, sh->y);
 
 						if(isCircleInsideRect(c, rect)){
 							fprintf(fTxt, "dle h %s\n", sh->id);
-							city.lista_hidrante = del(city.lista_hidrante, get(city.lista_hidrante, i));
+							city.lista_hidrante = del(city.lista_hidrante, sh);
 						}
+						l = pop(l);
 					}
-					
 				}
 				if(line[4] == 's' || line[5] == 's' || line[6] == 's'){
 					//remove r
-					for(int i = 0; i < length(city.lista_semaforo)-1; i++){
-						StSemaforo *ss = (StSemaforo *) get(city.lista_semaforo, i);
+					l = city.lista_semaforo;
+					n = length(l) -1;
+					 for(int i = 0; i < n; i++){
+						StSemaforo *ss = (StSemaforo *) get(l, 0);
 						//memory leak
 						if(isRectInsideRect(rect, createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y))){
 							fprintf(fTxt, "dle s %s\n", ss->id);
-							city.lista_semaforo = del(city.lista_semaforo, get(city.lista_semaforo, i));
+							city.lista_semaforo = del(city.lista_semaforo, ss);
 						}
+						l = pop(l);
 					}
 				}
 			}
-			//need to implement
 			else if(strncmp(line, "Dle", 3) == 0){
 				sscanf(line, "Dle t %lf %lf %lf", &x, &y, &r );
 				c = createCircle("", "", r, x, y);
 
 				if(line[4] == 'h' || line[5] == 'h' || line[6] == 'h'){
-					for(int i = 0; i < length(city.lista_hidrante) -1; i++){
-						StHidrante *sh =(StHidrante *) get(city.lista_hidrante, i);
-						/* c = createCircle(sh->strk, sh->fill, 10, sh->x, sh->y); */
+					l = city.lista_hidrante;
+					n = length(l) -1;
+					for(int i = 0; i < n; i++){
+						StHidrante *sh =(StHidrante *) get(l, 0);
 
 						if(isCircleInsideCircle(createCircle(sh->strk, sh->fill, 10, sh->x, sh->y), c)){
 							fprintf(fTxt, "Dle %s\n", sh->id);
-							city.lista_hidrante = del(city.lista_hidrante, get(city.lista_hidrante, i));
+							city.lista_hidrante = del(city.lista_hidrante, sh);
 						}
+						l = pop(l);
 					}
 				}
 				if(line[4] == 't' || line[5] == 't' || line[6] == 't'){
-					for(int i = 0; i < length(city.lista_torre) -1; i++){
-						StTorre *st = (StTorre *) get(city.lista_torre, i);
-						/* c = createCircle(st->strk, st->fill, 10, st->x, st->y); */
+					l = city.lista_torre;
+					n = length(l) -1 ;
+					for(int i = 0; i < n; i++){
+						StTorre *st = (StTorre *) get(l, 0);
 						if(isCircleInsideCircle(createCircle(st->strk, st->fill, 10, st->x, st->y), c)){
 							fprintf(fTxt, "Dle t %s\n", st->id);
-							city.lista_torre = del(city.lista_torre, get(city.lista_torre, i));
+							city.lista_torre = del(city.lista_torre, st);
 						}
-
+						l = pop(l);
 					}
-				
 				}
 				if(line[4] == 's' || line[5] == 's' || line[6] == 's'){
-					for(int i = 0; i < length(city.lista_semaforo) -1; i++){
-						StSemaforo *ss = (StSemaforo *) get(city.lista_semaforo, i);
+					l = city.lista_semaforo;
+					n = length(l) -1;
+					for(int i = 0; i < n; i++){
+						StSemaforo *ss = (StSemaforo *) get(l, 0);
 						//memory leak
 						rect = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
 						if(isRectInsideCircle(c, rect)){
 							fprintf(fTxt, "dle s %s\n", ss->id);
-							city.lista_semaforo = del(city.lista_semaforo, get(city.lista_semaforo, i));
+							city.lista_semaforo = del(city.lista_semaforo, ss);
 						}
+						l = pop(l);
 					}
 				}
 			}
-			//need to implement half of it
 			else if(strncmp(line, "cc", 2) == 0){
+				//that's really a bad code, need to change how to access in the future
+
 				sscanf(line, "cc %s %s %s", cep, tmp_strk, tmp_fill);
-				if(strncmp(line, "cc cep", 6) == 0){
-					StQuadra *sq;
-					if((sq = (StQuadra *) search_cep(cep, city) )!= NULL){
-						strcpy(sq->fill, tmp_fill);
-						strcpy(sq->strk, tmp_strk);
-					}
-					/* if((ss = (StSemaforo *) search_id_sem(id, city)) != NULL){ */
-          /*  */
-					/*  */
-					/* } */
+				StQuadra *sq;
+				StTorre *st;
+				StHidrante *sh;
+				StSemaforo *ss;
+				
+				if((sq = (StQuadra *) search_cep(cep, city) )!= NULL){
+					strcpy(sq->fill, tmp_fill);
+					strcpy(sq->strk, tmp_strk);
 				}
+
+				else if((ss = (StSemaforo *) search_id_sem(cep, city)) != NULL){
+					strcpy(ss->fill, tmp_fill);
+					strcpy(ss->strk, tmp_strk);
+				}
+				else if((st = (StTorre *) search_id_to(cep, city) )!= NULL){
+					strcpy(st->fill, tmp_fill);
+					strcpy(st->strk, tmp_strk);
+
+				}
+				else if((sh = (StHidrante *) search_id_hi(cep, city)) != NULL){
+					strcpy(sh->fill, tmp_fill);
+					strcpy(sh->strk, tmp_strk);
+				}
+			}
+			else if(strncmp(line, "crd?", 4) == 0){
+				
+				sscanf(line, "crd? %s", cep);
+				StQuadra *sq;
+				StTorre *st;
+				StHidrante *sh;
+				StSemaforo *ss;
+			printf("buscando\n");
+				if((sq = (StQuadra *) search_cep(cep, city) )!= NULL)
+					fprintf(fTxt, "%lf %lf %lf %lf QUADRA\n", sq->x, sq->y, sq->larg, sq->alt);
+				else if((ss = (StSemaforo *) search_id_sem(cep, city)) != NULL)
+					fprintf(fTxt, "%lf %lf SEMAFORO\n", ss->x, ss->y);
+				else if((st = (StTorre *) search_id_to(cep, city) )!= NULL)
+					fprintf(fTxt, "%lf %lf TORRE\n", st->x, st->y);
+				else if((sh = (StHidrante *) search_id_hi(cep, city)) != NULL)
+					fprintf(fTxt, "%lf %lf HIDRANTE\n", sh->x, sh->y);
+			}
+			/* closest pair */
+			else if(strncmp(line, "crb?", 4) == 0){
+				n = length(city.lista_torre);
+				l = city.lista_torre;
+				array_torre_x = malloc(sizeof(double) * n);
+
 			}
 		}
 		fSvgQry = fopen(criaString(dir, criaString(leitura, "-", qry), ".svg"), "w");
-			if(!fSvgQry){
-				fprintf(stderr, "bugou ao criar file");
-				exit(-1);
-			}
+		if(!fSvgQry){
+			fprintf(stderr, "bugou ao criar file");
+			exit(-1);
+		}
 		/*
 		 * create new svg file after manipulating [deleting etc] the old list
 		 *
 		 */
-			fprintf(fSvgQry, "<svg>\n");
-			//printa quadras
-			//
+		fprintf(fSvgQry, "<svg>\n");
 
-			//need to create each of them
-			//otherwhise, memory leak
-		for(int i = 0 ; i < length(city.lista_quadra)-1; i++){
-			StQuadra *sq = (StQuadra *) get(city.lista_quadra, i);
+		//time to print
+		l = city.lista_quadra;
+		n = length(l) -1;
+		for(int i = 0; i < n; i++){
+			StQuadra *sq = (StQuadra *) get(l, 0);
 			createQuadra(sq->fill, sq->strk, sq->cep, sq->x, sq->y, sq->larg, sq->alt);
 			drawQuadra(fSvgQry, createQuadra(sq->fill, sq->strk, sq->cep, sq->x, sq->y, sq->larg, sq->alt));
+			l = pop(l);
+		
 		}
+		/* for(int i = 0 ; i < length(city.lista_quadra)-1; i++){ */
+		/* 	StQuadra *sq = (StQuadra *) get(city.lista_quadra, i); */
+		/* 	createQuadra(sq->fill, sq->strk, sq->cep, sq->x, sq->y, sq->larg, sq->alt); */
+		/* 	drawQuadra(fSvgQry, createQuadra(sq->fill, sq->strk, sq->cep, sq->x, sq->y, sq->larg, sq->alt)); */
+		/* } */
 		for(int i =0; i < length(city.lista_hidrante)-1; i++){
 			StHidrante *sh = (StHidrante *) get(city.lista_hidrante, i);
 			drawHidrante(fSvgQry, createHidrante(sh->fill, sh->strk, sh->id, sh->x, sh->y));
@@ -596,6 +653,7 @@ main(int argc, char *argv[]){
 		fprintf(fSvgQry, "\n</svg>\n");
 		fclose(fSvgQry);
 	}
+	//t2 stuff
 	if(length(listC) >0 )
 		displayCircleToSvg(fDraw, listC);
 

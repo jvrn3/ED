@@ -3,8 +3,8 @@
 
 
 typedef struct stQuadra{
-  char fill[100], strk[100];
-  char cep[100];
+  char fill[50], strk[50];
+  char cep[50];
 
   double x, y, larg, alt;
 }StQuadra;

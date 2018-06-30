@@ -18,5 +18,5 @@ int isRectInsideRect(Rect a, Rect b);
 int isRectInsideCircle(Circle c, Rect r);
 int isCircleInsideRect(Circle c, Rect r);
 int isCircleInsideCircle(Circle a, Circle b);
-
+float area(int x1, int y1, int x2, int y2, int x3, int y3);
 #endif

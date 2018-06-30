@@ -1,5 +1,5 @@
 TARGET = siguel
-DEPS = siguel.o mystr.o circle.o rect.o static_list.o svg.o geometry.o palmeiras.o cidade.o quadra.o semaforo.o hidrante.o torre.o 
+DEPS = siguel.o mystr.o circle.o rect.o static_list.o svg.o geometry.o palmeiras.o cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o 
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
@@ -28,7 +28,8 @@ svg.o : $(SOURCEDIR)/Svg/svg.c
 
 cidade.o : $(SOURCEDIR)/Cidade/cidade.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Cidade/cidade.c
-
+sort.o : $(SOURCEDIR)/Sort/sort.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Sort/sort.c
 geometry.o : $(SOURCEDIR)/Geometry/geometry.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Geometry/geometry.c
 quadra.o : $(SOURCEDIR)/Quadra/quadra.c
