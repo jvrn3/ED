@@ -11,3 +11,7 @@ Hidrante createHidrante(char *fill, char *strk, char *id, double x, double y){
 	sh->y = y;
 	return h;
 }
+void deletaHidrante(Hidrante h){
+	StHidrante *sh = (StHidrante *)h;
+	free(sh);
+}

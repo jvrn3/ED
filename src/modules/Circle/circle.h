@@ -6,8 +6,8 @@ typedef void *Circle;
 #include <string.h>
 
 typedef struct stCircle{
-	char *border;
-	char *inside;
+	char border[50];
+	char inside[50];
 	double r,
 				 x,
 				 y;

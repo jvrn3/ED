@@ -12,4 +12,5 @@ typedef struct stHidrante{
 }StHidrante;
 
 Hidrante createHidrante(char *fill, char *strk, char *id, double x, double y);
+void deletaHidrante(Hidrante h);
 #endif
