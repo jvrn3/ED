@@ -36,6 +36,7 @@ main(int argc, char *argv[]){
 
 
 	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry ;
+	char *qry_name;
 
 	double *array_torre_x;
 	double r, x, y, w, h;
@@ -307,11 +308,12 @@ main(int argc, char *argv[]){
 		qry[strlen(qry) -4] = 0;
 		/* qry = criaString(dir, qry, ".qry"); */
 
+		
+		
 		fQry = fopen(criaString(path, qry, ".qry"), "r");
 		if(!fQry){
 			fprintf(stdout, "Cant open file");
 			exit(-1);
-		
 		}
 	
 		while(!feof(fQry)){
@@ -619,11 +621,17 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "crb?", 4) == 0){
 				n = length(city.lista_torre);
 				l = city.lista_torre;
-				array_torre_x = malloc(sizeof(double) * n);
+				/* array_torre_x = malloc(sizeof(double) * n); */
 
 			}
 		}
-		fSvgQry = fopen(criaString(dir, criaString(leitura, "-", qry), ".svg"), "w");
+		if(has_slash(qry))
+			qry_name = get_last_slash(qry);
+		else
+			qry_name = qry;
+
+		qry_name = criaString(dir, criaString(leitura, "-", qry_name), ".svg");
+		fSvgQry = fopen(qry_name, "w");
 		if(!fSvgQry){
 			fprintf(stderr, "bugou ao criar file");
 			exit(-1);
@@ -634,7 +642,7 @@ main(int argc, char *argv[]){
 		 */
 		fprintf(fSvgQry, "<svg>\n");
 
-		//time to print
+		//it's time to print
 
 		l = city.lista_quadra;
 		n = length(city.lista_quadra) -1;
@@ -709,5 +717,7 @@ main(int argc, char *argv[]){
 	destroy(city.lista_torre);
 	destroy(listC);
 	destroy(listR);
+	/* destroy(linha2); */
+	/* destroy(linha); */
 	return 0;
 }

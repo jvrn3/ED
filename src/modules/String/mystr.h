@@ -12,5 +12,6 @@ char *criaString(char *dir, char *nome, char *ext);
 char *aloca_tamanho(char *str, int len);
 char *arruma_path(char *str);
 char *concatena(char *str, char *str2);
-
+char *get_last_slash(char *str);
+int has_slash(char *str);
 #endif

@@ -63,20 +63,21 @@ Semaforo search_id_sem(char *id, Cidade c){
 	Lista s = c.lista_semaforo;
 	int n = length(s) -1;
 	for(int i = 0; i < n; i++){
-		StSemaforo *ss = (StSemaforo *) get(c.lista_semaforo, 0);
+		StSemaforo *ss = (StSemaforo *) get(s, 0);
 		if(strcmp(ss->id, id) == 0){
 			return ss;
 	}
 		s = pop(s);
 
 	}
+
 	return NULL;
 }
 Hidrante search_id_hi(char *id, Cidade c){
 	Lista s = c.lista_hidrante;
 	int n = length(s) -1;
 	for(int i = 0; i < n; i ++){
-		StHidrante *sh = (StHidrante *) get(c.lista_hidrante, 0);
+		StHidrante *sh = (StHidrante *) get(s, 0);
 		if(strcmp(sh->id, id) == 0)
 			return sh;
 		s = pop(s);
@@ -87,7 +88,7 @@ Torre search_id_to(char *id, Cidade c){
 	Lista s = c.lista_torre;
 	int n = length(s) -1;
 	for(int i =0; i < n; i++){
-		StTorre *st = (StTorre *) get(c.lista_torre, 0);
+		StTorre *st = (StTorre *) get(s, 0);
 		if(strcmp(st->id, id) == 0)
 			return st;
 		s = pop(s);
