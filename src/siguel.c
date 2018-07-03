@@ -306,10 +306,7 @@ main(int argc, char *argv[]){
 	//parsing and handling .qry files
 	if(qry != NULL){
 		qry[strlen(qry) -4] = 0;
-		/* qry = criaString(dir, qry, ".qry"); */
 
-		
-		
 		fQry = fopen(criaString(path, qry, ".qry"), "r");
 		if(!fQry){
 			fprintf(stdout, "Cant open file");
@@ -331,22 +328,27 @@ main(int argc, char *argv[]){
 				n = length(l) -1;
 				for(int i =0 ; i < n; i++){
 					StQuadra * sq =   (StQuadra *)get(l, 0);
-
-					if(isRectInsideRect(createRect("", "", sq->larg, sq->alt, sq->x, sq->y), rect)){
+					Rect rr = createRect("", "", sq->larg, sq->alt, sq->x, sq->y);
+					if(isRectInsideRect(rr, rect)){
 						fprintf(fTxt, "CEP REMOVIDO: %s\n", sq->cep);
 
 						city.lista_quadra = del(city.lista_quadra, sq);
 					}
 					l = pop(l);
+					free(rr);
+					rr = NULL;
 				}
 			}
 			//done?
 			else if(strncmp(line, "q?", 2) == 0){
 				sscanf(line, "q? %lf %lf %lf %lf", &x, &y, &w, &h);
 				rect = createRect("", "", w, h, x, y);
-				for(int i = 0; i < length(city.lista_quadra) -1; i++){
-					StQuadra *sq = (StQuadra *)get(city.lista_quadra, i);
-					if(isRectInsideRect(createRect(sq->strk, sq->fill, sq->larg, sq->alt, sq->x, sq->y), rect)){
+				l = city.lista_quadra;
+				n = length(l) - 1;
+				for(int i = 0; i < n; i++){
+					StQuadra *sq = (StQuadra *)get(l, 0);
+					Rect rr =createRect(sq->strk, sq->fill, sq->larg, sq->alt, sq->x, sq->y);
+					if(isRectInsideRect(rr, rect)){
 						fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
 								sq->cep,
 								sq->fill,
@@ -356,10 +358,17 @@ main(int argc, char *argv[]){
 								sq->larg,
 								sq->alt);
 					}
+					l = pop(l);
+					free(rr);
+					rr = NULL;
 				}
-				for(int i = 0; i < length(city.lista_semaforo) - 1; i++){
-						StSemaforo *ss = (StSemaforo *) get(city.lista_semaforo, i);
-					if(isRectInsideRect(createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y), rect)){
+
+				l = city.lista_semaforo;
+				n = length(l) -1;
+				for(int i = 0; i < n;  i++){
+						StSemaforo *ss = (StSemaforo *) get(l, 0);
+						Rect rr = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
+					if(isRectInsideRect(rr, rect)){
 						fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",
 								ss->id,
 								ss->fill,
@@ -367,10 +376,16 @@ main(int argc, char *argv[]){
 								ss->x,
 								ss->y);
 					}
+					l = pop(l);
+					free(rr);
+					rr = NULL;
 				}
-				for(int i = 0; i < length(city.lista_hidrante) - 1; i++){
-					StHidrante *sh = (StHidrante *) get(city.lista_hidrante, i);
-					if(isCircleInsideRect(createCircle(sh->strk, sh->fill, 10,sh->x, sh->y ), rect)){
+				l = city.lista_hidrante;
+				n = length(l) -1;
+				for(int i = 0; i <  n ; i++){
+					StHidrante *sh = (StHidrante *) get(l, 0);
+					c = createCircle(sh->strk, sh->fill, 10,sh->x, sh->y );
+					if(isCircleInsideRect(c, rect)){
 						fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
 								sh->id,
 								sh->fill,
@@ -379,10 +394,16 @@ main(int argc, char *argv[]){
 								sh->y
 								);
 					}
+					l = pop(l);
+					free(c);
+					c = NULL;
 				}
-				for(int i = 0; i < length(city.lista_torre) - 1; i++){
-					StTorre *st = (StTorre *) get(city.lista_torre, i);
-					if(isCircleInsideRect(createCircle(st->strk, st->fill, 10, st->x, st->y), rect)){
+				l = city.lista_torre;
+				n = length(l) -1;
+				for(int i = 0; i < n; i++){
+					StTorre *st = (StTorre *) get(l, 0);
+					c = createCircle(st->strk, st->fill, 10, st->x, st->y);
+					if(isCircleInsideRect(c, rect)){
 						fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
 								st->id,
 								st->fill,
@@ -391,6 +412,9 @@ main(int argc, char *argv[]){
 								st->y
 								);
 					}
+					l = pop(l);
+					free(c);
+					c = NULL;
 				}
 						//precisa fazer o retangulo pontilhado
 			}
@@ -471,11 +495,11 @@ main(int argc, char *argv[]){
 						city.lista_quadra = del(city.lista_quadra, sq);
 					}
 						l = pop(l);
-						/* free(rect); */
+						free(rect);
+						rect = NULL;
 					}
 
 				}
-				//need to check
 				else if(strncmp(line, "dle", 3)==0){
 					sscanf(line, "dle %*[srh] %lf %lf %lf %lf ",&x, &y, &w, &h);
 
@@ -493,7 +517,8 @@ main(int argc, char *argv[]){
 								city.lista_torre = del(city.lista_torre, st);
 							}
 							l = pop(l);
-							/* free(c); */
+							free(c);
+							c = NULL;
 						}
 					}
 

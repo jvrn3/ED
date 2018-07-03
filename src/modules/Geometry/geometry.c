@@ -106,13 +106,13 @@ int isInsideR(Rect r, double x, double y){
 		return 0;
 }
 
-// is the rect a inside b?vkk
-int isRectInsideRect(Rect a, Rect b){
-	StRect *sa = (StRect *)a;
-	if(isInsideR(b, sa->x, sa->y) && 
-			isInsideR(b, sa->x + sa->w, sa->y) &&
-			isInsideR(b, sa->x, sa->y + sa->h) &&
-			isInsideR(b, sa->x + sa->w, sa->y + sa->h))
+// is the rect a inside b?
+int isRectInsideRect(Rect in, Rect out){
+	StRect *sa = (StRect *)in;
+	if(isInsideR(out, sa->x, sa->y) && 
+			isInsideR(out, sa->x + sa->w, sa->y) &&
+			isInsideR(out, sa->x, sa->y + sa->h) &&
+			isInsideR(out, sa->x + sa->w, sa->y + sa->h))
 		return 1;
 	else return 0;
 }
