@@ -125,7 +125,7 @@ int isRectInsideCircle(Circle c, Rect r){
 }
 int isCircleInsideRect(Circle c, Rect r){
 	StCircle *sc = (StCircle *) c;
-	if(isInsideR(r, sc->x + sc->r, sc->y) && isInsideR(r, sc->x -sc->r, sc->y) && isInsideR(r, sc->x, sc->y + sc->r) && isInsideR(r, sc->x, sc->y - sc->y))
+	if(isInsideR(r, sc->x + sc->r, sc->y) && isInsideR(r, sc->x -sc->r, sc->y) && isInsideR(r, sc->x, sc->y + sc->r) && isInsideR(r, sc->x, sc->y - sc->r))
 		return 1;
 	else
 		return 0;

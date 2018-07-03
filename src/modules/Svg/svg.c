@@ -83,7 +83,6 @@ void drawRect(FILE *svgName, Rect r){
 			sr->h,
 			sr->inside,
 			sr->border);
-	free(sr);
 }
 
 void drawLineCToC(FILE *svgName, Circle c, Circle c2){
