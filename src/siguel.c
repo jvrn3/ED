@@ -21,7 +21,7 @@ main(int argc, char *argv[]){
 	char fill_t[MAXSIZE], strk_t[MAXSIZE];
 	char fill_s[MAXSIZE], strk_s[MAXSIZE];
 	char tmp_strk[MAXSIZE], tmp_fill[MAXSIZE];
-	char id_equipamentos[MAXSIZE];
+	char id_equipamentos[50];
 	Lista listC = createList();
 	Lista listR = createList();
 	Lista linha = createList();
@@ -32,7 +32,6 @@ main(int argc, char *argv[]){
 
 	Circle c;
 	Rect rect;
-	Torre t;
 
 
 	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry ;
@@ -135,7 +134,8 @@ main(int argc, char *argv[]){
 				else{
 					sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
 					c = createCircle(border, inside, r, x, y);
-					listC = insert(listC, c, id);
+					insert(listC, c, id);
+
 
 				}
 
@@ -145,7 +145,7 @@ main(int argc, char *argv[]){
 				sscanf(line, "r %d %s %s %lf %lf %lf %lf", &id, border, inside, &w, &h, &x, &y);
 				rect = createRect(border, inside, w, h, x, y);
 
-				listR = insert(listR, rect, id);
+				insert(listR, rect, id);
 				
 
 				break;
@@ -234,7 +234,7 @@ main(int argc, char *argv[]){
 				case 'h':
 				sscanf(line, "h %s %lf %lf",id_equipamentos, &x, &y);
 				Hidrante hid= createHidrante(fill_h, strk_h, id_equipamentos, x, y);
-				city = insert_hidrante(city, hid);
+				insert_hidrante(city, hid);
 				drawHidrante(fDraw, hid);
 
 				break;
@@ -244,7 +244,7 @@ main(int argc, char *argv[]){
 				sscanf(line, "q %s %lf %lf %lf %lf", cep,&x, &y, &w,&h);
 				Quadra q = createQuadra(fill_q, strk_q, cep, x, y, w, h);
 				
-				city = insert_quadra(city, q);
+				insert_quadra(city, q);
 				
 				drawQuadra(fDraw, q);
 
@@ -254,16 +254,15 @@ main(int argc, char *argv[]){
 				case 's':
 				sscanf(line, "s %s %lf %lf", id_equipamentos, &x, &y);
 				Semaforo sem = createSemaforo(fill_s, strk_s, id_equipamentos, x, y);
-				city = insert_semaforo(city, sem);
+				insert_semaforo(city, sem);
 
 				drawSemaforo(fDraw, sem);
-
 
 				break;
 				case 't':
 				sscanf(line, "t %s %lf %lf", id_equipamentos, &x, &y);
-				t = createTorre(fill_t, strk_t, id_equipamentos, x, y);
-				city = insert_torre(city, t);
+				Torre t = createTorre(fill_t, strk_t, id_equipamentos, x, y);
+				insert_torre(city, t);
 				drawTorre(fDraw, t);
 
 				break;
@@ -313,109 +312,30 @@ main(int argc, char *argv[]){
 			exit(-1);
 		}
 	
-		while(!feof(fQry)){
-			fgets(line, 1000, fQry);
+		/* while(!feof(fQry)){ */
+		while(fgets(line,1000,fQry) != NULL){
+			/* fgets(line, 1000, fQry); */
 
 			//dq command ~ done?
 			if(strncmp(line, "dq", 2) == 0){
 
 
 				sscanf(line, "dq %lf %lf %lf %lf", &x, &y, &w, &h);
+				printf("%s\n", line);
 
 				rect = createRect("", "", w, h, x, y);
-
-				l = city.lista_quadra;
-				n = length(l) -1;
-				for(int i =0 ; i < n; i++){
-					StQuadra * sq =   (StQuadra *)get(l, 0);
-					Rect rr = createRect("", "", sq->larg, sq->alt, sq->x, sq->y);
-					if(isRectInsideRect(rr, rect)){
-						fprintf(fTxt, "CEP REMOVIDO: %s\n", sq->cep);
-
-						city.lista_quadra = del(city.lista_quadra, sq);
-					}
-					l = pop(l);
-					free(rr);
-					rr = NULL;
-				}
+				searchOrDeleteQuadraInRect(rect, city.lista_quadra, fTxt, 1);
 			}
 			//done?
 			else if(strncmp(line, "q?", 2) == 0){
 				sscanf(line, "q? %lf %lf %lf %lf", &x, &y, &w, &h);
 				rect = createRect("", "", w, h, x, y);
-				l = city.lista_quadra;
-				n = length(l) - 1;
-				for(int i = 0; i < n; i++){
-					StQuadra *sq = (StQuadra *)get(l, 0);
-					Rect rr =createRect(sq->strk, sq->fill, sq->larg, sq->alt, sq->x, sq->y);
-					if(isRectInsideRect(rr, rect)){
-						fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
-								sq->cep,
-								sq->fill,
-								sq->strk, 
-								sq->x,
-								sq->y,
-								sq->larg,
-								sq->alt);
-					}
-					l = pop(l);
-					free(rr);
-					rr = NULL;
-				}
+				searchOrDeleteQuadraInRect(rect, city.lista_quadra, fTxt, 0);
+				searchOrDeleteSemaforoInRect(rect, city.lista_semaforo, fTxt, 0);
 
-				l = city.lista_semaforo;
-				n = length(l) -1;
-				for(int i = 0; i < n;  i++){
-						StSemaforo *ss = (StSemaforo *) get(l, 0);
-						Rect rr = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
-					if(isRectInsideRect(rr, rect)){
-						fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",
-								ss->id,
-								ss->fill,
-								ss->strk, 
-								ss->x,
-								ss->y);
-					}
-					l = pop(l);
-					free(rr);
-					rr = NULL;
-				}
-				l = city.lista_hidrante;
-				n = length(l) -1;
-				for(int i = 0; i <  n ; i++){
-					StHidrante *sh = (StHidrante *) get(l, 0);
-					c = createCircle(sh->strk, sh->fill, 10,sh->x, sh->y );
-					if(isCircleInsideRect(c, rect)){
-						fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-								sh->id,
-								sh->fill,
-								sh->strk,
-								sh->x,
-								sh->y
-								);
-					}
-					l = pop(l);
-					free(c);
-					c = NULL;
-				}
-				l = city.lista_torre;
-				n = length(l) -1;
-				for(int i = 0; i < n; i++){
-					StTorre *st = (StTorre *) get(l, 0);
-					c = createCircle(st->strk, st->fill, 10, st->x, st->y);
-					if(isCircleInsideRect(c, rect)){
-						fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-								st->id,
-								st->fill,
-								st->strk,
-								st->x,
-								st->y
-								);
-					}
-					l = pop(l);
-					free(c);
-					c = NULL;
-				}
+				searchOrDeleteHidranteInRect(rect, city.lista_hidrante, fTxt, 0);
+
+				searchOrDeleteTorreInRect(rect, city.lista_torre, fTxt, 0);
 						//precisa fazer o retangulo pontilhado
 			}
 			//done?
@@ -423,82 +343,23 @@ main(int argc, char *argv[]){
 				sscanf(line, "Q? %lf %lf %lf", &r, &x, &y);
 				c = createCircle("", "", r, x, y);
 
-				for(int i = 0; i < length(city.lista_quadra) -1; i++){
-					StQuadra *sq = (StQuadra *)get(city.lista_quadra, i);
-					if(isRectInsideCircle(c, createRect(sq->strk, sq->fill, sq->larg, sq->alt, sq->x, sq->y))){
-						fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
-								sq->cep,
-								sq->fill,
-								sq->strk, 
-								sq->x,
-								sq->y,
-								sq->larg,
-								sq->alt);
-					}
-				}
-				for(int i = 0; i < length(city.lista_semaforo) - 1; i++){
-						StSemaforo *ss = (StSemaforo *) get(city.lista_semaforo, i);
-						rect =  createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
-					if(isRectInsideCircle(c, rect)){
-						fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",
-								ss->id,
-								ss->fill,
-								ss->strk, 
-								ss->x,
-								ss->y);
-					}
-					free(rect);
-				}
-				for(int i = 0; i < length(city.lista_hidrante) - 1; i++){
-					StHidrante *sh = (StHidrante *) get(city.lista_hidrante, i);
-					if(isCircleInsideCircle(createCircle(sh->strk, sh->fill, 10,sh->x, sh->y), c)){
-						fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-								sh->id,
-								sh->fill,
-								sh->strk,
-								sh->x,
-								sh->y
-								);
-					}
-				}
+				searchOrDeleteQuadraInCircle(c, city.lista_quadra, fTxt, 0);
+
+				searchOrDeleteSemaforoInCircle(c, city.lista_semaforo, fTxt, 0);
 				
-				for(int i = 0; i < length(city.lista_torre) - 1; i++){
-					StTorre *st = (StTorre *) get(city.lista_torre, i);
-					if(isCircleInsideCircle(createCircle(st->strk, st->fill, 10, st->x, st->y), c)){
-						fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-								st->id,
-								st->fill,
-								st->strk,
-								st->x,
-								st->y
-								);
-					}
-				}
+				searchOrDeleteHidranteInCircle(c, city.lista_hidrante, fTxt, 0);
+				
+				searchOrDeleteTorreInCircle(c, city.lista_torre, fTxt, 0);
 			}
 			//Dq  undone
 			else if(strncmp(line, "Dq", 2) == 0){
 
 				sscanf(line, "Dq %lf %lf %lf", &r, &x, &y);
-
+				printf("%s\n", line);
 				c = createCircle("", "", r, x, y);
 				// go through the entire list and remove the ones that overlap
 				//
-				 l = city.lista_quadra;
-				 n = length(l)-1;
-				 for(int i = 0; i < n; i++){
-
-					StQuadra *sq = (StQuadra *) get(l, 0);
-					rect = createRect(sq->strk, sq->fill, sq->larg, sq->alt, sq->x, sq->y);
-
-					if(isRectInsideCircle(c, rect)){
-						fprintf(fTxt, "Dq %s\n", sq->cep);
-						city.lista_quadra = del(city.lista_quadra, sq);
-					}
-						l = pop(l);
-						free(rect);
-						rect = NULL;
-					}
-
+				searchOrDeleteQuadraInCircle(c, city.lista_quadra, fTxt, 1 );
 				}
 				else if(strncmp(line, "dle", 3)==0){
 					sscanf(line, "dle %*[srh] %lf %lf %lf %lf ",&x, &y, &w, &h);
@@ -506,109 +367,31 @@ main(int argc, char *argv[]){
 					rect = createRect("", "", w, h, x, y);
 					drawRect(fDraw, rect);
 					if(line[4] == 'r' || line[5] == 'r' || line[6] == 'r'){
-
-						l = city.lista_torre;
-						n = length(l) -1;
-						for(int i = 0; i < n; i++){
-							StTorre *st = (StTorre *) get(l, 0);
-							c = createCircle(st->strk, st->fill, 10, st->x, st->y);
-							if(isCircleInsideRect(c, rect)){
-								fprintf(fTxt, "dle t %s\n", st->id);
-								city.lista_torre = del(city.lista_torre, st);
-							}
-							l = pop(l);
-							free(c);
-							c = NULL;
-						}
+						searchOrDeleteTorreInRect(rect, city.lista_torre, fTxt, 1);
 					}
 
 					if(line[4] == 'h' || line[5] == 'h' || line[6] == 'h'){
 						//remove h
-						l = city.lista_hidrante;
-						n = length(l) -1;
-
-						 for(int i = 0; i < n; i++){
-							StHidrante *sh = (StHidrante *) get(l, 0);
-							c = createCircle(sh->strk, sh->fill, 10, sh->x, sh->y);
-
-							if(isCircleInsideRect(c, rect)){
-								fprintf(fTxt, "dle h %s\n", sh->id);
-								city.lista_hidrante = del(city.lista_hidrante, sh);
-							}
-							l = pop(l);
-							free(c);
-							c = NULL;
-
-						}
+						searchOrDeleteHidranteInRect(rect, city.lista_hidrante, fTxt, 1);
 					}
 					if(line[4] == 's' || line[5] == 's' || line[6] == 's'){
 						//remove r
-						l = city.lista_semaforo;
-						n = length(l) -1;
-						 for(int i = 0; i < n; i++){
-							StSemaforo *ss = (StSemaforo *) get(l, 0);
-							//memory leak
-							Rect rect_aux = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
-							if(isRectInsideRect(rect_aux, rect)){
-								fprintf(fTxt, "dle s %s\n", ss->id);
-								city.lista_semaforo = del(city.lista_semaforo, ss);
-							}
-							l = pop(l);
-							free(rect_aux);
-							rect_aux = NULL;
-						}
+						searchOrDeleteSemaforoInRect(rect, city.lista_semaforo, fTxt, 1);
 					}
 				}
 				else if(strncmp(line, "Dle", 3) == 0){
 					sscanf(line, "Dle %*[rsh] %lf %lf %lf", &x, &y, &r );
 					c = createCircle("", "", r, x, y);
 
-
 					if(line[4] == 'h' || line[5] == 'h' || line[6] == 'h'){
-						l = city.lista_hidrante;
-						n = length(l) -1;
-						for(int i = 0; i < n; i++){
-							StHidrante *sh =(StHidrante *) get(l, 0);
-							Circle circ = createCircle(sh->strk, sh->fill, 10, sh->x, sh->y);
-							if(isCircleInsideCircle(circ, c)){
-								fprintf(fTxt, "Dle %s\n", sh->id);
-								city.lista_hidrante = del(city.lista_hidrante, sh);
-							}
-							l = pop(l);
-							free(circ);
-							circ = NULL;
-						}
+
+						searchOrDeleteHidranteInCircle(c, city.lista_hidrante, fTxt, 1);
 					}
 					if(line[4] == 'r' || line[5] == 'r' || line[6] == 'r'){
-						l = city.lista_torre;
-						n = length(l) -1 ;
-						for(int i = 0; i < n; i++){
-							StTorre *st = (StTorre *) get(l, 0);
-							Circle circ = createCircle(st->strk, st->fill, 10, st->x, st->y);
-							if(isCircleInsideCircle(circ, c)){
-								fprintf(fTxt, "Dle r %s\n", st->id);
-								city.lista_torre = del(city.lista_torre, st);
-							}
-							l = pop(l);
-							free(circ);
-							circ=  NULL;
-						}
+						searchOrDeleteTorreInCircle(c, city.lista_torre, fTxt, 1);
 					}
 					if(line[4] == 's' || line[5] == 's' || line[6] == 's'){
-						l = city.lista_semaforo;
-						n = length(l) -1;
-						for(int i = 0; i < n; i++){
-							StSemaforo *ss = (StSemaforo *) get(l, 0);
-							//memory leak
-							rect = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
-							if(isRectInsideCircle(c, rect)){
-								fprintf(fTxt, "Dle s %s\n", ss->id);
-								city.lista_semaforo = del(city.lista_semaforo, ss);
-							}
-							l = pop(l);
-							free(rect);
-							rect = NULL;
-					}
+						searchOrDeleteSemaforoInCircle(c, city.lista_semaforo, fTxt, 1);
 				}
 			}
 			else if(strncmp(line, "cc", 2) == 0){
@@ -684,32 +467,31 @@ main(int argc, char *argv[]){
 		//it's time to print
 
 		l = city.lista_quadra;
-		n = length(city.lista_quadra) -1;
-		for(int i = 0; i < n; i++){
-			StQuadra *sq = (StQuadra *) get(l, 0);
-			drawQuadra(fSvgQry, sq);
-			l= pop(l);
-		}
+		n = length(l);
+		for(int i =0; i < n; i++){
+		 	StQuadra *sq = (StQuadra *) get(l, 0); 
+		 	drawQuadra(fSvgQry, sq); 
+			l = pop(l);
+	}
 		
 		l = city.lista_hidrante;
-		n = length(city.lista_hidrante) -1;
+		n = length(city.lista_hidrante);
 		for(int i =0; i < n; i++){
 			StHidrante *sh = (StHidrante *) get(l, 0);
 			drawHidrante(fSvgQry, sh);
 			l = pop(l);
 		}
 		l = city.lista_semaforo;
-		n = length(city.lista_semaforo) -1;
+		n = length(city.lista_semaforo);
 		for(int i =0; i < n; i++){
 			StSemaforo *ss = (StSemaforo *) get(l, 0);
 			drawSemaforo(fSvgQry, ss);
 			l = pop(l);
 		}
 		l = city.lista_torre;
-		n = length(city.lista_torre) -1;
+		n = length(city.lista_torre);
 		for(int i = 0; i < n; i++){
 			StTorre *st = (StTorre *) get(l,0);
-			/* Torre t = createTorre(st->fill, st->strk, st->id, st->x, st->y); */
 			drawTorre(fSvgQry, st);
 			l	= pop(l);
 		}
@@ -720,7 +502,7 @@ main(int argc, char *argv[]){
 	}
 	//t2 stuff
 	l = listR;
-	n = length(listR) -1;
+	n = length(listR);
 	for(int i =0; i < n; i++){
 		StRect *sr = (StRect *) get(l, 0);
 		drawRect(fDraw, sr);
@@ -728,7 +510,7 @@ main(int argc, char *argv[]){
 	}
 
 	l = listC;
-	n = length(listC) -1;
+	n = length(listC);
 	for(int i =0; i < n; i++){
 		StCircle *sc = (StCircle *) get(l, 0);
 		drawCircle(fDraw, sc);
@@ -750,13 +532,13 @@ main(int argc, char *argv[]){
 	fclose(fDraw);
 
 	//destroying lists
-	destroy(city.lista_semaforo);
-	destroy(city.lista_quadra);
-	destroy(city.lista_hidrante);
-	destroy(city.lista_torre);
+	 destroy(city.lista_semaforo); 
+	 destroy(city.lista_quadra); 
+	 destroy(city.lista_hidrante); 
+	destroy(city.lista_torre);  
 	destroy(listC);
 	destroy(listR);
-	/* destroy(linha2); */
+	 /*destroy(linha2); */
 	/* destroy(linha); */
 	return 0;
 }

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 typedef void *Torre;
 
+
 typedef struct stTorre{
   char fill[50];
   char strk[50];
