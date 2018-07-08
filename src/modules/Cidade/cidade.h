@@ -4,10 +4,9 @@
 #include "../Hidrante/hidrante.h"
 #include "../Semaforo/semaforo.h"
 #include "../Torre/torre.h"
-#include "../Lista/static_ist.h"
+#include "../Lista/linked_list.h"
 #include "../Rect/rect.h"
 #include "../Circle/circle.h"
-#include "../Lista/static_ist.h"
 #include "../Geometry/geometry.h"
 
 
@@ -32,6 +31,7 @@ Quadra search_cep(char *cep, Cidade c);
 Semaforo search_id_sem(char *id, Cidade c);
 Hidrante search_id_hi(char *id, Cidade c);
 Torre search_id_to(char *id, Cidade c);
+Torre search_id_toxy(float x, float y, Torre c);
 void searchOrDeleteQuadraInRect(Rect r, Lista lista_quadra, FILE *fp, int del);
 void searchOrDeleteSemaforoInRect(Rect r, Lista lista_semaforo, FILE *fp, int del);
 void searchOrDeleteHidranteInRect(Rect r, Lista lista_hidrante, FILE *fp, int del);
@@ -44,5 +44,6 @@ void rem_quadra(Lista lista_quadra, StQuadra *sq);
 void rem_torre(Lista lista_torre, StTorre *st);
 void rem_semaforo(Lista lista_semaforo, StSemaforo *ss);
 void rem_hidrante(Lista lista_hidrante, StHidrante *sh);
+void free_cidade(Cidade c);
 #endif
 

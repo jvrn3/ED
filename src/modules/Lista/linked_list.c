@@ -1,4 +1,4 @@
-#include "static_ist.h"
+#include "linked_list.h"
 
 
 Lista createList(){

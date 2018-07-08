@@ -213,9 +213,7 @@ void drawOverlapRR(FILE *svgName, Rect r, Rect r2){
 	}
 	else{
 		w = MAX(sr->w + sr->x, sr2->x + sr->w);
-		w = w - sr->x;
-
-	
+		w = w - sr2->x;
 	}
 	if(sr->y > sr2->y){
 		h = MAX(sr->h + sr-> y, sr2->y + sr2->h);
@@ -264,7 +262,17 @@ void drawOverlapCR(FILE *svgName, Circle c, Rect r){
 
 	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"red\" font-size=\"20\" >Sobrepoe</text>", x,y-2);
 	fprintf(svgName,"<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" stroke-dasharray=\"5,5\" fill-opacity=\"0\" stroke=\"pink\" stroke-width=\"5\"/>\n", x,y,w,h );
+}
+void drawRectPontilhado(FILE *svgName, Rect r){
+	StRect *sr = (StRect *) r;
 
+	fprintf(svgName,"<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" stroke-dasharray=\"5,5\" fill-opacity=\"0\" stroke=\"pink\" stroke-width=\"5\"/>\n", sr->x,sr->y,sr->x + sr->w,sr->y + sr->h );
 
 }
-
+void drawCirclePontilhado(FILE *svgName, Circle c){
+	StCircle *sc = (StCircle *) c;
+fprintf(svgName, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"pink\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n ",
+		sc->r,
+		sc->x,
+		sc->y);
+}

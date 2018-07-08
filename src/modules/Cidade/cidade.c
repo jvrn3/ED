@@ -72,6 +72,18 @@ Semaforo search_id_sem(char *id, Cidade c){
   /*  */
 	/* return NULL; */
 }
+Torre search_id_toxy(float x, float y, Torre t){
+	Node *n;
+	StTorre *st;
+	for(n = getFirst(t); n != NULL; n = n->next){
+		st = (StTorre *) n->data;
+		if((x - st->x) < 0.1 && (y - st->y) < 0.1){
+			return st;
+		}
+
+	}
+	return NULL;
+}
 Hidrante search_id_hi(char *id, Cidade c){
 	Node *n;
 	StHidrante *sh;
@@ -335,3 +347,9 @@ void searchOrDeleteTorreInCircle(Circle c, Lista lista_torre, FILE *fTxt, int de
 	}
 }
 
+void free_cidade(Cidade c){
+	destroy(c.lista_hidrante);
+	destroy(c.lista_quadra);
+	destroy(c.lista_semaforo);
+	destroy(c.lista_torre);
+}

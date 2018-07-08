@@ -4,7 +4,7 @@
 #include "../Rect/rect.h"
 #include "math.h"
 #include "../Geometry/geometry.h"
-#include "../Lista/static_ist.h"
+#include "../Lista/linked_list.h"
 #include "../Quadra/quadra.h"
 #include "../Hidrante/hidrante.h"
 #include "../Semaforo/semaforo.h"
@@ -28,7 +28,8 @@ void displayCircleToSvg(FILE *f, Lista l);
 void drawHidrante(FILE *svgName, Hidrante h);
 void drawSemaforo(FILE *svgName, Semaforo s);
 void drawTorre(FILE *svgName, Torre t);
-
+void drawRectPontilhado(FILE *svgName, Rect r);
+void drawCirclePontilhado(FILE *svgName, Circle c);
 #endif
 
 

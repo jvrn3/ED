@@ -1,5 +1,5 @@
 TARGET = siguel
-DEPS = siguel.o mystr.o circle.o rect.o static_list.o svg.o geometry.o palmeiras.o cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o 
+DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o palmeiras.o cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o 
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
@@ -20,8 +20,8 @@ circle.o : $(SOURCEDIR)/Circle/circle.c
 rect.o : $(SOURCEDIR)/Rect/rect.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Rect/rect.c
 
-static_list.o : $(SOURCEDIR)/Lista/static_list.c
-	$(CC) $(FLAGS) -c $(SOURCEDIR)/Lista/static_list.c
+linked_list.o : $(SOURCEDIR)/Lista/linked_list.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Lista/linked_list.c
 
 svg.o : $(SOURCEDIR)/Svg/svg.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Svg/svg.c
