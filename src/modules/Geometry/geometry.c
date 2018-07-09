@@ -177,30 +177,30 @@ float bruteForce(Ponto P[], int n)
     return min;
 }
 int find_ponto(Ponto p[], int n, float d, FILE *fp, FILE *fTxt, Torre t ){
-	for(int i = 0 ; i < n; i++){
-		for(int j = 1 ; j < n; j++){
-			if(distPoints(p[i], p[j]) == d){
-				fprintf(fp, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
-						15.0,
-						p[i].x,
-						p[i].y);
-				fprintf(fp, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
-						12.0,
-						p[j].x,
-						p[j].y);
-				StTorre *sa = (StTorre *)search_id_toxy(p[i].x, p[i].y, t);
-				StTorre *sb = (StTorre *)search_id_toxy(p[j].x, p[j].y, t);
+    for(int i = 0 ; i < n; i++){
+	for(int j = 1 ; j < n; j++){
+	    if(distPoints(p[i], p[j]) == d){
+		fprintf(fp, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
+			15.0,
+			p[i].x,
+			p[i].y);
+		fprintf(fp, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
+			15.0,
+			p[j].x,
+			p[j].y);
+		StTorre *sa = (StTorre *)search_id_toxy(p[i].x, p[i].y, t);
+		StTorre *sb = (StTorre *)search_id_toxy(p[j].x, p[j].y, t);
 
 
-				fprintf(fTxt, "ID %s  %s Distancia %lf\n",
-						sa->id,
-						sb->id,
-						d);
-				return 0;
-			}
-		}
+		fprintf(fTxt, "ID %s  %s Distancia %lf\n",
+			sa->id,
+			sb->id,
+			d);
+		return 0;
+	    }
 	}
-	return -1;
+    }
+    return -1;
 }
 float closestPairs(Ponto px[],  int n){
 	if(n <= 3)
