@@ -1,5 +1,5 @@
 TARGET = siguel
-DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o palmeiras.o cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o 
+DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
@@ -40,7 +40,9 @@ hidrante.o : $(SOURCEDIR)/Hidrante/hidrante.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Hidrante/hidrante.c
 torre.o : $(SOURCEDIR)/Torre/torre.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Torre/torre.c
-palmeiras.o : src/palmeiras.c
-	$(CC) $(FLAGS) -c src/palmeiras.c
+# palmeiras.o : src/palmeiras.c
+	# $(CC) $(FLAGS) -c src/palmeiras.c
+kdtree.o : $(SOURCEDIR)/Tree/kdtree.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Tree/kdtree.c
 clean: 
 	rm *.o

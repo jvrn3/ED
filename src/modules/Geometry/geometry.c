@@ -178,7 +178,7 @@ float bruteForce(Ponto P[], int n)
 }
 int find_ponto(Ponto p[], int n, float d, FILE *fp, FILE *fTxt, Torre t ){
     for(int i = 0 ; i < n; i++){
-	for(int j = 1 ; j < n; j++){
+	for(int j = i+1 ; j < n; j++){
 	    if(distPoints(p[i], p[j]) == d){
 		fprintf(fp, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
 			15.0,

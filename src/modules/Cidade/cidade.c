@@ -298,13 +298,13 @@ void searchOrDeleteTorreInRect(Rect r, Lista lista_torre, FILE *fTxt, int del){
 	StTorre *st;
 	Circle c;
 	for(n = getFirst(lista_torre);  n != NULL; n = n->next){
-		st = (StTorre *) n->data;
-		c = createCircle(st->strk, st->fill, 10, st->x, st->y);
-		if(isCircleInsideRect(c, r)){
-			if(del == 1){
-				rem_torre(lista_torre, st);
-				fprintf(fTxt, "dle t %s\n", st->id);
-			}
+        st = (StTorre *) n->data;
+	c = createCircle(st->strk, st->fill, 10, st->x, st->y);
+	  if(isCircleInsideRect(c, r)){
+	    if(del == 1){
+	        rem_torre(lista_torre, st);
+	        fprintf(fTxt, "dle t %s\n", st->id);
+	    }
 			else{
 				fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
 						st->id,
