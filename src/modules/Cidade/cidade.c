@@ -10,21 +10,32 @@ Cidade createCity(){
 	city.lista_hidrante = createList();
 	city.lista_semaforo = createList();
 	city.lista_torre = createList();
+
+
+	city.arvore_quadra = NULL;
+	city.arvore_semaforo = NULL;
+	city.arvore_hidrante = NULL;
+	city.arvore_torre = NULL;
+
 	return city;
 }
 
 
-void insert_quadra(Cidade c,Quadra q){
-	insert(c.lista_quadra, q, 0);
+KdTree insert_quadra(Cidade c,Quadra q){
+	/* insert(c.lista_quadra, q, 0); */
+	return kd_insert(c.arvore_quadra, q, compareQuadraX, compareQuadraY);
 }
-void insert_hidrante(Cidade c, Hidrante h){
-	insert(c.lista_hidrante, h, 0);
+KdTree insert_hidrante(Cidade c, Hidrante h){
+	/* insert(c.lista_hidrante, h, 0); */
+	return kd_insert(c.arvore_hidrante, h, compareHidranteX, compareHidranteY);
 }
-void insert_torre(Cidade c, Torre t){
-	insert(c.lista_torre, t, 0);
+KdTree insert_torre(Cidade c, Torre t){
+	/* insert(c.lista_torre, t, 0); */
+	return kd_insert(c.arvore_torre, t, compareTorreX, compareTorreY);
 }
-void insert_semaforo(Cidade c, Semaforo s){
-	insert(c.lista_semaforo, s, 0);
+KdTree insert_semaforo(Cidade c, Semaforo s){
+	/* insert(c.lista_semaforo, s, 0); */
+	return kd_insert(c.arvore_semaforo, s, compareSemaforoX, compareSemaforoY);
 }
 //could return the cep position and then use get function to access it
 Quadra search_cep(char *cep, Cidade c){
@@ -124,8 +135,9 @@ Torre search_id_to(char *id, Cidade c){
 	/* } */
 	/* return NULL; */
 }
-void rem_quadra(Lista lista_quadra, StQuadra *sq){
-	lista_quadra = del(lista_quadra,sq); 
+void rem_quadra( KdTree t, StQuadra *sq){
+	/* lista_quadra = del(lista_quadra,sq);  */
+	delete_kd_node(t, sq, quadraPointInX, quadraPointInY, 0);
 }
 void rem_hidrante(Lista lista_hidrante, StHidrante *sh){
 	lista_hidrante = del(lista_hidrante, sh);
@@ -135,33 +147,73 @@ void rem_semaforo(Lista lista_semaforo, StSemaforo *ss){
 }
 void rem_torre(Lista lista_torre, StTorre *st){
 	lista_torre = del(lista_torre, st);
+
 }
-void searchOrDeleteQuadraInRect(Rect r, Lista lista_quadra, FILE *fTxt, int del){
-	Node *n;
-	StQuadra *sq;
-	Rect r2;
-	for(n = getFirst(lista_quadra); n != NULL; n = n->next){
-		sq = (StQuadra *)n->data;
-		r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
-		if(isRectInsideRect(r2, r)){
-			if(del == 1){
-				fprintf(fTxt, "CEP REMOVIDO %s\n", sq->cep);
-				rem_quadra(lista_quadra, sq);
+void searchOrDeleteQuadraInRect(Rect r, KdTree k, Lista lista_quadra, FILE *fTxt, int del){
+	/* Node *n; */
+	if(k != NULL){
+		KdNode *kd = (KdNode *) k;
+		if(kd->right)
+			searchOrDeleteQuadraInRect(r, kd->right, lista_quadra, fTxt, del);
+		if(kd->left)
+			searchOrDeleteQuadraInRect(r, kd->left, lista_quadra, fTxt, del);
+
+		StQuadra *sq;
+		Rect r2;
+		if(kd->data != NULL){
+			sq = (StQuadra *) kd->data;
+			r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
+			if(isRectInsideRect(r2, r)){
+				if(del == 1){
+					fprintf(fTxt, "CEP REMOVIDO %s\n", sq->cep);
+					printf("%s\n", sq->cep);
+					/* rem_quadra(lista_quadra, sq); */
+					/* rem_quadra(kd, sq); */
+					k= delete_kd_node(k, kd->data, quadraPointInX, quadraPointInY, 0);
+
+				}
+				else{
+					fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
+							sq->cep,
+							sq->fill,
+							sq->strk, 
+							sq->x,
+							sq->y,
+							sq->larg,
+							sq->alt);
+				}
+
 			}
-			else{
-				fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
-								sq->cep,
-								sq->fill,
-								sq->strk, 
-								sq->x,
-								sq->y,
-								sq->larg,
-								sq->alt);
-			}
+
+			free(r2);
+			r2 = NULL;
 		}
-		free(r2);
-		r2 = NULL;
+
+
 	}
+	/* for(n = getFirst(lista_quadra); n != NULL; n = n->next){ */
+
+	/* 	sq = (StQuadra *)n->data; */
+	/* 	r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y);  */
+	/* 	if(isRectInsideRect(r2, r)){ */
+	/* 		if(del == 1){ */
+	/* 			fprintf(fTxt, "CEP REMOVIDO %s\n", sq->cep); */
+	/* 			rem_quadra(lista_quadra, sq); */
+	/* 		} */
+	/* 		else{ */
+	/* 			fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n", */
+	/* 							sq->cep, */
+	/* 							sq->fill, */
+	/* 							sq->strk,  */
+	/* 							sq->x, */
+	/* 							sq->y, */
+	/* 							sq->larg, */
+	/* 							sq->alt); */
+	/* 		} */
+	/* 	} */
+	/* 	free(r2); */
+	/* 	r1 = NULL; */
+	/* } */
 }
 void searchOrDeleteQuadraInCircle(Circle c, Lista lista_quadra, FILE *fTxt, int del){
 	Node *n;
@@ -177,13 +229,13 @@ void searchOrDeleteQuadraInCircle(Circle c, Lista lista_quadra, FILE *fTxt, int 
 			}
 			else{
 				fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
-								sq->cep,
-								sq->fill,
-								sq->strk, 
-								sq->x,
-								sq->y,
-								sq->larg,
-								sq->alt);
+						sq->cep,
+						sq->fill,
+						sq->strk, 
+						sq->x,
+						sq->y,
+						sq->larg,
+						sq->alt);
 			}
 		}
 		free(r);
@@ -352,4 +404,62 @@ void free_cidade(Cidade c){
 	destroy(c.lista_quadra);
 	destroy(c.lista_semaforo);
 	destroy(c.lista_torre);
+}
+
+void traverseTreeQuadra(KdTree kd, void (*func)(FILE *, void *), FILE *f){
+	KdNode *knode = (KdNode *)kd;
+	if(knode != NULL){
+		StQuadra *sq = (StQuadra *) knode->data;
+		if(sq != NULL)
+			func(f, sq);
+
+		if(knode->left != NULL)
+			traverseTreeQuadra(knode->left, func, f);
+		if(knode->right != NULL )
+			traverseTreeQuadra(knode->right, func, f);
+	}
+
+
+}
+void traverseTreeSemaforo(KdTree kd, void (*func)(FILE *, void *), FILE *f){
+	KdNode *knode = (KdNode *)kd;
+	if(knode != NULL){
+		StSemaforo *sq = (StSemaforo *) knode->data;
+		if(sq != NULL)
+			func(f, sq);
+
+		if(knode->left != NULL)
+			traverseTreeSemaforo(knode->left, func, f);
+		if(knode->right != NULL )
+			traverseTreeSemaforo(knode->right, func, f);
+	}
+
+}
+void traverseTreeTorre(KdTree kd, void (*func)(FILE *, void *), FILE *f){
+	KdNode *knode = (KdNode *)kd;
+	if(knode != NULL){
+		StTorre *sq = (StTorre *) knode->data;
+		if(sq != NULL)
+			func(f, sq);
+
+		if(knode->left != NULL)
+			traverseTreeTorre(knode->left, func, f);
+		if(knode->right != NULL )
+			traverseTreeTorre(knode->right, func, f);
+	}
+
+}
+void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f){
+	KdNode *knode = (KdNode *)kd;
+	if(knode != NULL){
+		StHidrante *sq = (StHidrante *) knode->data;
+		if(sq != NULL)
+			func(f, sq);
+
+		if(knode->left != NULL)
+			traverseTreeHidrante(knode->left, func, f);
+		if(knode->right != NULL )
+			traverseTreeHidrante(knode->right, func, f);
+	}
+
 }

@@ -14,6 +14,10 @@ typedef void *Quadra;
 
 
 Quadra createQuadra(char *fill, char *strk, char *cep, double x, double y, double larg, double alt);
+int compareQuadraX(Quadra a, Quadra b);
+int compareQuadraY(Quadra a, Quadra b);
+float quadraPointInX(Quadra a);
+float quadraPointInY(Quadra a);
 
 
 #endif

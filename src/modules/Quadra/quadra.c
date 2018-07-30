@@ -21,4 +21,31 @@ Quadra createQuadra(char *fill, char *strk, char *cep,
 
 	return q;
 }
+int compareQuadraX(Quadra a, Quadra b){
+	StQuadra *sq = (StQuadra *) a;
+	StQuadra *sqb = (StQuadra *) b;
 
+	if(sq->x < sqb->x)
+		return 1;
+	else
+		return -1;
+}
+int compareQuadraY(Quadra a, Quadra b){
+	StQuadra *sq = (StQuadra *) a;
+	StQuadra *sqb = (StQuadra *) b;
+
+
+	if(sq->y < sqb->y)
+		return 1;
+	else
+		return -1;
+}
+
+float quadraPointInX(Quadra a){
+	StQuadra *sq = (StQuadra *) a;
+	return sq->x;
+}
+float quadraPointInY(Quadra a){
+	StQuadra *sq = (StQuadra *) a;
+	return sq->y;
+}

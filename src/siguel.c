@@ -1,4 +1,5 @@
 #include "modules/String/mystr.h"
+
 #include "modules/Circle/circle.h"
 #include "modules/Rect/rect.h"
 #include "modules/Svg/svg.h"
@@ -6,6 +7,7 @@
 #include "modules/Cidade/cidade.h"
 #include "modules/Sort/sort.h"
 #include "palmeiras.h"
+#include "modules/Tree/kdtree.h"
 
 int
 main(int argc, char *argv[]){
@@ -236,7 +238,7 @@ main(int argc, char *argv[]){
 			case 'h':
 				sscanf(line, "h %s %lf %lf",id_equipamentos, &x, &y);
 				Hidrante hid= createHidrante(fill_h, strk_h, id_equipamentos, x, y);
-				insert_hidrante(city, hid);
+				city.arvore_hidrante = insert_hidrante(city, hid);
 				drawHidrante(fDraw, hid);
 
 				break;
@@ -246,7 +248,7 @@ main(int argc, char *argv[]){
 				sscanf(line, "q %s %lf %lf %lf %lf", cep,&x, &y, &w,&h);
 				Quadra q = createQuadra(fill_q, strk_q, cep, x, y, w, h);
 
-				insert_quadra(city, q);
+				city.arvore_quadra = insert_quadra(city, q);
 
 				drawQuadra(fDraw, q);
 
@@ -256,17 +258,15 @@ main(int argc, char *argv[]){
 			case 's':
 				sscanf(line, "s %s %lf %lf", id_equipamentos, &x, &y);
 				Semaforo sem = createSemaforo(fill_s, strk_s, id_equipamentos, x, y);
-				insert_semaforo(city, sem);
+				city.arvore_semaforo = insert_semaforo(city, sem);
 
 				drawSemaforo(fDraw, sem);
-
 				break;
 			case 't':
 				sscanf(line, "t %s %lf %lf", id_equipamentos, &x, &y);
 				Torre t = createTorre(fill_t, strk_t, id_equipamentos, x, y);
-				insert_torre(city, t);
+				city.arvore_torre = insert_torre(city, t);
 				drawTorre(fDraw, t);
-
 				break;
 
 			case 'a':
@@ -339,13 +339,13 @@ main(int argc, char *argv[]){
 				sscanf(line, "dq %lf %lf %lf %lf", &x, &y, &w, &h);
 
 				rect = createRect("", "", w, h, x, y);
-				searchOrDeleteQuadraInRect(rect, city.lista_quadra, fTxt, 1);
+				searchOrDeleteQuadraInRect(rect, city.arvore_quadra, city.lista_quadra, fTxt, 1);
 			}
 			//done?
 			else if(strncmp(line, "q?", 2) == 0){
 				sscanf(line, "q? %lf %lf %lf %lf", &x, &y, &w, &h);
 				rect = createRect("", "", w, h, x, y);
-				searchOrDeleteQuadraInRect(rect, city.lista_quadra, fTxt, 0);
+				searchOrDeleteQuadraInRect(rect, city.arvore_quadra, city.lista_quadra, fTxt, 0);
 				searchOrDeleteSemaforoInRect(rect, city.lista_semaforo, fTxt, 0);
 
 				searchOrDeleteHidranteInRect(rect, city.lista_hidrante, fTxt, 0);
@@ -468,33 +468,41 @@ main(int argc, char *argv[]){
 
 		//it's time to print
 
-		l = city.lista_quadra;
-		n = length(l);
-		for(int i =0; i < n; i++){
-			StQuadra *sq = (StQuadra *) get(l, 0); 
-			drawQuadra(fSvgQry, sq); 
-			l = pop(l);
-		}
+		/* l = city.lista_quadra; */
+		/* n = length(l); */
 
-		l = city.lista_hidrante;
-		n = length(city.lista_hidrante);
-		for(int i =0; i < n; i++){
-			StHidrante *sh = (StHidrante *) get(l, 0);
-			drawHidrante(fSvgQry, sh);
-			l = pop(l);
-		}
-		l = city.lista_semaforo;
-		n = length(city.lista_semaforo);
-		for(int i =0; i < n; i++){
-			StSemaforo *ss = (StSemaforo *) get(l, 0);
-			drawSemaforo(fSvgQry, ss);
-			l = pop(l);
-		}
-		Node *nod;
-		for(nod = getFirst(city.lista_torre); nod != NULL; nod = nod->next){
-			StTorre *st = (StTorre *) nod->data;
-			drawTorre(fSvgQry, st);
-		}
+		
+		traverseTreeQuadra(city.arvore_quadra, drawQuadra, fSvgQry);
+		traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, fSvgQry);
+		traverseTreeQuadra(city.arvore_hidrante, drawHidrante, fSvgQry);
+		traverseTreeQuadra(city.arvore_torre, drawTorre, fSvgQry);
+
+		
+		/* for(int i =0; i < n; i++){ */
+		/* 	StQuadra *sq = (StQuadra *) get(l, 0);  */
+		/* 	drawQuadra(fSvgQry, sq);  */
+		/* 	l = pop(l); */
+		/* } */
+
+		/* l = city.lista_hidrante; */
+		/* n = length(city.lista_hidrante); */
+		/* for(int i =0; i < n; i++){ */
+		/* 	StHidrante *sh = (StHidrante *) get(l, 0); */
+		/* 	drawHidrante(fSvgQry, sh); */
+		/* 	l = pop(l); */
+		/* } */
+		/* l = city.lista_semaforo; */
+		/* n = length(city.lista_semaforo); */
+		/* for(int i =0; i < n; i++){ */
+		/* 	StSemaforo *ss = (StSemaforo *) get(l, 0); */
+		/* 	drawSemaforo(fSvgQry, ss); */
+		/* 	l = pop(l); */
+		/* } */
+		/* Node *nod; */
+		/* for(nod = getFirst(city.lista_torre); nod != NULL; nod = nod->next){ */
+		/* 	StTorre *st = (StTorre *) nod->data; */
+		/* 	drawTorre(fSvgQry, st); */
+		/* } */
 		if(crb){
 			find_ponto(pontos_torre, length(city.lista_torre), clos, fSvgQry, fTxt, city.lista_torre);
 		}

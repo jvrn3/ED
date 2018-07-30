@@ -14,5 +14,7 @@ typedef struct stTorre{
 }StTorre;
 
 Torre createTorre(char *fill, char *strk, char *id, double x, double y);
+int compareTorreX(Torre a, Torre b);
+int compareTorreY(Torre a, Torre b);
 
 #endif

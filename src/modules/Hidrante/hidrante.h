@@ -13,4 +13,7 @@ typedef struct stHidrante{
 
 Hidrante createHidrante(char *fill, char *strk, char *id, double x, double y);
 void deletaHidrante(Hidrante h);
+int compareHidranteX(Hidrante a, Hidrante b);
+int compareHidranteY(Hidrante a, Hidrante b);
+
 #endif

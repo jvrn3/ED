@@ -54,6 +54,7 @@ main(){
 
 	printInOrder(kd, display_fn);
 	delete_kd_node(kd, createRect("grey", "gasdg", 11,12, 66, 85), point_in_x, point_in_y, 0);
+	delete_kd_node(kd, createRect("grey", "gasdg", 11,12, 85, 90), point_in_x, point_in_y, 0);
 	printf("%\n\n");
 	printInOrder(kd, display_fn);
 	
