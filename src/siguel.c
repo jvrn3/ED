@@ -342,7 +342,7 @@ main(int argc, char *argv[]){
 
 				rect = createRect("", "", w, h, x, y);
 				drawRect(fSvgQry, rect);
-				city.arvore_quadra = searchOrDeleteQuadraInRect(rect, city.arvore_quadra, city.lista_quadra, fTxt, 1);
+				city.arvore_quadra = deleteQuadraInRect(rect, city.arvore_quadra, fTxt);
 			}
 			else if(strncmp(line, "q?", 2) == 0){
 				sscanf(line, "q? %lf %lf %lf %lf", &x, &y, &w, &h);
