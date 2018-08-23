@@ -35,3 +35,12 @@ int compareTorreY(Torre a, Torre b){
   else
     return -1;
 }
+
+float torrePointInX(Torre a){
+  StTorre *st = (StTorre *) a;
+  return st->x;
+}
+float torrePointInY(Torre a){
+  StTorre *st = (StTorre *) a;
+  return st->y;
+}

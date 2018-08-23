@@ -16,4 +16,6 @@ Semaforo createSemaforo(char *fill, char *strk, char *id, double x, double y);
 #endif
 int compareSemaforoX(Semaforo a, Semaforo b);
 int compareSemaforoY(Semaforo a, Semaforo b);
+float semaforoPointInX(Semaforo s);
+float semaforoPointInY(Semaforo s);
 

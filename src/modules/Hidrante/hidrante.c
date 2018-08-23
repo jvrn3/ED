@@ -32,3 +32,11 @@ int compareHidranteY(Hidrante a, Hidrante b){
 	else
 		return -1;
 }
+float hidrantePointInX(Hidrante a){
+	StHidrante *sh = (StHidrante *) a;
+	return sh->x;
+}
+float hidrantePointInY(Hidrante a){
+	StHidrante *sh = (StHidrante *) a;
+	return sh->y;
+}

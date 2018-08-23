@@ -1,188 +1,149 @@
 #include "kdtree.h"
 
-KdTree newKdTree(void *data){
+KdTree newKdTree(void *data, float point[]){
     KdTree kd = malloc(sizeof(KdNode));
     KdNode *n = (KdNode *) kd;
     n->data = data;
     n->left = NULL;
     n->right = NULL;
-    n->height = 1;
-
+    copyPoint(n->point, point);
     return kd;
 }
+void copyPoint(float p[], float p2[]){
+   for(int i = 0; i < 2;i++){
+      p[i] = p2[i];
+   }
+}
 
-
-KdTree kd_insert_aux(KdTree t, void *data, int(*comparePointX)(void *, void*), int (*comparePointY)(void *, void *), int depth){
+KdTree kd_insert_aux(KdTree t, void *data, float point[2], int cd){
     KdNode *n = (KdNode *) t;
 
-
-    if(n == NULL)
-	return newKdTree(data);
-
-    if(depth % 2 == 0){
-	if(comparePointX(data, n->data) == -1){
-	    n->left = kd_insert_aux(n->left, data, comparePointX,comparePointY, depth + 1);
-	}
-	else{
-	    n->right = kd_insert_aux(n->right, data, comparePointX, comparePointY, depth + 1);
-	}
-    }
-    else if(depth % 2 == 1){
-	if(comparePointY(data, n->data) == -1){
-	    n->left = kd_insert_aux(n->left, data, comparePointX, comparePointY, depth + 1);
-	}
-	else{
-	    n->right = kd_insert_aux(n->right, data, comparePointX, comparePointY, depth + 1);
-	}
-    
+    if(n == NULL){
+       return newKdTree(data, point);
     }
 
-    return n;
-}
-KdTree kd_insert(KdTree kd, void *data, int (comparePointX)(void *, void *), int (*comparePointY)(void *, void *)){
-   return kd_insert_aux(kd, data, comparePointX, comparePointY, 0);
-}
-float min(float a, float b){
-    if(a < b)
-	return a;
-    else
-	return b;
-
-}
-KdTree minKdNode(KdTree a, KdTree b, KdTree  c, float (*point_in_d)(void *)){
-
-    KdNode *na = (KdNode *) a;
-    KdNode *nb = (KdNode *) b;
-    KdNode *nc = (KdNode *) c;
-
-    float fb, fc;
-    KdNode *x = na;
-    if(nb == NULL){
-	printf("null");
-	return NULL;
-    }
-
-    if(nb != NULL)
-	fb = point_in_d(nb->data);
-    if(nc != NULL)
-	fc = point_in_d(nc->data);
-    if(nb != NULL && fb < point_in_d(x->data))
-	x = nb;
-    if(nc != NULL && fc < point_in_d(x->data))
-	x = nc;
-
-    return x;
-}
-void *get_min_data(KdTree kd){
-    KdNode *n = (KdNode *) kd;
-    return n->data;
-
-}
-    
-KdTree  find_min_x(KdTree kd, int depth, float (*point_in_d)(void *)){
-    KdNode *n = (KdNode *) kd; 
-
-     if(kd == NULL){ 
-	return NULL;
-     } 
-	if(n->left == NULL){
-	    return n;
-	}
-	else{
-	    return minKdNode(n,
-		    find_min_x(n->left, depth+1, point_in_d),
-		    find_min_x(n->right, depth+1, point_in_d), point_in_d);
-	}
-
-}
-int are_same(void *a, void *b, float (*point_in_x)(void *), float (*point_in_y)(void *)){
-    if(point_in_x(a) != point_in_x(b))
-	return -1;
-    if(point_in_y(a) != point_in_y(b))
-	return -1;
-
-    return 1;
-}
-
-
-KdTree delete_kd_node(KdTree kd, void *data, float (*point_in_x)(void *), float (*point_in_y)(void *), int depth){
-    KdNode *n = (KdNode *) kd;
-    KdNode *n_min;
-    if(kd == NULL || data == NULL)
-	return NULL;
-    if(are_same(n->data, data, point_in_x, point_in_y) == 1){
-	if(n->right != NULL){
-	    if(depth %2 == 0){
-	    n_min = (KdNode *)find_min_x(n->right, depth, point_in_x);
-	    }
-	    else{
-	    n_min = (KdNode *) find_min_y(n->right, depth, point_in_y);
-	    }
-
-	    n->data = n_min->data;
-
-	    n->right = (KdNode *)delete_kd_node(n->right, n_min->data, point_in_x, point_in_y, depth +1);
-	}
-	else if(n->left != NULL){
-	    if(depth % 2 == 0)
-		n_min = (KdNode *)find_min_x(n->left, depth, point_in_x);
-	    else
-		n_min = (KdNode *) find_min_y(n->left, depth, point_in_y);
-
-	    n->data = n_min->data;
-	    n->right = (KdNode *)delete_kd_node(n->left, n_min->data, point_in_x, point_in_y, depth+1);
-	    n->left = NULL;
-	}
-	else{
-	    printf("Apagando %lf", point_in_x(n->data));
-	    free(n);
-	    n = NULL;
-	    return NULL;
-	}
-	return n;
-    }
-    if(depth % 2 == 0){
-	if(point_in_x(data) < point_in_x(n->data))
-	    n->left = (KdNode *)delete_kd_node(n->left, data, point_in_x, point_in_y, depth+1);
-	else
-	    n->right = (KdNode *)delete_kd_node(n->right, data, point_in_x, point_in_y, depth+1);
-
+    if(point[cd] < n->point[cd]){
+       n->left = kd_insert_aux(n->left, data, point, (cd + 1) % 2);
     }
     else{
-	printf("a");
-	if(point_in_y(data) < point_in_y(n->data))
-	    n->left = (KdNode *)delete_kd_node(n->left, data, point_in_x, point_in_y, depth+1);
-	else
-	    n->right = (KdNode *)delete_kd_node(n->right, data, point_in_x, point_in_y, depth+1);
+       n->right = kd_insert_aux(n->right, data, point, (cd + 1) % 2);
     }
     return n;
 }
-KdTree find_min_y(KdTree kd, int depth, float (*point_in_d)(void *)){
-    KdNode *n = (KdNode *) kd;
+KdTree kd_insert(KdTree kd, void *data, float point[2]){
+   return kd_insert_aux(kd, data, point, 0);
+}
+/* float min(float a, float b){ */
+/*     if(a < b) */
+/* 	return a; */
+/*     else */
+/* 	return b; */
+/*  */
+/* } */
 
-    if(kd == NULL)
-       return NULL;
-	if(n->left == NULL){
-	    return  n;
-	}
-	else{
-	    return minKdNode(n,
-		    find_min_y(n->left, depth+1, point_in_d),
-		    find_min_y(n->right, depth+1, point_in_d), point_in_d);
-	}
+
+KdTree minData(void *a,  void *b, void *c, int dim){
+   KdNode *kMin = (KdNode *) a;
+   KdNode *kb = (KdNode *) b;
+   KdNode *kc = (KdNode *) c;
+
+   if(kb->point[dim] < kMin->point[dim]){
+      kMin = kb;
+   }
+   if(kc->point[dim] < kMin->point[dim]){
+      kMin = kc;
+   }
+   return kMin;
 }
 
+KdTree find_min_rec(KdTree kd, int d, int depth){
+   KdNode *n = (KdNode *)  kd; 
+   if(n == NULL)
+      return NULL;
+      
+   int cd = d % 2;
+   if(cd == d){
+      if(n->left == NULL )
+	 return n;
+      else return find_min_rec(n->left, d, depth+1);
+   }
+   else{
+      return minData(n,
+	    find_min_rec(n->left, d, depth+1),
+	    find_min_rec(n->right, d, depth+1), d);
+   }
+}
+KdTree find_min(KdTree kd, int d){
+   return find_min_rec(kd, d, 0);
+
+}
+int are_same(float pointA[], float pointB[]){
+  for(int i = 0; i < 2; i++){
+     if(pointA[i] != pointB[i])
+	return 0;
+  }
+  return 1;
+}
+
+KdTree delete_kd_node(KdTree kd, void *data, float point[], int depth){
+   if(kd == NULL){
+      return NULL;
+   }
+   KdNode *n = (KdNode *) kd;
+   int cd = depth % 2;
+   if(are_same(n->point, point)){
+      if(n->right != NULL){
+	 KdNode *min = (KdNode *) find_min(n->right, cd);
+
+	 n->data = min->data;
+	 copyPoint(n->point, min->point);
+	 n->right = (KdNode *) delete_kd_node(n->right, min->data, min->point, depth+1);
+      }
+      else if(n->left != NULL){
+	 KdNode *min = (KdNode *) find_min(n->left, cd);
+	 n->data = min->data;
+	 copyPoint(n->point, min->point);
+	 n->right = (KdNode *) delete_kd_node(n->left, min->data, min->point, depth+1);
+	 n->left = NULL;
+      }
+      else{
+	 n = NULL;
+	 return NULL;
+      }
+      return n;
+   }
+   else{
+      if(point[cd] < n->point[cd]){
+	 n->left = (KdNode *) delete_kd_node(n->left, data, point, depth+1);
+      }
+      else{
+	 n->right = (KdNode *) delete_kd_node(n->right, data, point, depth+1);
+      }
+   }
+   return n;
+}
 void printInOrder(KdTree t, void (*displayFn)(void *)){
     KdNode *n = (KdNode *) t;
     if(n == NULL){
-	printf("Error\n");
+	printf("NULL\n");
 	return;
     }
 
-    if(n->left)
+    if(n->left != NULL)
 	printInOrder(n->left, displayFn);
     displayFn(n->data);
-    if(n->right)
+    if(n->right != NULL)
 	printInOrder(n->right, displayFn);
 }
 
+void destroyTree(KdTree k){
+   KdNode *kd = (KdNode *) k;
+   free(kd->data);
+   if(kd->left != NULL)
+      destroyTree(kd->left);
+   if(kd->right != NULL)
+      destroyTree(kd->right);
+
+   free(kd);
+
+}

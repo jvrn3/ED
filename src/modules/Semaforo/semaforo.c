@@ -32,3 +32,12 @@ int compareSemaforoY(Semaforo a, Semaforo b){
 	else
 		return -1;
 }
+
+float semaforoPointInX(Semaforo s){
+	StSemaforo *ss = (StSemaforo *) s;
+	return ss->x;
+}
+float semaforoPointInY(Semaforo s){
+	StSemaforo *ss = (StSemaforo *) s;
+	return ss->y;
+}

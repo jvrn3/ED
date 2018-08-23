@@ -16,5 +16,7 @@ typedef struct stTorre{
 Torre createTorre(char *fill, char *strk, char *id, double x, double y);
 int compareTorreX(Torre a, Torre b);
 int compareTorreY(Torre a, Torre b);
+float torrePointInX(Torre a);
+float torrePointInY(Torre a);
 
 #endif
