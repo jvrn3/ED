@@ -144,6 +144,58 @@ KdTree remove_semaforo(KdTree t, Semaforo s, float point[]){
 KdTree remove_torre(KdTree t, Torre to, float point[]){
 	return delete_kd_node(t, to, point, 0);
 }
+void searchQuadraInRect(Rect r, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StQuadra *sq;
+	Rect r2;
+	KdNode *kd = (KdNode *) k;
+	searchQuadraInRect(r, kd->left, fTxt);
+	searchQuadraInRect(r, kd->right, fTxt);
+	sq = (StQuadra *) kd->data;
+	r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
+
+	if(isRectInsideRect(r2, r)){
+		fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
+			sq->cep,
+			sq->fill,
+			sq->strk, 
+			sq->x,
+			sq->y,
+			sq->larg,
+			sq->alt);
+	}
+	free(r2);
+	r2 = NULL;
+}
+void searchQuadraInCircle(Circle c, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StQuadra *sq;
+	Rect r;
+	KdNode *kd = (KdNode *) k;
+	searchQuadraInCircle(c, kd->left, fTxt);
+	searchQuadraInCircle(c, kd->right, fTxt);
+	sq = (StQuadra *) kd->data;
+	r = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
+	if(isRectInsideCircle(c, r)){
+		fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
+				sq->cep,
+				sq->fill,
+				sq->strk, 
+				sq->x,
+				sq->y,
+				sq->larg,
+				sq->alt);
+
+	}
+	free(r);
+	r = NULL;
+}
+
+
+
+
 KdTree deleteQuadraInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return NULL;
@@ -161,25 +213,11 @@ KdTree deleteQuadraInRect(Rect r, KdTree k, FILE *fTxt){
 	free(r2);
 	r2 = NULL;
 	
-	/* float point[] = {sq->x, sq->y}; */
 	return kd;
-	
-	/* 		fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n", */
-	/* 				sq->cep, */
-	/* 				sq->fill, */
-	/* 				sq->strk,  */
-	/* 				sq->x, */
-	/* 				sq->y, */
-	/* 				sq->larg, */
-	/* 				sq->alt); */
-	/* 	} */
-    /*  */
-	/* } */
 }
 KdTree deleteQuadraInCircle(Circle c, KdTree k, FILE *fTxt ){
 	if(k == NULL)
 		return NULL;
-	/* Node *n; */ 
 	StQuadra *sq;
 	Rect r;
 	KdNode *kd = (KdNode *) k;
@@ -195,17 +233,50 @@ KdTree deleteQuadraInCircle(Circle c, KdTree k, FILE *fTxt ){
 	free(r);
 	r = NULL;
 	return kd;
-
-	/* 				fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n", */
-	/* 						sq->cep, */
-	/* 						sq->fill, */
-	/* 						sq->strk,  */
-	/* 						sq->x, */
-	/* 						sq->y, */
-	/* 						sq->larg, */
-	/* 						sq->alt); */
-
 }
+void searchSemaforoInRect(Rect r, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StSemaforo *ss;
+	Rect r2;
+	KdNode *kd = (KdNode *) k;
+	searchSemaforoInRect(r, kd->left, fTxt);
+	searchSemaforoInRect(r, kd->right, fTxt);
+	ss = (StSemaforo *) kd->data;
+	r2 = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
+	if(isRectInsideRect(r2, r)){
+		fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",
+				ss->id,
+				ss->fill,
+				ss->strk, 
+				ss->x,
+				ss->y);
+	}
+	free(r2);
+	r2 = NULL;
+}
+void searchSemaforoInCircle(Circle c, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StSemaforo *ss;
+	Rect r;
+	KdNode *kd = (KdNode *) k;
+	searchSemaforoInCircle(c, kd->left, fTxt);
+	searchSemaforoInCircle(c, kd->right, fTxt);
+
+	ss = (StSemaforo *) kd->data;
+	r = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
+	if(isRectInsideCircle(c,r)){
+		fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",
+				ss->id,
+				ss->fill,
+				ss->strk, 
+				ss->x,
+				ss->y);
+	}
+	free(r);
+}
+
 KdTree deleteSemaforoInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return NULL;
@@ -224,23 +295,7 @@ KdTree deleteSemaforoInRect(Rect r, KdTree k, FILE *fTxt){
 	r2 = NULL;
 	return kd;
 }
-	/* 	else{ */
-	/* 		fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", */
-	/* 				ss->id, */
-	/* 				ss->fill, */
-	/* 				ss->strk,  */
-	/* 				ss->x, */
-	/* 				ss->y); */
-	/* 	} */
-	/* } */
 
-/* 	fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", */
-		/* 			ss->id, */
-		/* 			ss->fill, */
-		/* 			ss->strk,  */
-		/* 			ss->x, */
-		/* 			ss->y); */
-		/* } */
 KdTree deleteSemaforoInCircle(Circle c, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return NULL;
@@ -260,14 +315,50 @@ KdTree deleteSemaforoInCircle(Circle c, KdTree k, FILE *fTxt){
 	r = NULL;
 	return kd;
 }
+void searchHidranteInRect(Rect r, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StHidrante *sh;
+	Circle c;
+	KdNode *kd = (KdNode *) k;
+	searchHidranteInRect(r, kd->left, fTxt);
+	searchHidranteInRect(r, kd->right, fTxt);
+	sh = (StHidrante *) kd->data;
+	c = createCircle(sh->strk, sh->fill, 10,sh->x, sh->y );
+	if(isCircleInsideRect(c, r)){
+		fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
+				sh->id,
+				sh->fill,
+				sh->strk,
+				sh->x,
+				sh->y
+			   );
 
-/* fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",  */
-/* 		sh->id, */
-/* 		sh->fill, */
-/* 		sh->strk, */
-/* 		sh->x, */
-/* 		sh->y */
-/* 	   ); */
+	}
+	free(c);
+}
+void searchHidranteInCircle(Circle c, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StHidrante *sh;
+	Circle c2;
+	KdNode *kd = (KdNode *) k;
+	searchHidranteInCircle(c, kd->left, fTxt);
+	searchHidranteInCircle(c, kd->right, fTxt);
+	sh = (StHidrante *) kd->data;
+	c2 = createCircle(sh->strk, sh->fill, 10,sh->x, sh->y );
+	if(isCircleInsideCircle(c2, c)){
+		fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
+				sh->id,
+				sh->fill,
+				sh->strk,
+				sh->x,
+				sh->y
+				);
+	}
+	free(c2);
+
+}
 KdTree deleteHidranteInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return NULL;
@@ -286,13 +377,6 @@ KdTree deleteHidranteInRect(Rect r, KdTree k, FILE *fTxt){
 	c = NULL;
 	return kd;
 }
-		/* fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",  */
-						/* 		sh->id, */
-						/* 		sh->fill, */
-						/* 		sh->strk, */
-						/* 		sh->x, */
-						/* 		sh->y */
-						/* 		); */
 
 KdTree deleteHidranteInCircle(Circle c, KdTree k, FILE *fTxt){
 	if(k == NULL)
@@ -312,14 +396,51 @@ KdTree deleteHidranteInCircle(Circle c, KdTree k, FILE *fTxt){
 	c2 = NULL;
 	return kd;
 }
-/* fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",  */
-/* 								st->id, */
-/* 								st->fill, */
-/* 								st->strk, */
-/* 								st->x, */
-/* 								st->y */
-/* 								); */
+void searchTorreInRect(Rect r, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StTorre *st;
+	Circle c;
+	KdNode *kd = (KdNode *) k;
 
+	searchTorreInRect(r, kd->left, fTxt);
+	searchTorreInRect(r, kd->right, fTxt);
+
+	st = (StTorre *) kd->data;
+	c = createCircle(st->strk, st->fill, 10, st->x, st->y);
+	if(isCircleInsideRect(c, r)){
+		fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
+				st->id,
+				st->fill,
+				st->strk,
+				st->x,
+				st->y
+			   );
+	}
+	free(c);
+}
+void searchTorreInCircle(Circle c, KdTree k, FILE *fTxt){
+	if(k == NULL)
+		return;
+	StTorre *st;
+	Circle c2;
+	KdNode *kd = (KdNode *) k;
+	searchTorreInCircle(c, kd->left, fTxt);
+	searchTorreInCircle(c, kd->right, fTxt);
+	st = (StTorre *) kd->data;
+	c2 = createCircle(st->strk, st->fill, 10, st->x, st->y);
+	if(isCircleInsideCircle(c2, c)){
+		fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
+				st->id,
+				st->fill,
+				st->strk,
+				st->x,
+				st->y
+			   );
+	}
+	free(c2);
+
+}
 KdTree deleteTorreInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return NULL;
@@ -338,14 +459,6 @@ KdTree deleteTorreInRect(Rect r, KdTree k, FILE *fTxt){
 	c = NULL;
 	return kd;
 }
-
-/* fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",  */
-/* 		st->id, */
-/* 		st->fill, */
-/* 		st->strk, */
-/* 		st->x, */
-/* 		st->y */
-/* 	   ); */
 KdTree deleteTorreInCircle(Circle c, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return NULL;
