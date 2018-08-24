@@ -412,21 +412,24 @@ main(int argc, char *argv[]){
 				StHidrante *sh;
 				StSemaforo *ss;
 
-				if((sq = (StQuadra *) search_cep(cep, city) )!= NULL){
+				sq = (StQuadra *) search_cep(cep, city.arvore_quadra);
+				if(sq != NULL){
 					strcpy(sq->fill, tmp_fill);
 					strcpy(sq->strk, tmp_strk);
+
+					
 				}
 
-				else if((ss = (StSemaforo *) search_id_sem(cep, city)) != NULL){
+				else if((ss = (StSemaforo *) search_id_sem(cep, city.arvore_semaforo)) != NULL){
 					strcpy(ss->fill, tmp_fill);
 					strcpy(ss->strk, tmp_strk);
 				}
-				else if((st = (StTorre *) search_id_to(cep, city) )!= NULL){
+				else if((st = (StTorre *) search_id_to(cep, city.arvore_torre) )!= NULL){
 					strcpy(st->fill, tmp_fill);
 					strcpy(st->strk, tmp_strk);
 
 				}
-				else if((sh = (StHidrante *) search_id_hi(cep, city)) != NULL){
+				else if((sh = (StHidrante *) search_id_hi(cep, city.arvore_hidrante)) != NULL){
 					strcpy(sh->fill, tmp_fill);
 					strcpy(sh->strk, tmp_strk);
 				}
@@ -434,17 +437,20 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "crd?", 4) == 0){
 
 				sscanf(line, "crd? %s", cep);
+				printf("%s\n", cep);
 				StQuadra *sq;
 				StTorre *st;
 				StHidrante *sh;
 				StSemaforo *ss;
-				if((sq = (StQuadra *) search_cep(cep, city) )!= NULL)
-					fprintf(fTxt, "%lf %lf %lf %lf QUADRA\n", sq->x, sq->y, sq->larg, sq->alt);
-				else if((ss = (StSemaforo *) search_id_sem(cep, city)) != NULL)
+				sq = (StQuadra *) search_cep(cep, city.arvore_quadra);
+					/* fprintf(fTxt, "%lf %lf %lf %lf QUADRA\n", sq->x, sq->y, sq->larg, sq->alt); */
+				if(sq != NULL)
+					printf("ae");
+				else if((ss = (StSemaforo *) search_id_sem(cep, city.arvore_semaforo)) != NULL)
 					fprintf(fTxt, "%lf %lf SEMAFORO\n", ss->x, ss->y);
-				else if((st = (StTorre *) search_id_to(cep, city) )!= NULL)
+				else if((st = (StTorre *) search_id_to(cep, city.arvore_torre) )!= NULL)
 					fprintf(fTxt, "%lf %lf TORRE\n", st->x, st->y);
-				else if((sh = (StHidrante *) search_id_hi(cep, city)) != NULL)
+				else if((sh = (StHidrante *) search_id_hi(cep, city.arvore_hidrante)) != NULL)
 					fprintf(fTxt, "%lf %lf HIDRANTE\n", sh->x, sh->y);
 			}
 			/* closest pair */
@@ -467,36 +473,11 @@ main(int argc, char *argv[]){
 
 		
 		traverseTreeQuadra(city.arvore_quadra, drawQuadra, fSvgQry);
-		/* traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, fSvgQry); */
-		/* traverseTreeQuadra(city.arvore_hidrante, drawHidrante, fSvgQry); */
-		/* traverseTreeQuadra(city.arvore_torre, drawTorre, fSvgQry); */
+		traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, fSvgQry);
+		traverseTreeHidrante(city.arvore_hidrante, drawHidrante, fSvgQry);
+		traverseTreeTorre(city.arvore_torre, drawTorre, fSvgQry);
 
 		
-		/* for(int i =0; i < n; i++){ */
-		/* 	StQuadra *sq = (StQuadra *) get(l, 0);  */
-		/* 	drawQuadra(fSvgQry, sq);  */
-		/* 	l = pop(l); */
-		/* } */
-
-		/* l = city.lista_hidrante; */
-		/* n = length(city.lista_hidrante); */
-		/* for(int i =0; i < n; i++){ */
-		/* 	StHidrante *sh = (StHidrante *) get(l, 0); */
-		/* 	drawHidrante(fSvgQry, sh); */
-		/* 	l = pop(l); */
-		/* } */
-		/* l = city.lista_semaforo; */
-		/* n = length(city.lista_semaforo); */
-		/* for(int i =0; i < n; i++){ */
-		/* 	StSemaforo *ss = (StSemaforo *) get(l, 0); */
-		/* 	drawSemaforo(fSvgQry, ss); */
-		/* 	l = pop(l); */
-		/* } */
-		/* Node *nod; */
-		/* for(nod = getFirst(city.lista_torre); nod != NULL; nod = nod->next){ */
-		/* 	StTorre *st = (StTorre *) nod->data; */
-		/* 	drawTorre(fSvgQry, st); */
-		/* } */
 		if(crb){
 			find_ponto(pontos_torre, length(city.lista_torre), clos, fSvgQry, fTxt, city.lista_torre);
 		}

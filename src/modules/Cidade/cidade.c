@@ -34,51 +34,51 @@ KdTree insert_semaforo(Cidade c, Semaforo s, float point[]){
 	/* insert(c.lista_semaforo, s, 0); */
 	return kd_insert(c.arvore_semaforo, s, point);
 }
-//could return the cep position and then use get function to access it
-Quadra search_cep(char *cep, Cidade c){
-	Node *n;
-	StQuadra *sq;
-	for(n = getFirst(c.lista_quadra); n != NULL; n = n->next){
-		sq = (StQuadra *) n->data;
-		if(strcmp(sq->cep, cep) == 0){
+Quadra search_cep(char *cep, KdTree kd_quadra){
+	printf("ae");
+	if(kd_quadra != NULL){
+		KdNode *kd = (KdNode *) kd_quadra;
+		StQuadra *sq = (StQuadra *) kd->data;
+		if(strcmp(cep, sq->cep) == 0){
+			printf("ae");
 			return sq;
 		}
-	}
-	return NULL;
-	/* Lista ss = c.lista_quadra; */
-	/* int n = length(ss)-1; */
-	/* for(int i = 0; i < n; i++){ */
-	/* 	StQuadra *sq = (StQuadra *) get(ss, 0); */
-	/* 	if(strcmp(sq->cep, cep) == 0){ */
-	/* 		return sq; */
-	/* 	} */
-  /*  */
-	/* 	ss = pop(ss); */
-	/* } */
-	/* return NULL; */
-}
-Semaforo search_id_sem(char *id, Cidade c){
-	Node *n; 
-	StSemaforo *ss;
-	for(n = getFirst(c.lista_semaforo); n != NULL; n = n->next){
-		ss = (StSemaforo *) n->data;
-		if(strcmp(ss->id, id) == 0){
-			return ss;
+		else{
+			StQuadra *found = search_cep(cep, kd->left);
+			if(found == NULL)
+				found = search_cep(cep, kd->right);
+
+			return found;
 		}
 	}
-	return NULL;
-	/* Lista s = c.lista_semaforo; */
-	/* int n = length(s) -1; */
-	/* for(int i = 0; i < n; i++){ */
-	/* 	StSemaforo *ss = (StSemaforo *) get(s, 0); */
-	/* 	if(strcmp(ss->id, id) == 0){ */
-	/* 		return ss; */
-	/* } */
-	/* 	s = pop(s); */
-  /*  */
-	/* } */
-  /*  */
-	/* return NULL; */
+	else
+		return NULL;
+}
+void change_quadra_color(KdTree kd_quadra, char *cep, char *ca, char *cb){
+	if(kd_quadra == NULL)
+		return;
+	KdNode *kd = (KdNode *) kd_quadra;
+	StQuadra *sq = (StQuadra *) kd->data;
+	change_quadra_color(kd->left, cep, ca, cb);
+	change_quadra_color(kd->right,cep, ca,cb);
+	if(strcmp(cep, sq->cep) == 0){
+		strcpy(sq->fill, ca);
+		strcpy(sq->strk, cb);
+	}
+}
+
+Semaforo search_id_sem(char *id, KdTree kd_sem){
+	KdNode *kd = (KdNode *) kd_sem;
+	if(kd_sem == NULL)
+		return NULL;
+
+	StSemaforo *ss = (StSemaforo *) kd->data;
+	if(strcmp(id, ss->id) == 0)
+		return ss;
+	if(strcmp(id, ss->id) != 0)
+		return search_id_sem(id, kd->right);
+	return search_id_sem(id, kd->left);
+	
 }
 Torre search_id_toxy(float x, float y, Torre t){
 	Node *n;
@@ -92,45 +92,30 @@ Torre search_id_toxy(float x, float y, Torre t){
 	}
 	return NULL;
 }
-Hidrante search_id_hi(char *id, Cidade c){
-	Node *n;
-	StHidrante *sh;
-	for(n = getFirst(c.lista_hidrante); n != NULL; n = n->next){
-		sh = (StHidrante *) n->data;
-		if(strcmp(sh->id, id) == 0){
-			return sh;
-		}
-	}
-	return NULL;
-	/* Lista s = c.lista_hidrante; */
-	/* int n = length(s) -1; */
-	/* for(int i = 0; i < n; i ++){ */
-	/* 	StHidrante *sh = (StHidrante *) get(s, 0); */
-	/* 	if(strcmp(sh->id, id) == 0) */
-	/* 		return sh; */
-	/* 	s = pop(s); */
-	/* } */
-	/* return NULL; */
+Hidrante search_id_hi(char *id, KdTree kd_hi){
+	KdNode *kd = (KdNode *) kd_hi;
+	if(kd_hi == NULL)
+		return NULL;
+	StHidrante *sh = (StHidrante *) kd;
+
+	if(strcmp(id, sh->id) == 0)
+		return sh;
+	if(strcmp(id, sh->id) != 0)
+		return search_id_hi(id, kd->right);
+	return search_id_hi(id, kd->left);
+	
 }
-Torre search_id_to(char *id, Cidade c){
-	Node *n;
-	StTorre *st;
-	for(n = getFirst(c.lista_torre); n != NULL; n = n->next){
-		st = (StTorre *) n->data;
-		if(strcmp(st->id, id) == 0){
-			return st;
-		}
-	}
-	return NULL;
-	/* Lista s = c.lista_torre; */
-	/* int n = length(s) -1; */
-	/* for(int i =0; i < n; i++){ */
-	/* 	StTorre *st = (StTorre *) get(s, 0); */
-	/* 	if(strcmp(st->id, id) == 0) */
-	/* 		return st; */
-	/* 	s = pop(s); */
-	/* } */
-	/* return NULL; */
+Torre search_id_to(char *id, KdTree kd_to){
+	KdNode *kd = (KdNode *) kd_to;
+	if(kd_to == NULL)
+		return NULL;
+	StTorre *st = (StTorre *) kd;
+	if(strcmp(id, st->id) == 0)
+		return st;
+	if(strcmp(id, st->id) != 0)
+		return search_id_to(id, kd->right);
+	return search_id_to(id, kd->left);
+
 }
 KdTree remove_quadra(KdTree t, Quadra q, float point[]){
 	return delete_kd_node(t, q, point, 0);
@@ -439,7 +424,6 @@ void searchTorreInCircle(Circle c, KdTree k, FILE *fTxt){
 			   );
 	}
 	free(c2);
-
 }
 KdTree deleteTorreInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
