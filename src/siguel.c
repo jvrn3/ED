@@ -1,5 +1,6 @@
 #include "modules/String/mystr.h"
 
+
 #include "modules/Circle/circle.h"
 #include "modules/Rect/rect.h"
 #include "modules/Svg/svg.h"
@@ -19,6 +20,10 @@ main(int argc, char *argv[]){
 	char suffix[MAXSIZE];
 	char line[1000];
 	char cep[MAXSIZE];
+	/*
+	 * variables used to "cc" comand 
+	 *
+	 * */
 	char fill_q[MAXSIZE], strk_q[MAXSIZE];
 	char fill_h[MAXSIZE], strk_h[MAXSIZE];
 	char fill_t[MAXSIZE], strk_t[MAXSIZE];
@@ -416,8 +421,6 @@ main(int argc, char *argv[]){
 				if(sq != NULL){
 					strcpy(sq->fill, tmp_fill);
 					strcpy(sq->strk, tmp_strk);
-
-					
 				}
 
 				else if((ss = (StSemaforo *) search_id_sem(cep, city.arvore_semaforo)) != NULL){
@@ -443,9 +446,8 @@ main(int argc, char *argv[]){
 				StHidrante *sh;
 				StSemaforo *ss;
 				sq = (StQuadra *) search_cep(cep, city.arvore_quadra);
-					/* fprintf(fTxt, "%lf %lf %lf %lf QUADRA\n", sq->x, sq->y, sq->larg, sq->alt); */
 				if(sq != NULL)
-					printf("ae");
+					fprintf(fTxt, "%lf %lf %lf %lf QUADRA\n", sq->x, sq->y, sq->larg, sq->alt);
 				else if((ss = (StSemaforo *) search_id_sem(cep, city.arvore_semaforo)) != NULL)
 					fprintf(fTxt, "%lf %lf SEMAFORO\n", ss->x, ss->y);
 				else if((st = (StTorre *) search_id_to(cep, city.arvore_torre) )!= NULL)
@@ -455,9 +457,11 @@ main(int argc, char *argv[]){
 			}
 			/* closest pair */
 			else if(strncmp(line, "crb?", 4) == 0){
-				pontos_torre = getPontos(city.lista_torre);
-				 clos = closest(pontos_torre, length(city.lista_torre));
+				/* pontos_torre = getPontos(city.lista_torre); */
+				 /* clos = closest(pontos_torre, length(city.lista_torre)); */
+				nn(city.arvore_torre);
 				crb = 1;
+
 			}
 		}
 
@@ -478,9 +482,9 @@ main(int argc, char *argv[]){
 		traverseTreeTorre(city.arvore_torre, drawTorre, fSvgQry);
 
 		
-		if(crb){
-			find_ponto(pontos_torre, length(city.lista_torre), clos, fSvgQry, fTxt, city.lista_torre);
-		}
+		/* if(crb){ */
+		/* 	find_ponto(pontos_torre, length(city.lista_torre), clos, fSvgQry, fTxt, city.lista_torre); */
+		/* } */
 
 		free(qry_name);
 		fprintf(fSvgQry, "\n</svg>\n");

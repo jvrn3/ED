@@ -1,4 +1,5 @@
 #include "cidade.h"
+#include <float.h>
 #include <string.h>
 
 Cidade createCity(){
@@ -35,12 +36,10 @@ KdTree insert_semaforo(Cidade c, Semaforo s, float point[]){
 	return kd_insert(c.arvore_semaforo, s, point);
 }
 Quadra search_cep(char *cep, KdTree kd_quadra){
-	printf("ae");
 	if(kd_quadra != NULL){
 		KdNode *kd = (KdNode *) kd_quadra;
 		StQuadra *sq = (StQuadra *) kd->data;
 		if(strcmp(cep, sq->cep) == 0){
-			printf("ae");
 			return sq;
 		}
 		else{
@@ -54,32 +53,24 @@ Quadra search_cep(char *cep, KdTree kd_quadra){
 	else
 		return NULL;
 }
-void change_quadra_color(KdTree kd_quadra, char *cep, char *ca, char *cb){
-	if(kd_quadra == NULL)
-		return;
-	KdNode *kd = (KdNode *) kd_quadra;
-	StQuadra *sq = (StQuadra *) kd->data;
-	change_quadra_color(kd->left, cep, ca, cb);
-	change_quadra_color(kd->right,cep, ca,cb);
-	if(strcmp(cep, sq->cep) == 0){
-		strcpy(sq->fill, ca);
-		strcpy(sq->strk, cb);
-	}
-}
-
 Semaforo search_id_sem(char *id, KdTree kd_sem){
-	KdNode *kd = (KdNode *) kd_sem;
-	if(kd_sem == NULL)
-		return NULL;
+	if(kd_sem != NULL){
+		KdNode *kd = (KdNode *) kd_sem;
+		StSemaforo *ss = (StSemaforo *) kd->data;
+		if(strcmp(id, ss->id) == 0)
+			return ss;
+		else{
+			StSemaforo *found = search_id_sem(id, kd->left);
+			if(found == NULL)
+				found = search_id_sem(id, kd->right);
 
-	StSemaforo *ss = (StSemaforo *) kd->data;
-	if(strcmp(id, ss->id) == 0)
-		return ss;
-	if(strcmp(id, ss->id) != 0)
-		return search_id_sem(id, kd->right);
-	return search_id_sem(id, kd->left);
-	
+			return found;
+		}
+	}
+	else
+		return NULL;
 }
+
 Torre search_id_toxy(float x, float y, Torre t){
 	Node *n;
 	StTorre *st;
@@ -93,29 +84,42 @@ Torre search_id_toxy(float x, float y, Torre t){
 	return NULL;
 }
 Hidrante search_id_hi(char *id, KdTree kd_hi){
-	KdNode *kd = (KdNode *) kd_hi;
-	if(kd_hi == NULL)
-		return NULL;
-	StHidrante *sh = (StHidrante *) kd;
+	if(kd_hi != NULL){
+		KdNode *kd = (KdNode *) kd_hi;
+		StHidrante *sh = (StHidrante *) kd->data;
 
-	if(strcmp(id, sh->id) == 0)
-		return sh;
-	if(strcmp(id, sh->id) != 0)
-		return search_id_hi(id, kd->right);
-	return search_id_hi(id, kd->left);
-	
+		if(strcmp(id, sh->id) == 0)
+			return sh;
+		else{
+			StHidrante *found = search_id_hi(id, kd->left);
+
+			if(found == NULL)
+				found = search_id_hi(id, kd->right);
+
+		return found;
+		}
+	}
+	else
+		return NULL;
 }
 Torre search_id_to(char *id, KdTree kd_to){
-	KdNode *kd = (KdNode *) kd_to;
-	if(kd_to == NULL)
-		return NULL;
-	StTorre *st = (StTorre *) kd;
-	if(strcmp(id, st->id) == 0)
-		return st;
-	if(strcmp(id, st->id) != 0)
-		return search_id_to(id, kd->right);
-	return search_id_to(id, kd->left);
+	if(kd_to != NULL){
+		KdNode *kd = (KdNode *) kd_to;
+		StTorre *st = (StTorre *) kd->data;
 
+		if(strcmp(id, st->id) == 0)
+			return st;
+		else{
+			StTorre *found = search_id_to(id, kd->left);
+
+			if(found == NULL)
+				found = search_id_to(id, kd->right);
+
+			return found;
+		}
+	}
+	else
+		return NULL;
 }
 KdTree remove_quadra(KdTree t, Quadra q, float point[]){
 	return delete_kd_node(t, q, point, 0);
@@ -195,7 +199,10 @@ KdTree deleteQuadraInRect(Rect r, KdTree k, FILE *fTxt){
 		fprintf(fTxt, "CEP REMOVIDO %s\n", sq->cep);
 		kd = remove_quadra(kd, kd->data, kd->point);
 	}
+	else
+		return kd;
 	free(r2);
+
 	r2 = NULL;
 	
 	return kd;
@@ -528,4 +535,45 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 			traverseTreeHidrante(knode->right, func, f);
 	}
 
+}
+
+void nn_aux(float a[], KdTree k, float *best){
+	if(k == NULL)
+		return;
+	KdNode *kd = (KdNode *) k;
+	StTorre *st = (StTorre *) kd->data;
+	float b[] = {st->x, st->y};
+	float dist = distancePoints(a, b);
+	if(dist < *best){
+		*best = dist;
+	}
+
+	if(kd->left != NULL && kd->right != NULL){
+		StTorre *st2 = (StTorre* ) kd->left->data;
+		float c[] = {st2->x, st2->y};
+		StTorre *st3 = (StTorre* ) kd->right->data;
+		float d[] = {st3->x, st3->y};
+		if(distancePoints(a, c) < distancePoints(a, d)){
+			nn_aux(a, kd->left, best);
+		}
+		else
+			nn_aux(a, kd->right, best);
+	}
+	if(kd->left == NULL && kd->right != NULL)
+		nn_aux(a, kd->right, best);
+	if(kd->left != NULL && kd->right == NULL)
+		nn_aux(a, kd->left, best);
+
+	if(kd->right == NULL && kd->left == NULL){
+		printf("%lf\n", dist);
+	
+	}
+
+}
+void nn(KdTree k){
+	KdNode *kd = (KdNode *)k;
+	StTorre *st = (StTorre *) kd->data;
+	float a[] = {st->x, st->y};
+	float best_dist = FLT_MAX;
+	nn_aux(a, k, &best_dist);
 }

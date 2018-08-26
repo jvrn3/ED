@@ -36,7 +36,6 @@ Hidrante remove_hidrante(KdTree t, Hidrante h, float point[]);
 Torre remove_torre(KdTree t, Torre to, float point[]);
 Semaforo remove_semaforo(KdTree t, Semaforo s, float point[]);
 Quadra search_cep(char *cep, KdTree kd);
-void change_quadra_color(KdTree kd_quadra, char *cep, char *ca, char *cb);
 Semaforo search_id_sem(char *id, KdTree kd);
 Hidrante search_id_hi(char *id, KdTree kd);
 Torre search_id_to(char *id, KdTree kd);
@@ -63,5 +62,7 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 void traverseTreeTorre(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 void traverseTreeSemaforo(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 
+void nn_aux(float a[], KdTree k, float *best);
+void nn(KdTree k);
 #endif
 

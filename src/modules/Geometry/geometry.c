@@ -1,6 +1,12 @@
 #include "geometry.h"
 #include <float.h>
 
+double distancePoints(float *a, float *b){
+    return sqrt(pow((a[0] - b[0]), 2) +
+		pow((a[1] - b[1]), 2)
+	    );
+
+}
 double distanceCC(Circle c, Circle c2){
 	StCircle *sc = (StCircle *) c;
 	StCircle *sc2 = (StCircle *) c2;
