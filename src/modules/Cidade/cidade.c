@@ -538,13 +538,14 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 }
 
 void nn_aux(float a[], KdTree k, float *best){
+	// put it on kdtree file
 	if(k == NULL)
 		return;
 	KdNode *kd = (KdNode *) k;
 	StTorre *st = (StTorre *) kd->data;
 	float b[] = {st->x, st->y};
 	float dist = distancePoints(a, b);
-	if(dist < *best){
+	if(dist < *best && dist != 0){
 		*best = dist;
 	}
 
@@ -565,7 +566,7 @@ void nn_aux(float a[], KdTree k, float *best){
 		nn_aux(a, kd->left, best);
 
 	if(kd->right == NULL && kd->left == NULL){
-		printf("%lf\n", dist);
+		printf("%lf\n", *best);
 	
 	}
 
@@ -573,7 +574,13 @@ void nn_aux(float a[], KdTree k, float *best){
 void nn(KdTree k){
 	KdNode *kd = (KdNode *)k;
 	StTorre *st = (StTorre *) kd->data;
-	float a[] = {st->x, st->y};
+	float a[] = {65, 45};
 	float best_dist = FLT_MAX;
-	nn_aux(a, k, &best_dist);
+	nn_aux(a, k, &best_dist); 
 }
+
+/* void test(KdTree k){ */
+/* 	KdNode *kd = (KdNode *) k; */
+/* 	StTorre *st = (StTorre *)kd; */
+/*  */
+/* } */
