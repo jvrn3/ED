@@ -64,7 +64,9 @@ void traverseTreeSemaforo(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 
 float nn_aux(float a[], KdTree k, float *best);
 float nn(KdTree k, float a[]);
-float testt(KdTree k, float *minor);
-float cl(KdTree k);
+float closest_aux(KdTree k, float *minor);
+float closest_kd(KdTree k);
+int pointt(KdTree k, float dist, FILE *fSvg, FILE *fTxt);
+void point_aux(FILE *fSvg, FILE *fTxt, StTorre *a, StTorre *b, float dist);
 #endif
 

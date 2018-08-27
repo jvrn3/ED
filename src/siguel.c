@@ -29,9 +29,9 @@ main(int argc, char *argv[]){
 	char fill_t[MAXSIZE], strk_t[MAXSIZE];
 	char fill_s[MAXSIZE], strk_s[MAXSIZE];
 	char tmp_strk[MAXSIZE], tmp_fill[MAXSIZE];
+	//
 	char id_equipamentos[50];
 	int crb = 0;
-	float clos;
 	Lista listC = createList();
 	Lista listR = createList();
 	Lista linha = createList();
@@ -44,20 +44,16 @@ main(int argc, char *argv[]){
 	Rect rect;
 
 
-	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry ;
+	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry, *ec;
 	char *qry_name;
 
-	Ponto *pontos_torre;
 	double r, x, y, w, h;
 	int n;
 
-	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry;
+	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc;
 
 
-
-	leitura = path = dir = qry = NULL;
-	/* printaPalmeiras1(); */
-
+	leitura = path = dir = qry = ec = NULL;
 	i = 1;
 	while(i < argc){
 		if(strcmp("-e", argv[i]) == 0){
@@ -84,7 +80,12 @@ main(int argc, char *argv[]){
 			qry = aloca_tamanho(qry, strlen(argv[i]));
 			strcpy(qry, argv[i]);
 
-
+		}
+		if(strcmp ("-ec", argv[i]) == 0){
+			i++;
+			ec = aloca_tamanho(ec, strlen(argv[i]));
+			strcpy(ec, argv[i]);
+		
 		}
 		i++;
 	}
@@ -93,11 +94,12 @@ main(int argc, char *argv[]){
 		strcpy(path, "./");
 	}
 	if(leitura == NULL || dir == NULL){
-		fprintf(stderr, "siguel usage: siguel [-e path -q file.qry] -f arq.geo -o dir");
+		fprintf(stderr, "siguel usage: siguel [-e path -q file.qry -ec file.ec] -f arq.geo -o dir");
 		exit(-1);
 	}
 
-
+	
+	// -f 
 	leitura[strlen(leitura) -4] = 0;
 
 	nomeTxt = criaString(dir, leitura, ".txt");
@@ -117,7 +119,7 @@ main(int argc, char *argv[]){
 
 	fDraw = fopen(nomeSvg, "w");
 	if(fDraw == NULL){
-		fprintf(stderr, "cant open file");
+		fprintf(stderr, "cant create file");
 		exit(-1);
 	}
 	fprintf(fDraw,"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100000\" height=\"100000\">\n");
@@ -179,6 +181,7 @@ main(int argc, char *argv[]){
 				break;
 
 			case 'o':
+
 				sscanf(line, "o %d %d", &id, &id2);
 				fputs(line, fTxt);
 				if ((linha = search_id(listC, id, 1)) != NULL){
@@ -188,8 +191,9 @@ main(int argc, char *argv[]){
 							fprintf(fTxt, "SIM\n");
 							drawOverlapCC(fDraw, linha, linha2);
 						}
-						else
+						else{
 							fprintf(fTxt, "NAO\n");
+						}
 					}
 					else{
 						linha2 = search_id(listR, id2, 1);
@@ -198,8 +202,9 @@ main(int argc, char *argv[]){
 							fprintf(fTxt, "SIM\n");
 							drawOverlapCR(fDraw, linha, linha2);
 						}
-						else
+						else{
 							fprintf(fTxt, "NAO\n");
+						}
 					}
 				}
 				//actually i have no idea what it is 28/06/2018
@@ -218,8 +223,9 @@ main(int argc, char *argv[]){
 							fprintf(fTxt, "SIM\n");
 							drawOverlapRR(fDraw, linha, linha2);
 						}
-						else
+						else{
 							fprintf(fTxt, "NAO\n");
+						}
 					}
 				}
 				break;
@@ -331,6 +337,7 @@ main(int argc, char *argv[]){
 		else
 			qry_name = qry;
 		qry_name = criaString(dir, criaString(leitura, "-", qry_name), ".svg");
+		printf("%s\n", qry_name);
 		fSvgQry = fopen(qry_name, "w");
 
 		if(!fSvgQry){
@@ -346,8 +353,9 @@ main(int argc, char *argv[]){
 				sscanf(line, "dq %lf %lf %lf %lf", &x, &y, &w, &h);
 
 				rect = createRect("", "", w, h, x, y);
-				drawRect(fSvgQry, rect);
 				city.arvore_quadra = deleteQuadraInRect(rect, city.arvore_quadra, fTxt);
+				drawRectPontilhado(fSvgQry, rect);
+				free(rect);
 			}
 			else if(strncmp(line, "q?", 2) == 0){
 				sscanf(line, "q? %lf %lf %lf %lf", &x, &y, &w, &h);
@@ -358,6 +366,7 @@ main(int argc, char *argv[]){
 				searchHidranteInRect(rect, city.arvore_hidrante, fTxt);
 				searchTorreInRect(rect, city.arvore_torre, fTxt);
 				drawRectPontilhado(fSvgQry, rect);
+				free(rect);
 			}
 			else if(strncmp(line, "Q?", 2) == 0){
 				sscanf(line, "Q? %lf  %lf %lf", &r, &x, &y);
@@ -370,19 +379,20 @@ main(int argc, char *argv[]){
 
 
 				drawCirclePontilhado(fSvgQry, c);
+				free(c);
 			}
 			else if(strncmp(line, "Dq", 2) == 0){
 				sscanf(line, "Dq %lf %lf %lf", &r, &x, &y);
 				c = createCircle("", "", r, x, y);
 				
-				drawCircle(fSvgQry, c);
 				city.arvore_quadra = deleteQuadraInCircle(c, city.arvore_quadra, fTxt);
+				drawCirclePontilhado(fSvgQry, c);
+				free(c);
 			}
 			else if(strncmp(line, "dle", 3)==0){
 				sscanf(line, "dle %*[srh] %lf %lf %lf %lf ",&x, &y, &w, &h);
 
 				rect = createRect("", "", w, h, x, y);
-				/* drawRect(fDraw, rect); */
 				if(line[4] == 'r' || line[5] == 'r' || line[6] == 'r'){
 					city.arvore_torre = deleteTorreInRect(rect, city.arvore_torre, fTxt);
 				}
@@ -395,6 +405,8 @@ main(int argc, char *argv[]){
 					//remove r
 					city.arvore_semaforo = deleteSemaforoInRect(rect, city.arvore_semaforo, fTxt);
 				}
+				drawRectPontilhado(fSvgQry, rect);
+				free(rect);
 			}
 			else if(strncmp(line, "Dle", 3) == 0){
 				sscanf(line, "Dle %*[rsh] %lf %lf %lf", &x, &y, &r );
@@ -409,6 +421,8 @@ main(int argc, char *argv[]){
 				if(line[4] == 's' || line[5] == 's' || line[6] == 's'){
 					city.arvore_semaforo = deleteSemaforoInCircle(c, city.arvore_semaforo, fTxt);
 				}
+				drawCirclePontilhado(fSvgQry, c);
+				free(c);
 			}
 			else if(strncmp(line, "cc", 2) == 0){
 				sscanf(line, "cc %s %s %s", cep, tmp_strk, tmp_fill);
@@ -457,13 +471,18 @@ main(int argc, char *argv[]){
 			}
 			/* closest pair */
 			else if(strncmp(line, "crb?", 4) == 0){
-				/* pontos_torre = getPontos(city.lista_torre); */
-				 /* clos = closest(pontos_torre, length(city.lista_torre)); */
-				printf("%lf\n",cl(city.arvore_semaforo));
-				/* crb = 1; */
-
+				crb = 1;
 			}
 		}
+
+
+		//Estabelecimento comercial
+
+		if(ec != NULL){
+			ec[strlen(ec) -4] = 0;
+			fEc =  fopen(criaString(path, ec, ".ec"), "r");
+		}
+
 
 		/*
 		 * create new svg file after manipulating [deleting etc] the old list
@@ -472,8 +491,6 @@ main(int argc, char *argv[]){
 
 		//it's time to print
 
-		/* l = city.lista_quadra; */
-		/* n = length(l); */
 
 		
 		traverseTreeQuadra(city.arvore_quadra, drawQuadra, fSvgQry);
@@ -482,9 +499,10 @@ main(int argc, char *argv[]){
 		traverseTreeTorre(city.arvore_torre, drawTorre, fSvgQry);
 
 		
-		/* if(crb){ */
-		/* 	find_ponto(pontos_torre, length(city.lista_torre), clos, fSvgQry, fTxt, city.lista_torre); */
-		/* } */
+		//had to do this because the circle on svg would be printed before other elements and then be hidden
+		if(crb){
+				pointt(city.arvore_torre, closest_kd(city.arvore_torre), fSvgQry, fTxt );
+		}
 
 		free(qry_name);
 		fprintf(fSvgQry, "\n</svg>\n");
@@ -522,7 +540,7 @@ main(int argc, char *argv[]){
 	fclose(fDraw);
 
 	//destroying lists
-	/* free_cidade(city); */
+	free_cidade(city);
 	destroy(listC);
 	destroy(listR);
 	/*destroy(linha2); */

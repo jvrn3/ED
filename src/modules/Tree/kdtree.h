@@ -12,6 +12,7 @@ typedef struct kdnode{
 }KdNode;
 
 /* 2d Tree */
+/* uma árvore kd é uma árvore binária que armazena pontos*/
 KdTree newKdTree(void *, float point[]);
 KdTree kd_insert_aux(KdTree t, void *data, float point[2], int cd);
 KdTree kd_insert(KdTree kd, void *data, float point[2]);

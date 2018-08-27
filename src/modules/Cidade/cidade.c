@@ -213,8 +213,8 @@ KdTree deleteQuadraInCircle(Circle c, KdTree k, FILE *fTxt ){
 	StQuadra *sq;
 	Rect r;
 	KdNode *kd = (KdNode *) k;
-	kd->left = deleteQuadraInCircle(c, kd->right, fTxt);
-	kd->right = deleteQuadraInCircle(c, kd->left, fTxt);
+	kd->left = deleteQuadraInCircle(c, kd->left, fTxt);
+	kd->right = deleteQuadraInCircle(c, kd->right, fTxt);
 	sq = (StQuadra *) kd->data;
 	r = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
 	if(isRectInsideCircle(c, r)){
@@ -538,7 +538,6 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 }
 
 float nn_aux(float a[], KdTree k, float *best){
-	printf("chamando\n");
 	if(k != NULL){
 		KdNode *kd = (KdNode *) k;
 		StTorre *st = (StTorre *) kd->data;
@@ -574,14 +573,12 @@ float nn_aux(float a[], KdTree k, float *best){
 
 }
 float nn(KdTree k, float a[]){
-	KdNode *kd = (KdNode *)k;
-	StTorre *st = (StTorre *) kd->data;
+	/* KdNode *kd = (KdNode *)k; */
 	float best_dist = FLT_MAX;
 	return nn_aux(a, k, &best_dist); 
 }
 
-float testt(KdTree k, float *minor){
-	printf("Chamando2\n");
+float closest_aux(KdTree k, float *minor){
 	if(k != NULL){
 		KdNode *kd = (KdNode *) k;
 		StTorre *st = (StTorre *)kd->data;
@@ -591,17 +588,71 @@ float testt(KdTree k, float *minor){
 			*minor = d;
 
 		if(kd->left != NULL){
-			testt(kd->left, minor);
+			closest_aux(kd->left, minor);
 		}
 
 		if(kd->right != NULL){
-			testt(kd->right, minor);
+			closest_aux(kd->right, minor);
 		}
 	}
 		return *minor;
 }
-float cl(KdTree k){
+float closest_kd(KdTree k){
 	float m = FLT_MAX;
-	return testt(k, &m);
+	return closest_aux(k, &m);
 
 }
+void point_aux(FILE *fSvg, FILE *fTxt, StTorre *a, StTorre *b, float dist){
+	printf("foi");
+	fprintf(fSvg, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
+			15.0,
+			a->x,
+			a->y);
+	fprintf(fSvg, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
+			15.0,
+			b->x,
+			b->y);
+	fprintf(fTxt, "ID %s  %s Distancia %lf\n", 
+			a->id,
+			b->id,
+			dist);
+}
+int pointt(KdTree k, float dist, FILE *fSvg, FILE *fTxt){
+	KdNode *kd = (KdNode *) k;
+
+	if(kd->right != NULL)
+		pointt(kd->right, dist, fSvg, fTxt);
+	if(kd->left != NULL)
+		pointt(kd->left, dist, fSvg, fTxt);
+	if(k != NULL){
+
+		StTorre *st = (StTorre *) kd->data;
+		float c[] = {st->x, st->y};
+		if(kd->left != NULL){
+			StTorre *st2  = (StTorre *) kd->left->data;
+			float d[] = {st2->x, st2->y};
+			if(distancePoints(c, d) == dist){
+				point_aux(fSvg, fTxt, st, st2, dist);
+				return 1;
+			}
+		}
+		else if(kd->right != NULL){
+			StTorre *st2  = (StTorre *) kd->right->data;
+			float d[] = {st2->x, st2->y};
+			if(distancePoints(c, d) == dist){
+				point_aux(fSvg, fTxt, st, st2, dist);
+				return 1;
+			}
+		}
+		/* if(kd->left != NULL&& kd->right != NULL){ */
+		/* 	StTorre *stt = (StTorre *) kd->left->data; */
+		/* 	StTorre *stx = (StTorre *) kd->right->data; */
+		/* 	float d[] = {stt->x, stt->y}; */
+		/* 	float e[] = {stx->x, stx->y}; */
+		/* 	if(distancePoints(d, e) == dist) */
+		/* 		point_aux(fSvg, fTxt, stt, stx, dist); return; */
+		/* } */
+	}
+	return 0;
+}
+

@@ -9,7 +9,7 @@ char *criaString(char *dir, char *nome, char *ext){
 
 }
 char *aloca_tamanho(char *str, int len){
-	str = (char *)malloc(sizeof(char) * len +1);
+	str = (char *)malloc(sizeof(char) * len + 1);
 	return str;
 }
 char *arruma_path(char *str){
