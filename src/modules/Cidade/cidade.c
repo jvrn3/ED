@@ -537,50 +537,71 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 
 }
 
-void nn_aux(float a[], KdTree k, float *best){
-	// put it on kdtree file
-	if(k == NULL)
-		return;
-	KdNode *kd = (KdNode *) k;
-	StTorre *st = (StTorre *) kd->data;
-	float b[] = {st->x, st->y};
-	float dist = distancePoints(a, b);
-	if(dist < *best && dist != 0){
-		*best = dist;
-	}
-
-	if(kd->left != NULL && kd->right != NULL){
-		StTorre *st2 = (StTorre* ) kd->left->data;
-		float c[] = {st2->x, st2->y};
-		StTorre *st3 = (StTorre* ) kd->right->data;
-		float d[] = {st3->x, st3->y};
-		if(distancePoints(a, c) < distancePoints(a, d)){
-			nn_aux(a, kd->left, best);
+float nn_aux(float a[], KdTree k, float *best){
+	printf("chamando\n");
+	if(k != NULL){
+		KdNode *kd = (KdNode *) k;
+		StTorre *st = (StTorre *) kd->data;
+		float b[] = {st->x, st->y};
+		float dist = distancePoints(a, b);
+		if(dist < *best && dist != 0){
+			*best = dist;
 		}
-		else
-			nn_aux(a, kd->right, best);
-	}
-	if(kd->left == NULL && kd->right != NULL)
-		nn_aux(a, kd->right, best);
-	if(kd->left != NULL && kd->right == NULL)
-		nn_aux(a, kd->left, best);
 
-	if(kd->right == NULL && kd->left == NULL){
-		printf("%lf\n", *best);
-	
+		if(kd->left != NULL && kd->right != NULL){
+			StTorre *st2 = (StTorre* ) kd->left->data;
+			float c[] = {st2->x, st2->y};
+			StTorre *st3 = (StTorre* ) kd->right->data;
+			float d[] = {st3->x, st3->y};
+			if(distancePoints(a, c) < distancePoints(a, d)){
+				nn_aux(a, kd->left, best);
+			}
+			else
+				nn_aux(a, kd->right, best);
+		}
+		if(kd->left == NULL && kd->right != NULL)
+			nn_aux(a, kd->right, best);
+		else if(kd->left != NULL && kd->right == NULL)
+			nn_aux(a, kd->left, best);
+
 	}
+	return *best;
+
+	/* if(kd->right == NULL && kd->left == NULL){ */
+	/* 	return  */
+	/*  */
+	/* } */
 
 }
-void nn(KdTree k){
+float nn(KdTree k, float a[]){
 	KdNode *kd = (KdNode *)k;
 	StTorre *st = (StTorre *) kd->data;
-	float a[] = {65, 45};
 	float best_dist = FLT_MAX;
-	nn_aux(a, k, &best_dist); 
+	return nn_aux(a, k, &best_dist); 
 }
 
-/* void test(KdTree k){ */
-/* 	KdNode *kd = (KdNode *) k; */
-/* 	StTorre *st = (StTorre *)kd; */
-/*  */
-/* } */
+float testt(KdTree k, float *minor){
+	printf("Chamando2\n");
+	if(k != NULL){
+		KdNode *kd = (KdNode *) k;
+		StTorre *st = (StTorre *)kd->data;
+		float a[] = {st->x, st->y};
+		float d = nn(k, a);
+		if(d < *minor)
+			*minor = d;
+
+		if(kd->left != NULL){
+			testt(kd->left, minor);
+		}
+
+		if(kd->right != NULL){
+			testt(kd->right, minor);
+		}
+	}
+		return *minor;
+}
+float cl(KdTree k){
+	float m = FLT_MAX;
+	return testt(k, &m);
+
+}

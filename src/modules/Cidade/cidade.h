@@ -62,7 +62,9 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 void traverseTreeTorre(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 void traverseTreeSemaforo(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 
-void nn_aux(float a[], KdTree k, float *best);
-void nn(KdTree k);
+float nn_aux(float a[], KdTree k, float *best);
+float nn(KdTree k, float a[]);
+float testt(KdTree k, float *minor);
+float cl(KdTree k);
 #endif
 

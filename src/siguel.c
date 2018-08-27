@@ -459,8 +459,8 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "crb?", 4) == 0){
 				/* pontos_torre = getPontos(city.lista_torre); */
 				 /* clos = closest(pontos_torre, length(city.lista_torre)); */
-				nn(city.arvore_torre);
-				crb = 1;
+				printf("%lf\n",cl(city.arvore_semaforo));
+				/* crb = 1; */
 
 			}
 		}
