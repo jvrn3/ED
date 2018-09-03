@@ -33,14 +33,6 @@ KdTree kd_insert_aux(KdTree t, void *data, float point[2], int cd){
 KdTree kd_insert(KdTree kd, void *data, float point[2]){
    return kd_insert_aux(kd, data, point, 0);
 }
-/* float min(float a, float b){ */
-/*     if(a < b) */
-/* 	return a; */
-/*     else */
-/* 	return b; */
-/*  */
-/* } */
-
 
 KdTree minData(void *a,  void *b, void *c, int dim){
    KdNode *kMin = (KdNode *) a;
@@ -139,12 +131,11 @@ void printInOrder(KdTree t, void (*displayFn)(void *)){
 }
 
 void destroyTree(KdTree k){
-   if(k != NULL){
-   KdNode *kd = (KdNode *) k;
-   if(kd->left != NULL)
-     destroyTree(kd->left);
-   if(kd->right != NULL)
-     destroyTree(kd->right);
-   free(kd);
-   }
+  KdNode *kd = (KdNode *) k;
+  if(k == NULL)
+    return;
+  destroyTree(kd->left);
+  destroyTree(kd->right);
+  free(kd->data);
+  free(kd);
 }

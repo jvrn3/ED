@@ -4,6 +4,10 @@
 #include <stdlib.h>
 
 typedef void *Lista;
+/* Uma lista ligada é uma coleção linear de dados. Cada elemento aponta para o próximo, até chegar ao final da lista(tail).
+ *
+ *Neste trabalho, é usado a Single Linked List, que só possuio o nó apontando para o head*/
+
 
 typedef struct node{
 	void *data;
@@ -25,6 +29,7 @@ int length(Lista l);
 Lista del_posicao(Lista l, int i);
 
 Node *createNode(void *data, int id);
+int insertAtEnd(Lista l, void *data);
 
 int insert(Lista l, void *data, int id);
 int insertAfter(Lista l, int pos, void *data, int id);
@@ -41,6 +46,7 @@ Lista del(Lista l, void *data);
 void *pop(Lista l);
 Node *getNext(Lista l);
 
+Lista searchList(Lista l, int (*compare)(void *, void *), void *comp);
 void destroy(Lista l);
 Node *getFirst(Lista l);
 

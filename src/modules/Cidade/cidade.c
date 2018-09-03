@@ -2,6 +2,8 @@
 #include <float.h>
 #include <string.h>
 
+
+//Inicializa tudo da cidade
 Cidade createCity(){
 	Cidade city;
 
@@ -16,25 +18,37 @@ Cidade createCity(){
 	city.arvore_hidrante = NULL;
 	city.arvore_torre = NULL;
 
+	city.comercio = new_hash_table();
+	city.pessoas = new_hash_table();
+	city.moradores = new_hash_table();
+
 	return city;
 }
 
+int _compareCepMorador(void *h, void *k){
+	HashData *hd = (HashData *) h;
+	char *key = (char *) k;
+	char *morador_cep  = morador_get_cep(hd->data);
+
+	if(strcmp(morador_cep, key) == 0)
+		return 1;
+	else
+		return 0;
+}
+
 KdTree insert_quadra(Cidade c, Quadra q, float point[2]){
-	/* insert(c.lista_quadra, q, 0); */
 	return kd_insert(c.arvore_quadra, q, point);
 }
 KdTree insert_hidrante(Cidade c, Hidrante h, float point[]){
-	/* insert(c.lista_hidrante, h, 0); */
 	return kd_insert(c.arvore_hidrante, h, point);
 }
 KdTree insert_torre(Cidade c, Torre t, float point[]){
-	/* insert(c.lista_torre, t, 0); */
 	return kd_insert(c.arvore_torre, t, point);
 }
 KdTree insert_semaforo(Cidade c, Semaforo s, float point[]){
-	/* insert(c.lista_semaforo, s, 0); */
 	return kd_insert(c.arvore_semaforo, s, point);
 }
+
 Quadra search_cep(char *cep, KdTree kd_quadra){
 	if(kd_quadra != NULL){
 		KdNode *kd = (KdNode *) kd_quadra;
@@ -480,6 +494,7 @@ void free_cidade(Cidade c){
 	destroyTree(c.arvore_semaforo);
 	
 }
+
 
 void traverseTreeQuadra(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 	if(kd == NULL)

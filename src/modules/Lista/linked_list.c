@@ -21,21 +21,6 @@ int length(Lista l){
 	StList *list = (StList *) l;
 	return list->size;
 }
-/* int length(Lista l){ */
-/* 	int count = 0; */
-/*  */
-/* 	Node *n = (Node *) l; */
-/* 	Node *aux = n; */
-/* 	if(n == NULL) */
-/* 		return 0; */
-/*  */
-/*  */
-/* 	while(aux){ */
-/* 		++count; */
-/* 		aux = aux->next; */
-/* 	} */
-/* 		return count; */
-/* } */
 void * get(Lista l, int pos){
 	StList *n = (StList *) l;
 	Node *tmp = n->head;
@@ -62,10 +47,31 @@ Node *getFirst(Lista l){
 	return n;
 
 }
+int insertAtEnd(Lista l, void *data){
+
+	StList *lista = (StList *) l;
+	if(lista->head == NULL)
+		insert(l, data, 0);
+	Node *tmp = lista->head;
+	Node *new_node = createNode(data, 0);
+	if(!new_node)
+		return 0;
+
+	while(tmp->next != NULL){
+		tmp = tmp->next;
+	}
+	tmp->next = new_node;
+
+	/* lista->head = tmp; */
+	lista->size++;
+	return 1;
+	
+return 0;
+}
 int insert(Lista l, void *data, int id){
 	StList *lista = (StList *) l;
 	Node *aux = (Node* )createNode(data, id);
-
+	
 	aux->next = lista->head;
 	lista->head = aux;
 	lista->size++;
@@ -117,6 +123,7 @@ int insertAfter(Lista l, int pos, void *data, int id){
 	list->head = n;
 	return 1;
 }
+
 void display(Lista l, FILE *fname, void (*f)(FILE *, void *)){
 	StList *n = (StList *) l;
 	Node *nod = n->head;
@@ -210,3 +217,14 @@ void destroy(Lista l){
 	list->head = NULL;
 }
 
+Lista searchList(Lista l, int (*compare)(void *, void *), void *comp){
+	StList *sl = (StList *) l;
+	Node *n = sl->head;
+	while(n->next != NULL || compare(n->data, comp) == 0){
+		n = n->next;
+	}
+	if(n != NULL)
+		return n->data;
+	else
+		return NULL;
+}

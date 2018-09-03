@@ -1,5 +1,5 @@
 TARGET = siguel
-DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o
+DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
@@ -10,6 +10,19 @@ siguel : $(DEPS)
 
 siguel.o : src/siguel.c
 	$(CC) $(FLAGS) -c src/siguel.c
+hash_table.o : $(SOURCEDIR)/Hash/hash_table.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Hash/hash_table.c
+
+comercio.o : $(SOURCEDIR)/Comercio/comercio.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Comercio/comercio.c
+pessoa.o : $(SOURCEDIR)/Pessoa/pessoa.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Pessoa/pessoa.c
+
+morador.o : $(SOURCEDIR)/Morador/morador.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Morador/morador.c
+
+address.o : $(SOURCEDIR)/Address/address.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Address/address.c
 
 mystr.o : $(SOURCEDIR)/String/mystr.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/String/mystr.c

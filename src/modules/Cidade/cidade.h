@@ -10,7 +10,12 @@
 #include "../Circle/circle.h"
 #include "../Geometry/geometry.h"
 #include "../Tree/kdtree.h"
+#include "../Comercio/comercio.h"
+#include "../Hash/hash_table.h"
+#include "../Pessoa/pessoa.h"
+#include "../Morador/morador.h"
 
+/* Representação de Siguel, cidade com diversos equipamentos, pessoas etc */
 
 typedef struct cidade{
   Lista lista_quadra;
@@ -23,10 +28,15 @@ typedef struct cidade{
   KdTree arvore_hidrante;
   KdTree arvore_torre;
 
+  Hash comercio;
+  Hash pessoas;
+  Hash moradores;
+
 
 }Cidade;
 
 Cidade createCity();
+int _compareCepMorador(void *hd, void *k);
 KdTree insert_quadra(Cidade c, Quadra q, float point[2]);
 KdTree insert_hidrante(Cidade c, Hidrante h, float point[]);
 KdTree insert_semaforo(Cidade c, Semaforo s, float point[]);

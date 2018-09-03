@@ -1,15 +1,13 @@
 #include "modules/String/mystr.h"
 
-
 #include "modules/Circle/circle.h"
 #include "modules/Rect/rect.h"
 #include "modules/Svg/svg.h"
 #include "modules/Geometry/geometry.h"
 #include "modules/Cidade/cidade.h"
 #include "modules/Sort/sort.h"
-#include "palmeiras.h"
 #include "modules/Tree/kdtree.h"
-
+#include "modules/Hash/hash_table.h"
 int
 main(int argc, char *argv[]){
 	int id, id2, i;
@@ -44,32 +42,31 @@ main(int argc, char *argv[]){
 	Rect rect;
 
 
-	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry, *ec;
-	char *qry_name;
+
+	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry, *ec, *pm;
 
 	double r, x, y, w, h;
 	int n;
 
-	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc;
+	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc, *fPm;
 
-
-	leitura = path = dir = qry = ec = NULL;
+	leitura = path = dir = qry = ec = pm = NULL;
 	i = 1;
 	while(i < argc){
 		if(strcmp("-e", argv[i]) == 0){
 			i++;
-			path = aloca_tamanho(path, strlen(argv[i]));
+			path = aloca_tamanho( strlen(argv[i]));
 			strcpy(path,arruma_path(argv[i]));
 			printf("PATH=%s\n", path);
 		}
 		if(strcmp("-f", argv[i]) == 0){
 			i++;
-			leitura = aloca_tamanho(leitura, strlen(argv[i]));
+			leitura = aloca_tamanho( strlen(argv[i]));
 			strcpy(leitura, argv[i]);
 		}
 		if(strcmp("-o", argv[i]) == 0){
 			i++;
-			dir = aloca_tamanho(dir, strlen(argv[i]));
+			dir = aloca_tamanho( strlen(argv[i]));
 			strcpy(dir, argv[i]);
 			dir = arruma_path(dir);
 
@@ -77,24 +74,28 @@ main(int argc, char *argv[]){
 		}
 		if(strcmp("-q", argv[i]) == 0){
 			i++;
-			qry = aloca_tamanho(qry, strlen(argv[i]));
+			qry = aloca_tamanho( strlen(argv[i]));
 			strcpy(qry, argv[i]);
 
 		}
 		if(strcmp ("-ec", argv[i]) == 0){
 			i++;
-			ec = aloca_tamanho(ec, strlen(argv[i]));
+			ec = aloca_tamanho(strlen(argv[i]));
 			strcpy(ec, argv[i]);
-		
+		}
+		if(strcmp("-pm", argv[i]) == 0){
+			i++;
+			pm = aloca_tamanho(strlen(argv[i]));
+			strcpy(pm, argv[i]);
 		}
 		i++;
 	}
 	if(path==NULL){
-		path = aloca_tamanho(path, 3);
+		path = aloca_tamanho(3);
 		strcpy(path, "./");
 	}
 	if(leitura == NULL || dir == NULL){
-		fprintf(stderr, "siguel usage: siguel [-e path -q file.qry -ec file.ec] -f arq.geo -o dir");
+		fprintf(stderr, "siguel usage: siguel [-e path -q file.qry -ec file.ec -pm file.pm] -f arq.geo -o dir");
 		exit(-1);
 	}
 
@@ -263,9 +264,8 @@ main(int argc, char *argv[]){
 				Quadra q = createQuadra(fill_q, strk_q, cep, x, y, w, h);
 				point[0] = x;
 				point[1] = y;
-				city.arvore_quadra = insert_quadra(city, q, point);
+				 city.arvore_quadra= insert_quadra(city, q, point);
 				drawQuadra(fDraw, q);
-
 
 				break;
 
@@ -323,10 +323,55 @@ main(int argc, char *argv[]){
 		}
 
 	}
+	if(ec != NULL){
+		int num;
+		ec[strlen(ec) -3] = 0;
+
+		fEc =  fopen(criaString(path, ec, ".ec"), "r");
+		if(!fEc){
+			printf("Error opening ec file\n Try again\n");
+			exit(-1);
+		}
+		while(fgets(line,1000,fEc) != NULL){
+			if(strncmp(line, "e", 1) == 0){
+				char cnpj[50], codt[50], cep[50], face, nome[100], comp[50];
+				sscanf(line, "e %s %s %s %c %d %s %s", cnpj, codt, cep, &face, &num, nome, comp);
+				put(city.comercio,cnpj, createComercio(cnpj, codt, cep, face, num, nome, comp));
+			}
+		}
+		fclose(fEc);
+	}
+	if(pm != NULL){
+		pm[strlen(pm) - 3] = 0;
+
+		fPm = fopen(criaString(path, pm, ".pm"), "r");
+		if(!fPm){
+			printf("Error opening pm file\n Try again\n");
+			exit(-1);
+		}
+		while(fgets(line, 1000, fPm) != NULL){
+			if(strncmp(line, "p", 1) == 0){
+				char cpf[50], nome[50], sobrenome[50], sexo, nasc[50];
+				sscanf(line, "p %s %s %s %c %s", cpf, nome, sobrenome, &sexo, nasc);
+				put(city.pessoas,cpf, createPessoa(cpf, nome, sobrenome, sexo, nasc));
+			}
+			else if(strncmp(line, "m", 1) == 0){
+				char cpf[50], cep[50], face, comp[50];
+				int num;
+				sscanf(line, "m %s %s %c %d %s", cpf, cep, &face, &num, comp);
+				put(city.moradores,cpf, createMorador(cpf, cep, face, num, comp));
+			}
+
+		}
+		fclose(fPm);
+
+	}
+
 	//parsing and handling .qry files
 	if(qry != NULL){
 		qry[strlen(qry) -4] = 0;
 
+		char *qry_name = qry;
 		fQry = fopen(criaString(path, qry, ".qry"), "r");
 		if(!fQry){
 			fprintf(stdout, "Cant open file");
@@ -334,8 +379,6 @@ main(int argc, char *argv[]){
 		}
 		if(has_slash(qry))
 			qry_name = get_last_slash(qry);
-		else
-			qry_name = qry;
 		qry_name = criaString(dir, criaString(leitura, "-", qry_name), ".svg");
 		printf("%s\n", qry_name);
 		fSvgQry = fopen(qry_name, "w");
@@ -473,15 +516,32 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "crb?", 4) == 0){
 				crb = 1;
 			}
+			else if(strncmp(line, "m?", 2) == 0){
+				//moradores da quadra cujo cep é cep
+				//
+				sscanf(line, "m? %s", cep);
+				if(search_cep(cep, city.arvore_quadra) == NULL){
+					printf("CEP da quadra nao encontrado!\n %s", cep);
+				}
+				else{
+					Lista mor_quadra = hash_filter_to_list(city.moradores, _compareCepMorador, cep);
+					/* printf("%s\n", sm->cpf); */
+					Node *n;
+					for(n = getFirst(mor_quadra); n != NULL; n = n->next){
+						StMorador *sm = (StMorador *) n->data;
+						printf("%s\n", sm->cpf);
+					}
+
+					
+
+				}
+			}
 		}
 
 
 		//Estabelecimento comercial
 
-		if(ec != NULL){
-			ec[strlen(ec) -4] = 0;
-			fEc =  fopen(criaString(path, ec, ".ec"), "r");
-		}
+		
 
 
 		/*
@@ -508,6 +568,11 @@ main(int argc, char *argv[]){
 		fprintf(fSvgQry, "\n</svg>\n");
 		fclose(fSvgQry);
 	}
+
+	//estabelecimento comercial
+	
+
+	
 	//t2 stuff
 	l = listR;
 	n = length(listR);
@@ -540,7 +605,7 @@ main(int argc, char *argv[]){
 	fclose(fDraw);
 
 	//destroying lists
-	free_cidade(city);
+	/* free_cidade(city); */
 	destroy(listC);
 	destroy(listR);
 	/*destroy(linha2); */

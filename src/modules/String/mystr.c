@@ -8,7 +8,8 @@ char *criaString(char *dir, char *nome, char *ext){
 	return aux;
 
 }
-char *aloca_tamanho(char *str, int len){
+char *aloca_tamanho(int len){
+	char *str;
 	str = (char *)malloc(sizeof(char) * len + 1);
 	return str;
 }
