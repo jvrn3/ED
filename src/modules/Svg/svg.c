@@ -276,3 +276,6 @@ fprintf(svgName, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"pink\" f
 		sc->x,
 		sc->y);
 }
+void drawCruz(FILE *svgName, float *pontos){
+
+}

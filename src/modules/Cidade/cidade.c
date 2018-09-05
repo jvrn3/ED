@@ -21,10 +21,42 @@ Cidade createCity(){
 	city.comercio = new_hash_table();
 	city.pessoas = new_hash_table();
 	city.moradores = new_hash_table();
+	city.tipo_comercio = new_hash_table();
+	city.cep_quadra = new_hash_table();
 
 	return city;
 }
-
+Pessoa searchPessoa(Hash h, char *key){
+	StPessoa *sp= (StPessoa *) search(h, key);
+	if(sp == NULL){
+		printf("Pessoa nao encontrada ");
+		return NULL;
+	}
+	return sp;
+}
+Comercio searchComercio(Hash h, char *key){
+	StComercio *sc = (StComercio *) search(h, key);
+	if(sc == NULL){
+		printf("Comercio nao encontrado\n");
+		return NULL;
+	}
+	return sc;
+}
+Morador searchMorador(Hash h, char *key){
+	StMorador *sm = (StMorador *) search(h, key);
+	if(sm == NULL){
+		printf("Morador nao encontrado\n");
+		return NULL;
+	}
+	return sm;
+}
+char *get_sexo(Pessoa p){
+	StPessoa *sp = (StPessoa *) p;
+	if(sp->sexo == 'm' || sp->sexo == 'M')
+		return "Masculino";
+	else
+		return "Feminino";
+}
 int _compareCepMorador(void *h, void *k){
 	HashData *hd = (HashData *) h;
 	char *key = (char *) k;
@@ -35,7 +67,47 @@ int _compareCepMorador(void *h, void *k){
 	else
 		return 0;
 }
+int _compareCepEstblcmto(void *h, void *k){
+	HashData *hd = (HashData *) h;
+	char *key = (char *) k;
+	char *estabelecimento_cep = estabelecimento_get_cep(hd->data);
+	if(strcmp(estabelecimento_cep, key) == 0)
+		return 1;
+	else
+		return 0;
+}
+void _hashSearchQuadraInRect(Cidade c, Rect r, KdTree kd_quadra, FILE *fTxt){
+	HashTable *ht = (HashTable *) c.moradores;
+	StQuadra *sq;
+	Node *n;
+	char *quadra;
+	fprintf(fTxt, "\n---- Moradores dentro da quadra ---- \n");
 
+	for(int i = 0; i < get_hash_max(); i++){
+		if(ht->table[i] != NULL){
+			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
+				HashData *hd = (HashData *) n->data;
+				quadra = morador_get_cep(hd->data);
+				sq = search_cep(quadra, kd_quadra);
+
+				if(sq != NULL){
+					Rect r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y);
+					if(isRectInsideRect(r2, r)){
+						StPessoa *sp = search(c.pessoas, hd->key);
+						fprintf(fTxt, "Nome %s %s\n", sp->nome, sp->sobrenome);
+						fprintf(fTxt, "Endereco %s %c %d %s\n", morador_get_cep(hd->data), 
+								morador_get_face(hd->data), 
+								morador_get_num(hd->data),
+								morador_get_comp(hd->data));
+					
+					}
+					free(r2);
+
+				}
+			}
+		}
+	}
+}
 KdTree insert_quadra(Cidade c, Quadra q, float point[2]){
 	return kd_insert(c.arvore_quadra, q, point);
 }

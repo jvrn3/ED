@@ -218,13 +218,10 @@ void destroy(Lista l){
 }
 
 Lista searchList(Lista l, int (*compare)(void *, void *), void *comp){
-	StList *sl = (StList *) l;
-	Node *n = sl->head;
-	while(n->next != NULL || compare(n->data, comp) == 0){
-		n = n->next;
+	Node *n;
+	for(n = getFirst(l); n != NULL; n = n->next){
+		if(compare(n->data, comp) == 0)
+			return n->data;
 	}
-	if(n != NULL)
-		return n->data;
-	else
-		return NULL;
+	return NULL;
 }

@@ -6,13 +6,21 @@
 typedef void *Comercio;
 
 typedef struct stComercio{
-	char cnpj[50];
+	char cnpj[100];
 	char codt[50];
 	char nome[100];
 	Address address;
 }StComercio;
 
+typedef struct stComercioTipo{
+	char codt[50];
+	char descricao[100];
+}StComercioTipo;
 
 Comercio createComercio(char *cnpj, char *codt, char *cep, char face, int num, char *comp, char *nome);
+Comercio createTipoComercio(char *codt, char *descricao);
+char *estabelecimento_get_cep(Comercio c);
+
+
 #endif
 

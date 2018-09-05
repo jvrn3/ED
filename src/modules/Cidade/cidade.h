@@ -15,7 +15,12 @@
 #include "../Pessoa/pessoa.h"
 #include "../Morador/morador.h"
 
-/* Representação de Siguel, cidade com diversos equipamentos, pessoas etc */
+/* Representação de Siguel, cidade com diversos equipamentos, pessoas etc 
+ * Este arquivo contém funções que manipulam a cidade
+ *
+ * */
+
+
 
 typedef struct cidade{
   Lista lista_quadra;
@@ -31,12 +36,19 @@ typedef struct cidade{
   Hash comercio;
   Hash pessoas;
   Hash moradores;
+  Hash tipo_comercio;
+  Hash cep_quadra;
 
 
 }Cidade;
 
 Cidade createCity();
+Pessoa searchPessoa(Hash h, char *key);
+Morador searchMorador(Hash h, char *key);
+Comercio searchComercio(Hash h, char *key);
 int _compareCepMorador(void *hd, void *k);
+int _compareCepEstblcmto(void *h, void *k);
+void _hashSearchQuadraInRect(Cidade c, Rect r, KdTree kd_quadra, FILE *fp);
 KdTree insert_quadra(Cidade c, Quadra q, float point[2]);
 KdTree insert_hidrante(Cidade c, Hidrante h, float point[]);
 KdTree insert_semaforo(Cidade c, Semaforo s, float point[]);

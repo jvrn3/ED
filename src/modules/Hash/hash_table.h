@@ -5,9 +5,6 @@
 #include <string.h>
 #include "../Lista/linked_list.h"
 typedef void *Hash;
-typedef struct hashEntry{
-	Lista hash_list;
-}HashEntry;
 typedef struct hashTable{
 	int size;
 	// StList *table;
@@ -29,4 +26,6 @@ void put(HashTable *ht, char *key, void *data);
 void *search(HashTable *ht, char *key);
 int compare(void *, void *);
 Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *), char *key);
+int get_hash_max();
+void remove_hash(HashTable *ht, char *key);
 #endif

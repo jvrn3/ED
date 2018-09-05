@@ -2,11 +2,7 @@
 
 int HASH_SIZE=128;
 
-Hash new_hash_entry(){
-	HashEntry *hs = malloc(sizeof(HashEntry));
-	hs->hash_list = createList();
-	return hs;
-}
+
 int compare(void *data, void *key){
 	HashData *hd = (HashData *) data;
 	if(strcmp(hd->key, (char *)key) == 0)
@@ -47,7 +43,7 @@ void *search(HashTable *ht, char *key){
 	int index = hash(key);
 	printf("Search Hash %s INDEX %d\n", key, index);
 	if(ht->table[index] != NULL){
-		//compare function compare key and the element of the hash
+		//compare function compares key and the element of the hash
 		HashData *hd= (HashData *) searchList(ht->table[index], compare, key);
 		return hd->data;
 	}
@@ -61,15 +57,29 @@ Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *),char *_com
 			Node *n;
 			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
 				if(_cmpr(n->data, _comp_key)){
-					HashData *hd = (HashData *)n->data;
-					insert(new_list, hd->data, 0);
+					insert(new_list, n->data, 0);
 				}
 			}
 		}
 	}
 	return new_list;
 }
-void delete_hash_table(HashTable *ht){
+void remove_hash(HashTable *ht, char *key){
+	int index = hash(key);
+	//does this key exist? 
+	if(ht->table[index] != NULL){
+		HashData *hd = (HashData *) searchList(ht->table[index], compare, key);
+		free(hd->data);
+		free(hd);
+		printf("Deletado");
+	}
+	else{
+		printf("Erro ao deletar.\n");
+	
+	}
+}
+int get_hash_max(){
+	return HASH_SIZE;
 }
 //djb2 hash function
 int hash(char *str){

@@ -10,6 +10,7 @@ typedef struct stPessoa{
 	char sobrenome[50];
 	char sexo;
 	char nasc[100];
+	int vivo;
 
 }StPessoa;
 #endif

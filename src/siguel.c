@@ -266,6 +266,7 @@ main(int argc, char *argv[]){
 				point[1] = y;
 				 city.arvore_quadra= insert_quadra(city, q, point);
 				drawQuadra(fDraw, q);
+				put(city.cep_quadra, cep, q);
 
 				break;
 
@@ -337,6 +338,11 @@ main(int argc, char *argv[]){
 				char cnpj[50], codt[50], cep[50], face, nome[100], comp[50];
 				sscanf(line, "e %s %s %s %c %d %s %s", cnpj, codt, cep, &face, &num, nome, comp);
 				put(city.comercio,cnpj, createComercio(cnpj, codt, cep, face, num, nome, comp));
+			}
+			else if(strncmp(line, "t", 1) == 0){
+				char codt[50], descr[50];
+				sscanf(line, "t %s %s", codt, descr);
+				put(city.tipo_comercio, codt, createTipoComercio(codt, descr));
 			}
 		}
 		fclose(fEc);
@@ -524,21 +530,86 @@ main(int argc, char *argv[]){
 					printf("CEP da quadra nao encontrado!\n %s", cep);
 				}
 				else{
+					printf("----Moradores no Cep %s ----\n", cep);
 					Lista mor_quadra = hash_filter_to_list(city.moradores, _compareCepMorador, cep);
-					/* printf("%s\n", sm->cpf); */
 					Node *n;
 					for(n = getFirst(mor_quadra); n != NULL; n = n->next){
-						StMorador *sm = (StMorador *) n->data;
-						printf("%s\n", sm->cpf);
+						HashData *hd =(HashData *) n->data;
+						StPessoa *sp = (StPessoa *) search(city.pessoas, hd->key);
+						fprintf(fTxt, "Nome => %s %s\n", sp->nome, sp->sobrenome);
+						StMorador *sm = (StMorador *) hd->data;
+						fprintf(fTxt, "Endereco: %s\n" , morador_get_cep(sm));
 					}
-
-					
-
 				}
 			}
+			else if(strncmp(line, "mr?", 3) == 0){
+				sscanf(line, "mr? %lf %lf %lf %lf", &x, &y, &w, &h);
+				Rect r = createRect("", "", w,h,x,y);
+				_hashSearchQuadraInRect(city, r, city.arvore_quadra, fTxt);
+				free(r);
+			}
+			else if(strncmp(line, "dm?", 3) == 0){
+				char cpf[50];
+				sscanf(line, "dm? %s", cpf);
+				StMorador  *sm = (StMorador *) search(city.moradores, cpf);
+				StPessoa *sp = (StPessoa *) search(city.pessoas, cpf);
+				if(sm != NULL && sp != NULL){
+					fprintf(fTxt, "Endereco %s %c %d %s\n", morador_get_cep(sm),
+						morador_get_face(sm), 
+						morador_get_num(sm),
+						morador_get_comp(sm));
+				fprintf(fTxt, "Nome %s %s\n", sp->nome, sp->sobrenome);
+				}
+				else{
+					printf("Pessoa nao encontrada. Pode estar morta!");
+				
+				}
+
+			}
+			else if(strncmp(line, "de?", 3) == 0){
+				char cnpj[50];
+				sscanf(line, "de? %s", cnpj);
+				StComercio *sc = searchComercio(city.comercio, cnpj);
+
+			}
+			else if(strncmp(line, "rip", 3) == 0){
+				char cpf[50];
+				sscanf(line, "rip %s", cpf);
+				StPessoa *sp = searchPessoa(city.pessoas, cpf);
+				StMorador *sm = searchMorador(city.moradores, cpf);
+				if(sp->sexo == 'm' || sp->sexo == 'M'){
+					fprintf(fTxt, "RIP %s %s, portador %s, do sexo Masculino, nascido a %s, residia no endereco %s/%d/%c", sp->nome, sp->sobrenome, sp->cpf, sp->nasc, morador_get_cep(sm), morador_get_num(sm), morador_get_face(sm));
+				}
+				else{
+					fprintf(fTxt, "RIP %s %s, portador %s, do sexo Feminino, nascida a %s, residia no endereco %s/%d/%c", sp->nome, sp->sobrenome, sp->cpf, sp->nasc, morador_get_cep(sm), morador_get_num(sm), morador_get_face(sm));
+				}
+				remove_hash(city.pessoas, cpf);
+
+				drawCruz(fSvgQry, )
+				//printar cruz
+			}
+			else if(strncmp(line, "ecq?", 4) == 0){
+				sscanf(line, "ecq? %s", cep);
+					Lista estbl_quadra = hash_filter_to_list(city.comercio, _compareCepEstblcmto, cep);
+
+					printf("TODO");
+			}
+			else if(strncmp(line, "ecr?", 4) == 0){
+				sscanf(line, "ecr? %s", cep);
+			}
+			else if(strncmp(line, "tecq?", 5) == 0){
+				sscanf(line, "tecq? %s", cep);
+				/* Lista os tipos de estabelecimentos comerciais de uma quadra */
+				Lista estbl_quadra = hash_filter_to_list(city.comercio, _compareCepEstblcmto, cep);
+				Node *n;
+				for(n = getFirst(estbl_quadra); n != NULL; n = n->next){
+					HashData *hd = n->data;
+					StComercio *sc = (StComercio *)hd->data;
+					printf("%s", sc->nome);
+				}
+
+			}
 		}
-
-
 		//Estabelecimento comercial
 
 		
