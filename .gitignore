@@ -12,5 +12,4 @@ vgcore.*
 test/
 out/
 siguel
-
-
+t3/*
