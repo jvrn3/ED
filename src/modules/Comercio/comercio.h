@@ -17,10 +17,11 @@ typedef struct stComercioTipo{
 	char descricao[100];
 }StComercioTipo;
 
-Comercio createComercio(char *cnpj, char *codt, char *cep, char face, int num, char *comp, char *nome);
+Comercio createComercio(char *cnpj, char *codt, char *cep, char face, int num, char *nome);
 Comercio createTipoComercio(char *codt, char *descricao);
 char *estabelecimento_get_cep(Comercio c);
-
-
+int estabelecimento_get_num(Comercio c);
+char estabelecimento_get_face(Comercio c);
+char *estabelecimento_get_codt(Comercio c);
 #endif
 

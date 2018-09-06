@@ -1,11 +1,11 @@
 #include "comercio.h"
 
-Comercio createComercio(char *cnpj, char *codt, char *cep, char face, int num, char *comp, char *nome){
+Comercio createComercio(char *cnpj, char *codt, char *cep, char face, int num, char *nome){
 	StComercio *sc = malloc(sizeof(StComercio));
 	strcpy(sc->cnpj, cnpj);
 	strcpy(sc->nome, nome);
 	strcpy(sc->codt, codt);
-	sc->address = createAddress(cep, face, num, comp);
+	sc->address = createAddress(cep, face, num, "com");
 	return sc;
 }
 
@@ -19,4 +19,16 @@ Comercio createTipoComercio(char *codt, char *descricao){
 char *estabelecimento_get_cep(Comercio c){
 	StComercio *sc = (StComercio *) c;
 	return address_get_cep(sc->address);
+}
+int estabelecimento_get_num(Comercio c){
+	StComercio *sc = (StComercio *) c;
+	return address_get_num(sc->address);
+}
+char estabelecimento_get_face(Comercio c){
+	StComercio *sc = (StComercio *) c;
+	return address_get_face(sc->address);
+}
+char *estabelecimento_get_codt(Comercio c){
+	StComercio *sc = (StComercio *) c;
+	return sc->codt;
 }

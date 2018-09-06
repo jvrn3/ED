@@ -262,11 +262,12 @@ main(int argc, char *argv[]){
 			case 'q':
 				sscanf(line, "q %s %lf %lf %lf %lf", cep,&x, &y, &w,&h);
 				Quadra q = createQuadra(fill_q, strk_q, cep, x, y, w, h);
+				//hash insertion
+				put(city.cep_quadra, cep, q);
 				point[0] = x;
 				point[1] = y;
 				 city.arvore_quadra= insert_quadra(city, q, point);
 				drawQuadra(fDraw, q);
-				put(city.cep_quadra, cep, q);
 
 				break;
 
@@ -335,9 +336,9 @@ main(int argc, char *argv[]){
 		}
 		while(fgets(line,1000,fEc) != NULL){
 			if(strncmp(line, "e", 1) == 0){
-				char cnpj[50], codt[50], cep[50], face, nome[100], comp[50];
-				sscanf(line, "e %s %s %s %c %d %s %s", cnpj, codt, cep, &face, &num, nome, comp);
-				put(city.comercio,cnpj, createComercio(cnpj, codt, cep, face, num, nome, comp));
+				char cnpj[50], codt[50], cep[50], face, nome[100]; 
+				sscanf(line, "e %s %s %s %c %d %s", cnpj, codt, cep, &face, &num, nome);
+				put(city.comercio,cnpj, createComercio(cnpj, codt, cep, face, num, nome));
 			}
 			else if(strncmp(line, "t", 1) == 0){
 				char codt[50], descr[50];
@@ -530,7 +531,7 @@ main(int argc, char *argv[]){
 					printf("CEP da quadra nao encontrado!\n %s", cep);
 				}
 				else{
-					printf("----Moradores no Cep %s ----\n", cep);
+					fprintf(fTxt, "\n----Moradores no Cep %s ----\n", cep);
 					Lista mor_quadra = hash_filter_to_list(city.moradores, _compareCepMorador, cep);
 					Node *n;
 					for(n = getFirst(mor_quadra); n != NULL; n = n->next){
@@ -538,41 +539,54 @@ main(int argc, char *argv[]){
 						StPessoa *sp = (StPessoa *) search(city.pessoas, hd->key);
 						fprintf(fTxt, "Nome => %s %s\n", sp->nome, sp->sobrenome);
 						StMorador *sm = (StMorador *) hd->data;
-						fprintf(fTxt, "Endereco: %s\n" , morador_get_cep(sm));
+						fprintf(fTxt, "Endereco => %s/%c/%d\n" , morador_get_cep(sm), morador_get_face(sm),
+								morador_get_num(sm));
 					}
+					//need to handle freeing memory
+					destroy(mor_quadra);
 				}
 			}
 			else if(strncmp(line, "mr?", 3) == 0){
+				//moradores em uma região r
 				sscanf(line, "mr? %lf %lf %lf %lf", &x, &y, &w, &h);
 				Rect r = createRect("", "", w,h,x,y);
 				_hashSearchQuadraInRect(city, r, city.arvore_quadra, fTxt);
 				free(r);
 			}
 			else if(strncmp(line, "dm?", 3) == 0){
+				//imprime dados do morador indicado pelo cpf
 				char cpf[50];
 				sscanf(line, "dm? %s", cpf);
 				StMorador  *sm = (StMorador *) search(city.moradores, cpf);
+				insert(city.mor, sm, 0);
 				StPessoa *sp = (StPessoa *) search(city.pessoas, cpf);
 				if(sm != NULL && sp != NULL){
-					fprintf(fTxt, "Endereco %s %c %d %s\n", morador_get_cep(sm),
+				fprintf(fTxt, "\nDados de => %s %s\n", sp->nome, sp->sobrenome);
+					fprintf(fTxt, "Endereco => %s/%c/%d\n", morador_get_cep(sm),
 						morador_get_face(sm), 
-						morador_get_num(sm),
-						morador_get_comp(sm));
-				fprintf(fTxt, "Nome %s %s\n", sp->nome, sp->sobrenome);
+						morador_get_num(sm));
 				}
 				else{
-					printf("Pessoa nao encontrada. Pode estar morta!");
+					printf("Pessoa nao encontrada. Pode estar morta!\n");
 				
 				}
-
 			}
 			else if(strncmp(line, "de?", 3) == 0){
+				//imprime todos os dados do estabelecimento comercial identificado por cnpj
 				char cnpj[50];
 				sscanf(line, "de? %s", cnpj);
 				StComercio *sc = searchComercio(city.comercio, cnpj);
+				StComercioTipo *sct = searchComercioTipo(city.tipo_comercio, estabelecimento_get_codt(sc));
+				fprintf(fTxt, "\nEstabelecimento comercial identificado por -> %s\n", sc->cnpj);
+				fprintf(fTxt, "Nome => %s\nDescricao: %s\nEndereco %s/%c/%d\n", sc->nome, sct->descricao,
+						estabelecimento_get_cep(sc),
+						estabelecimento_get_face(sc),
+						estabelecimento_get_num(sc));
+				insert(city.est, sc, 0);
 
 			}
 			else if(strncmp(line, "rip", 3) == 0){
+				//pessoa morreu
 				char cpf[50];
 				sscanf(line, "rip %s", cpf);
 				StPessoa *sp = searchPessoa(city.pessoas, cpf);
@@ -584,9 +598,6 @@ main(int argc, char *argv[]){
 					fprintf(fTxt, "RIP %s %s, portador %s, do sexo Feminino, nascida a %s, residia no endereco %s/%d/%c", sp->nome, sp->sobrenome, sp->cpf, sp->nasc, morador_get_cep(sm), morador_get_num(sm), morador_get_face(sm));
 				}
 				remove_hash(city.pessoas, cpf);
-
-				drawCruz(fSvgQry, )
-				//printar cruz
 			}
 			else if(strncmp(line, "ecq?", 4) == 0){
 				sscanf(line, "ecq? %s", cep);
@@ -628,6 +639,13 @@ main(int argc, char *argv[]){
 		traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, fSvgQry);
 		traverseTreeHidrante(city.arvore_hidrante, drawHidrante, fSvgQry);
 		traverseTreeTorre(city.arvore_torre, drawTorre, fSvgQry);
+		Node *n;
+		for(n = getFirst(city.mor); n != NULL; n = n->next){
+			drawMorador(fSvgQry, city, n->data);
+		}
+		for(n = getFirst(city.est); n != NULL; n = n->next){
+			drawEstabelecimento(fSvgQry, city, n->data);
+		}
 
 		
 		//had to do this because the circle on svg would be printed before other elements and then be hidden
@@ -640,7 +658,6 @@ main(int argc, char *argv[]){
 		fclose(fSvgQry);
 	}
 
-	//estabelecimento comercial
 	
 
 	

@@ -8,6 +8,7 @@ typedef struct ponto{
   double y;
 }Ponto;
 
+
 #include "../Circle/circle.h"
 #include "../Rect/rect.h"
 #include "../Torre/torre.h"
@@ -15,6 +16,7 @@ typedef struct ponto{
 #include "../Sort/sort.h"
 #include "../Cidade/cidade.h"
 #include "math.h"
+Ponto createPonto(float x, float y);
 double distancePoints(float *a, float *b);
 double distanceCC(Circle c, Circle c2);
 double distanceCR(Circle c, Rect r);

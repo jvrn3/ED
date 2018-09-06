@@ -39,13 +39,19 @@ typedef struct cidade{
   Hash tipo_comercio;
   Hash cep_quadra;
 
+  Lista mor;
+  Lista est;
+
 
 }Cidade;
 
 Cidade createCity();
+Ponto city_get_ponto(Cidade c, Address a);
 Pessoa searchPessoa(Hash h, char *key);
+Comercio searchComercioTipo(Hash h, char *key);
 Morador searchMorador(Hash h, char *key);
 Comercio searchComercio(Hash h, char *key);
+Quadra searchQuadra(Hash h, char *key);
 int _compareCepMorador(void *hd, void *k);
 int _compareCepEstblcmto(void *h, void *k);
 void _hashSearchQuadraInRect(Cidade c, Rect r, KdTree kd_quadra, FILE *fp);

@@ -9,6 +9,9 @@
 #include "../Hidrante/hidrante.h"
 #include "../Semaforo/semaforo.h"
 #include "../Torre/torre.h"
+#include "../Morador/morador.h"
+#include "../Address/address.h"
+#include "../Cidade/cidade.h"
 
 
 /* procedures to draw in svg format */ 
@@ -30,6 +33,8 @@ void drawSemaforo(FILE *svgName, Semaforo s);
 void drawTorre(FILE *svgName, Torre t);
 void drawRectPontilhado(FILE *svgName, Rect r);
 void drawCirclePontilhado(FILE *svgName, Circle c);
+void drawMorador(FILE *svg, Cidade c, Morador m);
+void drawEstabelecimento(FILE *svgName, Cidade c, Morador m);
 #endif
 
 

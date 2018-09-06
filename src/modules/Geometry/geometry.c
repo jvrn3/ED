@@ -1,6 +1,12 @@
 #include "geometry.h"
 #include <float.h>
 
+Ponto createPonto(float x, float y){
+    Ponto p;
+    p.x = x;
+    p.y = y;
+    return p;
+}
 double distancePoints(float *a, float *b){
     return sqrt(pow((a[0] - b[0]), 2) +
 		pow((a[1] - b[1]), 2)
@@ -115,13 +121,14 @@ int isInsideR(Rect r, double x, double y){
 
 // is the rect a inside b?
 int isRectInsideRect(Rect in, Rect out){
-	StRect *sa = (StRect *)in;
-	if(isInsideR(out, sa->x, sa->y) && 
-			isInsideR(out, sa->x + sa->w, sa->y) &&
-			isInsideR(out, sa->x, sa->y + sa->h) &&
-			isInsideR(out, sa->x + sa->w, sa->y + sa->h))
-		return 1;
-	else return 0;
+
+    StRect *sa = (StRect *)in;
+    if(isInsideR(out, sa->x, sa->y) && 
+	    isInsideR(out, sa->x + sa->w, sa->y) &&
+	    isInsideR(out, sa->x, sa->y + sa->h) &&
+	    isInsideR(out, sa->x + sa->w, sa->y + sa->h))
+	return 1;
+    else return 0;
 }
 
 int isRectInsideCircle(Circle c, Rect r){

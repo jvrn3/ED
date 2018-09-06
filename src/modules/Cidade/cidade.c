@@ -24,7 +24,42 @@ Cidade createCity(){
 	city.tipo_comercio = new_hash_table();
 	city.cep_quadra = new_hash_table();
 
+	city.mor = createList();
+	city.est = createList();
+
 	return city;
+}
+Ponto city_get_ponto(Cidade c, Address a){
+	Quadra q = search(c.cep_quadra, address_get_cep(a));
+	char face = address_get_face(a);
+	int num = address_get_num(a);
+	double x, y;
+	if(face == 'S' || face == 's'){
+		x = quadra_get_x(q) + num;
+		y = quadra_get_y(q);
+	}
+	else if(face == 'N' || face == 'n'){
+		x = quadra_get_x(q) + num;
+		y = quadra_get_y(q) + quadra_get_h(q);
+	}
+	else if (face == 'O' || face == 'o'){
+		x = quadra_get_x(q) + quadra_get_w(q);
+		y = quadra_get_y(q) + num;
+	}
+	else{
+		x = quadra_get_x(q);
+		y = quadra_get_y(q) + num;
+	}
+	Ponto p = createPonto(x,y);
+	return p;
+}
+Comercio searchComercioTipo(Hash h, char *key){
+	StComercioTipo *sct = (StComercioTipo *) search(h, key);
+	if(sct == NULL){
+		printf("Tipo nao encontrado\n");
+		return NULL;
+	}
+	return sct;
 }
 Pessoa searchPessoa(Hash h, char *key){
 	StPessoa *sp= (StPessoa *) search(h, key);
@@ -33,6 +68,14 @@ Pessoa searchPessoa(Hash h, char *key){
 		return NULL;
 	}
 	return sp;
+}
+Quadra searchQuadra(Hash h, char *key){
+	StQuadra *sq = (StQuadra *) search(h, key);
+	if(sq == NULL){
+		printf("Cep nao encontrado\n");
+		return NULL;
+	}
+	return sq;
 }
 Comercio searchComercio(Hash h, char *key){
 	StComercio *sc = (StComercio *) search(h, key);
@@ -88,18 +131,15 @@ void _hashSearchQuadraInRect(Cidade c, Rect r, KdTree kd_quadra, FILE *fTxt){
 			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
 				HashData *hd = (HashData *) n->data;
 				quadra = morador_get_cep(hd->data);
-				sq = search_cep(quadra, kd_quadra);
-
+				sq = searchQuadra(c.cep_quadra, quadra);
 				if(sq != NULL){
 					Rect r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y);
 					if(isRectInsideRect(r2, r)){
-						StPessoa *sp = search(c.pessoas, hd->key);
+						StPessoa *sp = (StPessoa *)search(c.pessoas, hd->key);
 						fprintf(fTxt, "Nome %s %s\n", sp->nome, sp->sobrenome);
-						fprintf(fTxt, "Endereco %s %c %d %s\n", morador_get_cep(hd->data), 
+						fprintf(fTxt, "Endereco %s/%c/%d\n", morador_get_cep(hd->data), 
 								morador_get_face(hd->data), 
-								morador_get_num(hd->data),
-								morador_get_comp(hd->data));
-					
+								morador_get_num(hd->data));
 					}
 					free(r2);
 

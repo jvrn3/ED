@@ -276,6 +276,22 @@ fprintf(svgName, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"pink\" f
 		sc->x,
 		sc->y);
 }
-void drawCruz(FILE *svgName, float *pontos){
+void drawMorador(FILE *svgName, Cidade c,  Morador m){
+	StMorador *sm = (StMorador *) m;
+	Ponto p = city_get_ponto(c, sm->addr);
+	//face é nort
+		fprintf(svgName, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"10\" fill=\"crimson\"/>",
+				p.x,
+				p.y);
+}
+void drawEstabelecimento(FILE *svgName, Cidade c, Morador m){
+	StComercio *sc = (StComercio *) m;
+	Ponto p = city_get_ponto(c, sc->address);
+
+	fprintf(svgName, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"10\" fill=\"darkgoldenrod\"/>",
+			p.x,
+			p.y
+			);
 
 }
+

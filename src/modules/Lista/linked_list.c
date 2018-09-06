@@ -220,7 +220,7 @@ void destroy(Lista l){
 Lista searchList(Lista l, int (*compare)(void *, void *), void *comp){
 	Node *n;
 	for(n = getFirst(l); n != NULL; n = n->next){
-		if(compare(n->data, comp) == 0)
+		if(compare(n->data, comp))
 			return n->data;
 	}
 	return NULL;
