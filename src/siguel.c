@@ -55,26 +55,24 @@ main(int argc, char *argv[]){
 	while(i < argc){
 		if(strcmp("-e", argv[i]) == 0){
 			i++;
-			path = aloca_tamanho( strlen(argv[i]));
-			strcpy(path,arruma_path(argv[i]));
-			printf("PATH=%s\n", path);
+			path = aloca_tamanho(strlen(argv[i]));
+			strcpy(path,argv[i]);
+			path = arruma_path(path);
 		}
 		if(strcmp("-f", argv[i]) == 0){
 			i++;
-			leitura = aloca_tamanho( strlen(argv[i]));
+			leitura = aloca_tamanho(strlen(argv[i]));
 			strcpy(leitura, argv[i]);
 		}
 		if(strcmp("-o", argv[i]) == 0){
 			i++;
-			dir = aloca_tamanho( strlen(argv[i]));
+			dir = aloca_tamanho(strlen(argv[i]));
 			strcpy(dir, argv[i]);
 			dir = arruma_path(dir);
-
-			printf("%s\n", dir);
 		}
 		if(strcmp("-q", argv[i]) == 0){
 			i++;
-			qry = aloca_tamanho( strlen(argv[i]));
+			qry = aloca_tamanho(strlen(argv[i]));
 			strcpy(qry, argv[i]);
 
 		}
@@ -107,10 +105,8 @@ main(int argc, char *argv[]){
 	nomeSvg = criaString(dir, leitura, ".svg");
 
 	nomePath = criaString(path, leitura, ".geo");
-	printf("NOME LEITURA=%s\n", nomePath);
 
 	fRead = fopen(nomePath, "r");
-	printf("NOME ESCRITA=%s\n", nomeTxt);
 
 	fTxt  = fopen(nomeTxt, "w");
 	if(fTxt == NULL){
@@ -123,7 +119,8 @@ main(int argc, char *argv[]){
 		fprintf(stderr, "cant create file");
 		exit(-1);
 	}
-	fprintf(fDraw,"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100000\" height=\"100000\">\n");
+
+	startSvg(fDraw);
 
 	if(fRead == NULL){
 		fprintf(stderr, "Can't find file to read\nCheck if it exists\n");
@@ -141,15 +138,12 @@ main(int argc, char *argv[]){
 					sscanf(line, "ch %s %s", strk_h, fill_h);
 				else if(line[1] == 't')
 					sscanf(line, "ct %s %s", strk_t, fill_t);
-
 				else if(line[1] == 's')
 					sscanf(line, "cs %s %s", strk_s, fill_s);
 				else{
 					sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
 					c = createCircle(border, inside, r, x, y);
 					insert(listC, c, id);
-
-
 				}
 
 				break;
@@ -377,17 +371,18 @@ main(int argc, char *argv[]){
 	//parsing and handling .qry files
 	if(qry != NULL){
 		qry[strlen(qry) -4] = 0;
-
+		char *fQryString = criaString(path, qry, ".qry");
+		fQry = fopen(fQryString, "r");
+		free(fQryString);
 		char *qry_name = qry;
-		fQry = fopen(criaString(path, qry, ".qry"), "r");
 		if(!fQry){
 			fprintf(stdout, "Cant open file");
 			exit(-1);
 		}
 		if(has_slash(qry))
 			qry_name = get_last_slash(qry);
-		qry_name = criaString(dir, criaString(leitura, "-", qry_name), ".svg");
-		printf("%s\n", qry_name);
+		char *qry_nameString = criaString(leitura, "-", qry_name);
+		qry_name = criaString(dir, qry_nameString, ".svg");
 		fSvgQry = fopen(qry_name, "w");
 
 		if(!fSvgQry){
@@ -550,7 +545,7 @@ main(int argc, char *argv[]){
 				//moradores em uma região r
 				sscanf(line, "mr? %lf %lf %lf %lf", &x, &y, &w, &h);
 				Rect r = createRect("", "", w,h,x,y);
-				_hashSearchQuadraInRect(city, r, city.arvore_quadra, fTxt);
+				_hashSearchQuadraInRect(city, r, fTxt);
 				free(r);
 			}
 			else if(strncmp(line, "dm?", 3) == 0){
@@ -600,28 +595,66 @@ main(int argc, char *argv[]){
 				remove_hash(city.pessoas, cpf);
 			}
 			else if(strncmp(line, "ecq?", 4) == 0){
+				//estabelecimento comercial numa dada regiao
 				sscanf(line, "ecq? %s", cep);
 					Lista estbl_quadra = hash_filter_to_list(city.comercio, _compareCepEstblcmto, cep);
+					Node *n;
+					fprintf(fTxt, "\n---- Estebelecimentos comerciais no cep %s ----\n", cep);
+					for(n = getFirst(estbl_quadra); n != NULL; n = n->next){
+						HashData *hd = (HashData *) n->data;
+						StComercio * sc = (StComercio *) hd->data;
+						fprintf(fTxt, "Cnpj => %s\nNome =>%s\nTipo =>%s\n",sc->cnpj, sc->nome, sc->codt);
+					}
+					destroy(estbl_quadra);
 
-					printf("TODO");
 			}
 			else if(strncmp(line, "ecr?", 4) == 0){
-				sscanf(line, "ecr? %s", cep);
+				char tp[50];
+				if(sscanf(line, "ecr? %s %lf %lf %lf %lf", tp, &x, &y, &w, &h) == 5){
+					Rect r = createRect("", "", w, h, x, y);
+					_hashSearchTipoInRect(city, r, tp, fTxt);
+					free(r);
+				}
+				else{
+					sscanf(line, "ecr? %s", tp);
+					Lista estblc = hash_filter_to_list(city.comercio, _compareCodtEstblc, tp);
+					Node *n;
+					fprintf(fTxt, "\n---- Estabelecimentos comerciais do tipo %s ----\n", tp);
+					for(n = getFirst(estblc); n != NULL; n = n->next){
+						HashData *hd = (HashData *) n->data;
+						StComercio *sc = (StComercio *) hd->data;
+						fprintf(fTxt, "Nome => %s\nEndereco =>%s/%c/%d\n", sc->nome,
+								estabelecimento_get_cep(sc),
+								estabelecimento_get_face(sc), 
+								estabelecimento_get_num(sc));
+					}
+					destroy(estblc);
+				}
 			}
 			else if(strncmp(line, "tecq?", 5) == 0){
 				sscanf(line, "tecq? %s", cep);
 				/* Lista os tipos de estabelecimentos comerciais de uma quadra */
 				Lista estbl_quadra = hash_filter_to_list(city.comercio, _compareCepEstblcmto, cep);
 				Node *n;
+				fprintf(fTxt, "\n----Tipos de comercio da quadra com o CEP %s----\n", cep);
 				for(n = getFirst(estbl_quadra); n != NULL; n = n->next){
 					HashData *hd = n->data;
 					StComercio *sc = (StComercio *)hd->data;
-					printf("%s", sc->nome);
+					fprintf(fTxt, "Tipo => %s\n", sc->codt);
 				}
-
+				destroy(estbl_quadra);
+			}
+			else if(strncmp(line, "tecr?", 5) == 0){
+				/* Tipos de estabelecimentos numa dada regiao */
+				sscanf(line, "tecr? %lf %lf %lf %lf", &x, &y, &w, &h);
+				Rect r =  createRect("", "", w, h, x, y);
+				_hashSearchEstblcInRect(city, r, fTxt);
+				free(r);
+			}
+			else if(strncmp(line, "hmpe?", 5) == 0){
+				printf("Todo\n\n");
 			}
 		}
-		//Estabelecimento comercial
 
 		
 
@@ -654,6 +687,7 @@ main(int argc, char *argv[]){
 		}
 
 		free(qry_name);
+		free(qry_nameString);
 		fprintf(fSvgQry, "\n</svg>\n");
 		fclose(fSvgQry);
 	}
@@ -686,6 +720,8 @@ main(int argc, char *argv[]){
 	free(nomeSvg);
 	free(nomeTxt);
 	free(nomePath);
+	free(ec);
+	free(pm);
 
 
 	fclose(fRead);
@@ -693,7 +729,7 @@ main(int argc, char *argv[]){
 	fclose(fDraw);
 
 	//destroying lists
-	/* free_cidade(city); */
+	free_cidade(city);
 	destroy(listC);
 	destroy(listR);
 	/*destroy(linha2); */

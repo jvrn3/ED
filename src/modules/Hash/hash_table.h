@@ -25,7 +25,7 @@ void insertHash(char *key, void *data);
 void put(HashTable *ht, char *key, void *data);
 void *search(HashTable *ht, char *key);
 int compare(void *, void *);
-Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *), char *key);
+Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *), void *key);
 int get_hash_max();
 void remove_hash(HashTable *ht, char *key);
 #endif

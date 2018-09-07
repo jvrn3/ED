@@ -100,6 +100,15 @@ char *get_sexo(Pessoa p){
 	else
 		return "Feminino";
 }
+int _compareCodtEstblc(void *h, void *k){
+	HashData *hd= (HashData *) h;
+	char *key = (char *) k;
+	char *codt = estabelecimento_get_codt(hd->data);
+	if(strcmp(codt, key) == 0)
+		return 1;
+	else
+		return 0;
+}
 int _compareCepMorador(void *h, void *k){
 	HashData *hd = (HashData *) h;
 	char *key = (char *) k;
@@ -119,7 +128,54 @@ int _compareCepEstblcmto(void *h, void *k){
 	else
 		return 0;
 }
-void _hashSearchQuadraInRect(Cidade c, Rect r, KdTree kd_quadra, FILE *fTxt){
+void _hashSearchEstblcInRect(Cidade c, Rect r, FILE *fTxt){
+	HashTable *ht = (HashTable *) c.comercio;
+	Node *n;
+	fprintf(fTxt, "\n---- Estabelecimentos dentro do retangulo ----\n");
+	for(int i = 0; i < get_hash_max(); i++){
+		if(ht->table[i] != NULL){
+			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
+				HashData *hd = (HashData *) n->data;
+				StComercio *sc  = (StComercio *) hd->data;
+				Ponto p = city_get_ponto(c, sc->address);
+				if(isInsideR(r, p.x, p.y)){
+					fprintf(fTxt, "Nome => %s\nEndereco => %s/%c/%d\n",
+								sc->nome,
+								estabelecimento_get_cep(sc),
+								estabelecimento_get_face(sc),
+								estabelecimento_get_num(sc));
+				}
+			}
+		}
+	}
+}
+void _hashSearchTipoInRect(Cidade c, Rect r, char *key, FILE *fTxt){
+	HashTable *ht = (HashTable *) c.comercio;
+	Node *n;
+	fprintf(fTxt, "\n---- Estabelecimentos do tipo %s dentro do retangulo ----\n", key);
+	for(int i = 0; i < get_hash_max(); i++){
+		if(ht->table[i] != NULL){
+			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
+				HashData *hd = (HashData *) n->data;
+				StComercio *sc = (StComercio *) hd->data;
+				//se codt == codt pesquisado, entao
+				if(strcmp(key, sc->codt) == 0){
+					Ponto p = city_get_ponto(c, sc->address);
+					if(isInsideR(r, p.x, p.y)){
+						fprintf(fTxt, "Nome => %s\nEndereco => %s/%c/%d\n",
+								sc->nome,
+								estabelecimento_get_cep(sc),
+								estabelecimento_get_face(sc),
+								estabelecimento_get_num(sc));
+					}
+				}
+
+			}
+		}
+	
+	}
+}
+void _hashSearchQuadraInRect(Cidade c, Rect r, FILE *fTxt){
 	HashTable *ht = (HashTable *) c.moradores;
 	StQuadra *sq;
 	Node *n;
@@ -307,8 +363,6 @@ void searchQuadraInCircle(Circle c, KdTree k, FILE *fTxt){
 	free(r);
 	r = NULL;
 }
-
-
 
 
 KdTree deleteQuadraInRect(Rect r, KdTree k, FILE *fTxt){
@@ -604,7 +658,13 @@ void free_cidade(Cidade c){
 	destroyTree(c.arvore_hidrante);
 	destroyTree(c.arvore_torre);
 	destroyTree(c.arvore_semaforo);
-	
+	delete_hash_table(c.tipo_comercio);
+	delete_hash_table(c.moradores);
+	delete_hash_table(c.pessoas);
+	delete_hash_table(c.cep_quadra);
+	delete_hash_table(c.comercio);
+	destroy(c.mor);
+	destroy(c.est);
 }
 
 
@@ -730,7 +790,6 @@ float closest_kd(KdTree k){
 
 }
 void point_aux(FILE *fSvg, FILE *fTxt, StTorre *a, StTorre *b, float dist){
-	printf("foi");
 	fprintf(fSvg, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
 			15.0,
 			a->x,

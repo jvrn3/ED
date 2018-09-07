@@ -49,6 +49,8 @@ Node *getNext(Lista l);
 Lista searchList(Lista l, int (*compare)(void *, void *), void *comp);
 void destroy(Lista l);
 Node *getFirst(Lista l);
+void *removeFirst(Lista l);
+void *removeLast(Lista l);
 
 #endif
 

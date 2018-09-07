@@ -10,14 +10,14 @@ char *criaString(char *dir, char *nome, char *ext){
 }
 char *aloca_tamanho(int len){
 	char *str;
-	str = (char *)malloc(sizeof(char) * len + 1);
+	str = malloc(sizeof(char) * len + 1);
 	return str;
 }
 char *arruma_path(char *str){
 	char ultimo = str[strlen(str) -1];
 	char *aux;
 	if(ultimo != '/'){
-		aux = (char *)malloc(sizeof(char) * strlen(str) +2);
+		aux = malloc(sizeof(char) * strlen(str) +2);
 		strcpy(aux, str);
 		strcat(aux, "/");
 		return aux;
@@ -41,7 +41,7 @@ char *get_last_slash(char *str){
 	return NULL;
 }
 char *concatena(char *str, char *str2){
-	str = (char *)realloc(str, sizeof(char) * (strlen(str) + strlen(str2) )+2);
+	str = realloc(str, sizeof(char) * (strlen(str) + strlen(str2) )+1);
 	strcat(str, str2);
 	return str;
 }

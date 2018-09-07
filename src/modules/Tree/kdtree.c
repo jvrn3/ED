@@ -99,9 +99,7 @@ KdTree delete_kd_node(KdTree kd, void *data, float point[], int depth){
 	 n->left = NULL;
       }
       else{
-	n->data = NULL;
 	n = NULL;
-
 	 return NULL;
       }
       return n;
@@ -136,6 +134,9 @@ void destroyTree(KdTree k){
     return;
   destroyTree(kd->left);
   destroyTree(kd->right);
-  free(kd->data);
-  free(kd);
+  void *data = kd->data;
+  if(data != NULL)
+    free(data);
+  if(kd != NULL)
+    free(kd);
 }

@@ -1,5 +1,8 @@
 #include "svg.h"
 /* need to create a geometry library */
+void startSvg(FILE *fSvg){
+	fprintf(fSvg,"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100000\" height=\"100000\">\n");
+}
 void displayRectToSvg(FILE *f, Lista l){
 	Node *n = (Node *)l;
 	while(n->next != NULL){

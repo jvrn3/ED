@@ -16,6 +16,7 @@
 
 /* procedures to draw in svg format */ 
 
+void startSvg(FILE *fSvg);
 void drawCircle(FILE *fname, Circle c);
 void drawRect(FILE *fname, Rect r);
 void drawQuadra(FILE *svgName, Quadra r);
