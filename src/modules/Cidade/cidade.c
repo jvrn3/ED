@@ -29,6 +29,15 @@ Cidade createCity(){
 
 	return city;
 }
+Address changeAddress(Address a, char *cep, char face, int num, char *comp){
+	StAddress *sa = (StAddress *) a;
+	strcpy(sa->cep, cep);
+	strcpy(sa->comp, comp);
+	sa->face= face;
+	sa->num = num;
+	return sa;
+}
+
 Ponto city_get_ponto(Cidade c, Address a){
 	Quadra q = search(c.cep_quadra, address_get_cep(a));
 	char face = address_get_face(a);
@@ -658,11 +667,11 @@ void free_cidade(Cidade c){
 	destroyTree(c.arvore_hidrante);
 	destroyTree(c.arvore_torre);
 	destroyTree(c.arvore_semaforo);
-	delete_hash_table(c.tipo_comercio);
-	delete_hash_table(c.moradores);
-	delete_hash_table(c.pessoas);
-	delete_hash_table(c.cep_quadra);
-	delete_hash_table(c.comercio);
+	delete_hash_table(c.tipo_comercio, free);
+	delete_hash_table(c.moradores, free_morador);
+	delete_hash_table(c.pessoas, free);
+	delete_hash_table(c.cep_quadra, free);
+	delete_hash_table(c.comercio, free_comercio);
 	destroy(c.mor);
 	destroy(c.est);
 }

@@ -10,14 +10,14 @@ char *criaString(char *dir, char *nome, char *ext){
 }
 char *aloca_tamanho(int len){
 	char *str;
-	str = malloc(sizeof(char) * len + 1);
+	str = malloc(sizeof(char) * len +1);
 	return str;
 }
 char *arruma_path(char *str){
 	char ultimo = str[strlen(str) -1];
 	char *aux;
 	if(ultimo != '/'){
-		aux = malloc(sizeof(char) * strlen(str) +2);
+		aux = malloc(sizeof(char) * strlen(str) +2  );
 		strcpy(aux, str);
 		strcat(aux, "/");
 		return aux;

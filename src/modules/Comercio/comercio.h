@@ -23,5 +23,6 @@ char *estabelecimento_get_cep(Comercio c);
 int estabelecimento_get_num(Comercio c);
 char estabelecimento_get_face(Comercio c);
 char *estabelecimento_get_codt(Comercio c);
+void free_comercio(Comercio c);
 #endif
 

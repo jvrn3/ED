@@ -36,6 +36,7 @@ void drawRectPontilhado(FILE *svgName, Rect r);
 void drawCirclePontilhado(FILE *svgName, Circle c);
 void drawMorador(FILE *svg, Cidade c, Morador m);
 void drawEstabelecimento(FILE *svgName, Cidade c, Morador m);
+void drawLineMudanca(FILE *svgName, Ponto a, Ponto b);
 #endif
 
 

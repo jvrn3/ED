@@ -22,4 +22,6 @@ int morador_get_num(Morador m);
 
 char *morador_get_comp(Morador m);
 
+void free_morador(Morador m);
+
 #endif

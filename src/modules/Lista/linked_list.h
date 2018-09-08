@@ -51,6 +51,7 @@ void destroy(Lista l);
 Node *getFirst(Lista l);
 void *removeFirst(Lista l);
 void *removeLast(Lista l);
+void *search_del(Lista l, int (*compare)(void *, void *), void *comp);
 
 #endif
 

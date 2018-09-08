@@ -27,3 +27,8 @@ char *morador_get_comp(Morador m){
 	return address_get_comp(sm->addr);
 
 }
+void free_morador(Morador m){
+	StMorador *sm = (StMorador *) m;
+	free(sm->addr);
+	free(sm);
+}

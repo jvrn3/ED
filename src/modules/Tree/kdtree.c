@@ -134,9 +134,5 @@ void destroyTree(KdTree k){
     return;
   destroyTree(kd->left);
   destroyTree(kd->right);
-  void *data = kd->data;
-  if(data != NULL)
-    free(data);
-  if(kd != NULL)
-    free(kd);
+  free(kd);
 }

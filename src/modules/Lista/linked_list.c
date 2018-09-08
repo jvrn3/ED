@@ -163,7 +163,7 @@ Lista search_id(Lista l, int id, int data){
 void *removeLast(Lista l){
 	StList *st = (StList *) l;
 	Node *tmp = st->head;
-	Node *t;
+	Node *t = tmp;
 	if(st->head == NULL){
 		void *d = tmp->data;
 		free(st->head);
@@ -252,14 +252,19 @@ void *removeFirst(Lista l){
 	if(st->head == NULL)
 		return NULL;
 	Node *n = st->head;
+	if(n->next == NULL){
+		void *d = n->data;
+		st->head = NULL;
+		st->size--;
+		free(n);
+		return d;
+	}
 	void *d = n->data;
 	st->head = n->next;
 	st->size--;
-	
 	free(n);
 	return d;
 }
-
 
 void destroy(Lista l){
 	StList *list = (StList *) l;
@@ -268,8 +273,15 @@ void destroy(Lista l){
 		if(data != NULL)
 			free(data);
 	}
-	
 	free(list);
+}
+void *search_del(Lista l, int (*compare)(void *, void *), void *comp ){
+	Node *n;
+	for(n = getFirst(l); n != NULL; n = n->next){
+		if(compare(n->data, comp))
+			return del(l, n->data);
+	}
+	return NULL;
 }
 
 Lista searchList(Lista l, int (*compare)(void *, void *), void *comp){

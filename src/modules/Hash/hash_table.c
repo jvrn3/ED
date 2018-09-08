@@ -62,27 +62,28 @@ Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *),void *_com
 	}
 	return new_list;
 }
-void remove_hash(HashTable *ht, char *key){
+void *remove_hash(HashTable *ht, char *key){
 	int index = hash(key);
+
+	HashData *hd = search_del(ht->table[index], compare, key);
+	if(hd != NULL){
+		void *d = hd->data;
+		free(hd);
+		return d;
+	}
 	//does this key exist? 
-	if(ht->table[index] != NULL){
-		HashData *hd = (HashData *) searchList(ht->table[index], compare, key);
-		if(hd == NULL)
-			return;
-		else{
-			del(ht->table[index], hd);
-			free(hd);
-			hd = NULL;
-		}
-	}
-	else{
-		printf("Erro ao deletar.\n");
-	
-	}
+	return NULL;
 }
-void delete_hash_table(HashTable *ht){
+void delete_hash_table(HashTable *ht, void (*func)(void *)){
 	for(int i = 0; i < get_hash_max(); i++){
 		if(ht->table[i] != NULL){
+			while(length(ht->table[i]) > 0){
+				HashData *data= removeFirst(ht->table[i]);
+				if(data != NULL){
+					func(data->data);
+					free(data);
+				}
+			}
 			destroy(ht->table[i]);
 		}
 	}

@@ -67,7 +67,7 @@ main(){
 	kd = kd_insert(kd, r3, point);
 	float point2[] = {70, 10};
 	kd = kd_insert(kd, r5, point2);
-	kd = delete_kd_node(kd, r3, point, 0);
+	delete_kd_node(kd, r3, point, 0);
     /*  */
 	/* kd=  kd_insert(kd, r2, );   */
 	/* kd  = kd_insert(kd, r5, compare, compareY);  */
@@ -79,6 +79,7 @@ main(){
 	/* delete_kd_node(kd, createRect("grey", "gasdg", 11,12, 66, 85), compareZ, 0); */
 	/* printf("%\n\n"); */
 	/* printInOrder(kd, display_fn); */
+	destroyTree(kd);
 
 	
 

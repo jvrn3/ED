@@ -1,17 +1,18 @@
 #include "../modules/Hash/hash_table.h"
+#include "../modules/Morador/morador.h"
 
 int
 main(){
-	int a = 2;
-	int b = 4;
-	void *d = &a;
-	void *e = &b;
 	HashTable *ht = new_hash_table();
-	put(ht, "joao", d);
-	put(ht, "Joao", e);
+	put (ht, "123",createMorador("123", "abc", 'S', 123, "apto" ));
+	put (ht, "223",createMorador("223", "bbc", 'N', 223, "apto" ));
+	put (ht, "323",createMorador("323", "cbc", 'L', 323, "apto" ));
+	put (ht, "423",createMorador("423", "dbc", 'O', 423, "apto" ));
 
-	printf("%d\n",  *(int *)search(ht, "Joao"));
-	printf("%d",  *(int *)search(ht, "joao"));
+	StMorador *sm = (StMorador *) search(ht, "123");
+	printf("%s\n", sm->cpf);
 
 
+	delete_hash_table(ht, free_morador);
+	return 0;
 }

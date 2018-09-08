@@ -295,6 +295,14 @@ void drawEstabelecimento(FILE *svgName, Cidade c, Morador m){
 			p.x,
 			p.y
 			);
-
+}
+void drawLineMudanca(FILE *svgName, Ponto a, Ponto b){
+	fprintf(svgName, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke-width=\"5\" stroke=\"%s\"/>\n",
+			a.x + 10,
+			a.y,
+			b.x,
+			b.y,
+			"black");
+	printf("%lf\n", a.x);
 }
 

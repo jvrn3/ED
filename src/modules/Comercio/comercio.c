@@ -32,3 +32,8 @@ char *estabelecimento_get_codt(Comercio c){
 	StComercio *sc = (StComercio *) c;
 	return sc->codt;
 }
+void free_comercio(Comercio c){
+	StComercio *sc = (StComercio *) c;
+	free(sc->address);
+	free(sc);
+}

@@ -46,6 +46,7 @@ typedef struct cidade{
 }Cidade;
 
 Cidade createCity();
+Address changeAddress(Address a, char *cep, char face, int num, char *comp);
 Ponto city_get_ponto(Cidade c, Address a);
 Pessoa searchPessoa(Hash h, char *key);
 Comercio searchComercioTipo(Hash h, char *key);
