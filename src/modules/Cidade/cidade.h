@@ -47,6 +47,7 @@ typedef struct cidade{
 
 Cidade createCity();
 Address changeAddress(Address a, char *cep, char face, int num, char *comp);
+Ponto hmp(Hidrante h);
 Ponto city_get_ponto(Cidade c, Address a);
 Pessoa searchPessoa(Hash h, char *key);
 Comercio searchComercioTipo(Hash h, char *key);
@@ -94,10 +95,6 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 void traverseTreeTorre(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 void traverseTreeSemaforo(KdTree kd, void (*func)(FILE *, void *), FILE *f);
 
-float nn_aux(float a[], KdTree k, float *best);
-float nn(KdTree k, float a[]);
-float closest_aux(KdTree k, float *minor);
-float closest_kd(KdTree k);
 int pointt(KdTree k, float dist, FILE *fSvg, FILE *fTxt);
 void point_aux(FILE *fSvg, FILE *fTxt, StTorre *a, StTorre *b, float dist);
 #endif

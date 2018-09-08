@@ -643,7 +643,11 @@ main(int argc, char *argv[]){
 				free(r);
 			}
 			else if(strncmp(line, "hmpe?", 5) == 0){
-				printf("Todo\n\n");
+				char cep[50], face;
+				int num;
+				sscanf(line, "hmpe? %s %c %d", cep, &face, &num);
+				Address a = createAddress(cep, face, num, "");
+				printf("%lf\n", nn(city.arvore_hidrante, city_get_ponto(city, a), hmp));
 			}
 			else if(strncmp(line, "fec", 3) == 0){
 				char cnpj[50];
@@ -695,7 +699,8 @@ main(int argc, char *argv[]){
 		
 		//had to do this because the circle on svg would be printed before other elements and then be hidden
 		if(crb){
-				pointt(city.arvore_torre, closest_kd(city.arvore_torre), fSvgQry, fTxt );
+
+				/* pointt(city.arvore_torre, closest_kd(city.arvore_torre), fSvgQry, fTxt ); */
 		}
 
 		free(qry);

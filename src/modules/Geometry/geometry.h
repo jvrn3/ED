@@ -16,8 +16,9 @@ typedef struct ponto{
 #include "../Sort/sort.h"
 #include "../Cidade/cidade.h"
 #include "math.h"
+#include <float.h>
 Ponto createPonto(float x, float y);
-double distancePoints(float *a, float *b);
+double distancePoints(Ponto a, Ponto b);
 double distanceCC(Circle c, Circle c2);
 double distanceCR(Circle c, Rect r);
 double distanceRR(Rect r, Rect r2);

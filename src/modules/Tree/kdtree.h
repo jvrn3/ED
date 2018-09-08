@@ -1,5 +1,4 @@
 #ifndef KDTREE_H
-
 #define KDTREE_H
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +9,7 @@ typedef struct kdnode{
     struct kdnode *left;
     struct kdnode *right;
 }KdNode;
-
+#include "../Geometry/geometry.h"
 /* 2d Tree */
 /* uma árvore kd é uma árvore binária que armazena pontos*/
 KdTree newKdTree(void *, float point[]);
@@ -26,4 +25,8 @@ void copy_node(void *a, void *b);
 int are_same(float a[], float b[]);
 void destroyTree(KdTree k);
 void copyPoint(float p[], float p2[]);
+float nn_aux(Ponto a, KdTree k, float *best, Ponto (*getPontos)(void *));
+float nn(KdTree k, Ponto a, Ponto (*getPontos)(void *));
+float closest_aux(KdTree k, float *minor, Ponto (*getPontos)(void *));
+float closest_kd(KdTree k, Ponto (*getPontos)(void *) );
 #endif

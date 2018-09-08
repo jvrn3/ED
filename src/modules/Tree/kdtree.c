@@ -1,5 +1,4 @@
 #include "kdtree.h"
-
 KdTree newKdTree(void *data, float point[]){
     KdTree kd = malloc(sizeof(KdNode));
     KdNode *n = (KdNode *) kd;
@@ -135,4 +134,58 @@ void destroyTree(KdTree k){
   destroyTree(kd->left);
   destroyTree(kd->right);
   free(kd);
+}
+//nearest neighbor of a given point
+float nn_aux(Ponto a, KdTree k, float *best, Ponto (*getPontos)(void *)){
+  if(k != NULL){
+    KdNode *kd = (KdNode *) k;
+
+    Ponto b = getPontos(kd->data);
+    float dist = distancePoints(a, b);
+    if(dist < *best && dist != 0){
+      *best = dist;
+    }
+    if(kd->left != NULL && kd->right != NULL){
+      Ponto c = getPontos(kd->left->data);
+      Ponto d = getPontos(kd->right->data);
+      if(distancePoints(a, c) < distancePoints(a, d)){
+	nn_aux(a, kd->left, best, getPontos);
+      }
+      else
+	nn_aux(a, kd->right, best, getPontos);
+    }
+    if(kd->left == NULL && kd->right != NULL)
+      nn_aux(a, kd->right, best, getPontos);
+    else if(kd->left != NULL && kd->right == NULL)
+      nn_aux(a, kd->left, best, getPontos);
+  }
+  return *best;
+}
+float nn(KdTree k, Ponto a, Ponto (*getPontos)(void *)){
+  /* KdNode *kd = (KdNode *)k; */
+  float best_dist = FLT_MAX;
+  return nn_aux(a, k, &best_dist, getPontos); 
+}
+float closest_aux(KdTree k, float *minor, Ponto (*getPoints)(void *)){
+	if(k != NULL){
+		KdNode *kd = (KdNode *) k;
+		Ponto a = getPoints(kd->data);
+		float d = nn(k, a, getPoints);
+		if(d < *minor)
+			*minor = d;
+
+		if(kd->left != NULL){
+			closest_aux(kd->left, minor, getPoints);
+		}
+
+		if(kd->right != NULL){
+			closest_aux(kd->right, minor, getPoints);
+		}
+	}
+		return *minor;
+}
+//closest points in a kd tree
+float closest_kd(KdTree k, Ponto (*getPontos)(void *)){
+	float m = FLT_MAX;
+	return closest_aux(k, &m, getPontos);
 }

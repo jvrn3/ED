@@ -1,5 +1,4 @@
 #include "geometry.h"
-#include <float.h>
 
 Ponto createPonto(float x, float y){
     Ponto p;
@@ -7,9 +6,9 @@ Ponto createPonto(float x, float y){
     p.y = y;
     return p;
 }
-double distancePoints(float *a, float *b){
-    return sqrt(pow((a[0] - b[0]), 2) +
-		pow((a[1] - b[1]), 2)
+double distancePoints(Ponto a, Ponto b){
+    return sqrt(pow((a.x - b.x), 2) +
+		pow((a.y - b.y), 2)
 	    );
 
 }
@@ -154,18 +153,18 @@ int isCircleInsideCircle(Circle a, Circle b){
 		return 0;
 }
 
-Ponto  *getPontos(Torre t){
-	Node *n;
-	int i;
-	Ponto *p = (Ponto *)malloc(sizeof(Ponto) * length(t));
-	for(i = 0, n = getFirst(t); n != NULL; n = n->next, i++){
-		StTorre *st = (StTorre *) n->data;
-		p[i].x = st->x;
-		p[i].y = st->y; 
-	}
-	return p;
-}
-
+/* Ponto  *getPontos(Torre t){ */
+/* 	Node *n; */
+/* 	int i; */
+/* 	Ponto *p = (Ponto *)malloc(sizeof(Ponto) * length(t)); */
+/* 	for(i = 0, n = getFirst(t); n != NULL; n = n->next, i++){ */
+/* 		StTorre *st = (StTorre *) n->data; */
+/* 		p[i].x = st->x; */
+/* 		p[i].y = st->y;  */
+/* 	} */
+/* 	return p; */
+/* } */
+/*  */
 /* Ponto *sortPontos(Ponto *pontos, int length){ */
 /* 	heap_sort(pontos, length); */
 /* 	return pontos; */
@@ -265,13 +264,6 @@ float stripClosest(Ponto *strip, int size, float d){
 	return min;
 }
 float closest(Ponto *ponto, int n){
-/* 	Ponto px[n]; */
-/* 	Ponto py[n]; */
-/* 	for(int i = 0; i < n; i++){ */
-/* 		px[i] = p[i]; */
-/* 		py[i] = p[i]; */
-/* 	} */
-/* 	heap_sort_x(p, n); */
 
 	heap_sort_x(ponto, n);
 	float min = closestPairs(ponto, n);
