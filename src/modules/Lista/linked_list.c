@@ -42,6 +42,8 @@ Node * getNext(Lista l){
 }
 Node *getFirst(Lista l){
 	StList *list = (StList* )l;
+	if(list->head == NULL)
+		return NULL;
 	Node *n = list->head;
 	return n;
 
@@ -133,6 +135,8 @@ void display(Lista l, FILE *fname, void (*f)(FILE *, void *)){
 	}
 
 }
+//Deprecated
+//used only for t2
 void manipulate(Lista l, Lista l2, FILE *fname, void (*f)(FILE *, void *, void *)){
 	StList *n = (StList *) l;
 	StList *n2 = (StList *) l2;
@@ -144,6 +148,8 @@ void manipulate(Lista l, Lista l2, FILE *fname, void (*f)(FILE *, void *, void *
 		aux = aux->next;
 	}
 }
+//Deprecated
+//used only for t2
 Lista search_id(Lista l, int id, int data){
 	StList *list = (StList *) l;
 	Node *n = list->head;
@@ -161,6 +167,8 @@ Lista search_id(Lista l, int id, int data){
 	
 }
 void *removeLast(Lista l){
+	if(l == NULL)
+		return NULL;
 	StList *st = (StList *) l;
 	Node *tmp = st->head;
 	Node *t = tmp;
@@ -177,13 +185,18 @@ void *removeLast(Lista l){
 			tmp = tmp->next;
 		}
 	}
-	void *d = t->next->data;
+	void *d =NULL;
+	if(t->next)
+		d = t->next->data;
 	free(t->next);
 	t->next = NULL;
 	st->size--;
 	return d;
 }
 void * del(Lista l, void *data){
+	if(l == NULL)
+		return NULL;
+
 	StList *list = (StList *) l;
 	Node *n = list->head;
 	Node *prev = NULL;
@@ -211,43 +224,10 @@ void * del(Lista l, void *data){
 		list->size--;
 		return d;
 	}
-	/* if(tmp != NULL && tmp->data == data){ */
-	/* 	list->head = tmp->next; */
-	/* 	void *d = tmp->data; */
-	/* 	free(tmp); */
-	/* 	return d; */
-	/*  */
-	/* } */
-	/* while(tmp != NULL && tmp->data != data){ */
-	/* 	prev = tmp; */
-	/* 	tmp = tmp->next; */
-	/* } */
-	/* if(tmp == NULL) */
-	/* 	return tmp; */
-    /*  */
-	/* prev->next = tmp->next; */
-	/* void *d = tmp->data; */
-	/* free(tmp); */
-	/* return d; */
-	/* if(tmp == NULL) */
-	/* 	return NULL; */
-	/*  */
-	/* while(tmp->data != data && tmp->next != NULL){ */
-	/* 	prev = tmp; */
-	/* 	tmp = tmp->next; */
-	/* } */
-	/* if(tmp->data == data){ */
-	/* 	if(prev) */
-	/* 			prev->next = tmp->next; */
-	/* 	else */
-	/* 		list->head = tmp->next; */
-	/* } */
-	/* void *d = tmp->data; */
-	/* free(tmp); */
-	/* list->size--; */
-	/* return d; */
 }
 void *removeFirst(Lista l){
+	if(l == NULL)
+		return NULL;
 	StList *st = (StList *) l;
 	if(st->head == NULL)
 		return NULL;
@@ -267,6 +247,8 @@ void *removeFirst(Lista l){
 }
 
 void destroy(Lista l){
+	if(l == NULL)
+		return;
 	StList *list = (StList *) l;
 	while(list->size > 0){
 		void *data = removeFirst(list);
@@ -291,4 +273,13 @@ Lista searchList(Lista l, int (*compare)(void *, void *), void *comp){
 			return n->data;
 	}
 	return NULL;
+}
+void destroyList(Lista l){
+	if(l == NULL)
+		return;
+	StList *list = (StList *) l;
+	while(list->size > 0){
+		removeFirst(list);
+	}
+	free(list);
 }

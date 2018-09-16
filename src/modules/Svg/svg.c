@@ -194,7 +194,6 @@ void drawOverlapCC(FILE *svgName, Circle c, Circle c2){
 	else
 		w = MAX(sc->x + sc->r , sc2->x + sc2->r) +abs(x) ;
 
-	printf("\n\n%.2f", y);
 	if(y > 0)
 		h = MAX(sc->y + sc->r, sc2->y + sc2->r) - y;
 	else
@@ -279,30 +278,48 @@ fprintf(svgName, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"pink\" f
 		sc->x,
 		sc->y);
 }
-void drawMorador(FILE *svgName, Cidade c,  Morador m){
-	StMorador *sm = (StMorador *) m;
-	Ponto p = city_get_ponto(c, sm->addr);
+void drawMorador(FILE *svgName, Ponto p, char *cpf){
 	//face é nort
-		fprintf(svgName, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"10\" fill=\"crimson\"/>",
+		fprintf(svgName, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"10\" fill=\"violet\"/>",
+
 				p.x,
 				p.y);
+	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"black\" font-size=\"12\">%s</text>\n",
+			p.x + 5, p.y, cpf);
 }
-void drawEstabelecimento(FILE *svgName, Cidade c, Morador m){
-	StComercio *sc = (StComercio *) m;
-	Ponto p = city_get_ponto(c, sc->address);
-
+void drawEstabelecimento(FILE *svgName, Ponto p){
 	fprintf(svgName, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"10\" fill=\"darkgoldenrod\"/>",
 			p.x,
 			p.y
 			);
 }
 void drawLineMudanca(FILE *svgName, Ponto a, Ponto b){
-	fprintf(svgName, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke-width=\"5\" stroke=\"%s\"/>\n",
+	fprintf(svgName, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke-width=\"3\" stroke=\"%s\"/>\n",
 			a.x + 10,
 			a.y,
 			b.x,
 			b.y,
 			"black");
-	printf("%lf\n", a.x);
 }
+void drawLineMudancaEst(FILE *svgName, Ponto a, Ponto b){
+	fprintf(svgName, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke-width=\"3\" stroke=\"%s\"/>\n",
+			a.x + 10,
+			a.y,
+			b.x,
+			b.y,
+			"thistle");
+}
+void drawLinePontilhado(FILE *svgName, Ponto p, Ponto q){
+	fprintf(svgName, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke-width=\"1\" stroke-dasharray=\"5,5\" stroke=\"red\"/>\n", p.x, p.y, q.x, q.y);
+}
+void drawCruz(FILE *svgName, Ponto p){
+	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"15\" height=\"15\" fill=\"%s\" stroke=\"%s\"/>\n transform=\"rotate(-45)\"",
+			p.x -8,
+			p.y -8,
+			"black",
+			"black");
+	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"18\">✞</text>\n",
+			p.x-8,
+			p.y +5);
 
+}

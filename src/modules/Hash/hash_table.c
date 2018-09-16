@@ -1,6 +1,6 @@
 #include "hash_table.h"
 
-int HASH_SIZE=128;
+int HASH_SIZE=256;
 
 
 int compare(void *data, void *key){
@@ -29,13 +29,11 @@ void put(HashTable *ht, char *key, void *data){
 	hd->data = data;
 	strcpy(hd->key, key);
 	insert(ht->table[index], hd, 0);
-	/* insertAtEnd(ht->table[index]->hash_list, hd); */
 	ht->size++;
 
-	/** ** ** ** ** **  */
 	/* if(ht->size >= 0.7 * HASH_SIZE){ */
 	/* 	HASH_SIZE = HASH_SIZE *2; */
-	/* 	ht->table = realloc(ht->table, HASH_SIZE); */
+	/* 	ht->table = realloc(ht->table, HASH_SIZE * sizeof(HashTable)); */
 	/* } */
 }
 void *search(HashTable *ht, char *key){

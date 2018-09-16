@@ -11,9 +11,6 @@
 #include "../Torre/torre.h"
 #include "../Morador/morador.h"
 #include "../Address/address.h"
-#include "../Cidade/cidade.h"
-
-
 /* procedures to draw in svg format */ 
 
 void startSvg(FILE *fSvg);
@@ -34,9 +31,12 @@ void drawSemaforo(FILE *svgName, Semaforo s);
 void drawTorre(FILE *svgName, Torre t);
 void drawRectPontilhado(FILE *svgName, Rect r);
 void drawCirclePontilhado(FILE *svgName, Circle c);
-void drawMorador(FILE *svg, Cidade c, Morador m);
-void drawEstabelecimento(FILE *svgName, Cidade c, Morador m);
+void drawMorador(FILE *svg, Ponto p, char *cpf);
+void drawEstabelecimento(FILE *svgName, Ponto p);
 void drawLineMudanca(FILE *svgName, Ponto a, Ponto b);
+void drawLineMudancaEst(FILE *svgName, Ponto a, Ponto b);
+void drawLinePontilhado(FILE *svgName, Ponto p, Ponto q);
+void drawCruz(FILE *fsvgName, Ponto p);
 #endif
 
 

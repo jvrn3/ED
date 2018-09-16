@@ -10,7 +10,6 @@ main(){
 	put (ht, "423",createMorador("423", "dbc", 'O', 423, "apto" ));
 
 	StMorador *sm = (StMorador *) search(ht, "123");
-	printf("%s\n", sm->cpf);
 
 
 	delete_hash_table(ht, free_morador);

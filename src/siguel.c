@@ -7,6 +7,11 @@
 #include "modules/Sort/sort.h"
 #include "modules/Tree/kdtree.h"
 #include "modules/Hash/hash_table.h"
+/*
+ *@author: João Vitor Roma Neto
+ * 
+ *
+ * */ 
 int
 main(int argc, char *argv[]){
 	int id, id2, i;
@@ -17,6 +22,7 @@ main(int argc, char *argv[]){
 	char suffix[MAXSIZE];
 	char line[1000];
 	char cep[MAXSIZE];
+	void *linha, *linha2;
 	/*
 	 * variables used to "cc" comand 
 	 *
@@ -26,19 +32,19 @@ main(int argc, char *argv[]){
 	char fill_t[MAXSIZE], strk_t[MAXSIZE];
 	char fill_s[MAXSIZE], strk_s[MAXSIZE];
 	char tmp_strk[MAXSIZE], tmp_fill[MAXSIZE];
-	//
+	/*
+	 *
+	 * */
 	char id_equipamentos[50];
 	int crb = 0;
 	Lista listC = createList();
 	Lista listR = createList();
-	Lista linha = createList();
-	Lista linha2 = createList();
+	Lista hmpList = createList();
+	Lista hmpeList = createList();
 	Cidade city = createCity();
 
 	Circle c;
 	Rect rect;
-
-
 
 	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry, *ec, *pm;
 
@@ -46,6 +52,7 @@ main(int argc, char *argv[]){
 	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc, *fPm;
 
 	leitura = path = dir = qry = ec = pm = NULL;
+	/* */
 	i = 1;
 	while(i < argc){
 		if(strcmp("-e", argv[i]) == 0){
@@ -83,6 +90,7 @@ main(int argc, char *argv[]){
 		}
 		i++;
 	}
+	//se path não existir, então é ./ 
 	if(path==NULL){
 		path = aloca_tamanho(3);
 		strcpy(path, "./");
@@ -92,31 +100,18 @@ main(int argc, char *argv[]){
 		exit(-1);
 	}
 
-	
 	// -f 
 	leitura[strlen(leitura) -4] = 0;
-
 	nomeTxt = criaString(dir, leitura, ".txt");
 	nomeSvg = criaString(dir, leitura, ".svg");
-
 	nomePath = criaString(path, leitura, ".geo");
-
 	fRead = fopen(nomePath, "r");
-
-	fTxt  = fopen(nomeTxt, "w");
-	if(fTxt == NULL){
-		fprintf(stderr, "cant open file ");
-		exit(-1);
-	}
-
 	fDraw = fopen(nomeSvg, "w");
 	if(fDraw == NULL){
 		fprintf(stderr, "cant create file");
 		exit(-1);
 	}
-
 	startSvg(fDraw);
-
 	if(fRead == NULL){
 		fprintf(stderr, "Can't find file to read\nCheck if it exists\n");
 		exit(-1);
@@ -148,6 +143,7 @@ main(int argc, char *argv[]){
 				break;
 
 			case 'd':
+				fTxt = fopen(nomeTxt, "a");
 				sscanf(line, "d %d %d", &id, &id2);
 				fputs(line, fTxt);
 				if ((linha = search_id(listC, id, 1)) != NULL){
@@ -157,16 +153,16 @@ main(int argc, char *argv[]){
 						fprintf(fTxt, "%.2f\n",distanceCR(search_id(listC, id, 1), search_id(listR, id2,1)));
 				}
 				if ((linha = search_id(listR, id,1 )) != NULL){
-					printf("a");
 					if((linha2 = search_id(listC, id2, 1)) != NULL)
 						fprintf(fTxt, "%.2f\n",distanceCR(linha2, linha));
 					else
 						fprintf(fTxt, "%.2f\n",distanceRR(linha, search_id(listR, id2, 1)));
 				}
+				fclose(fTxt);
 				break;
 
 			case 'o':
-
+				fTxt = fopen(nomeTxt, "a");
 				sscanf(line, "o %d %d", &id, &id2);
 				fputs(line, fTxt);
 				if ((linha = search_id(listC, id, 1)) != NULL){
@@ -213,8 +209,10 @@ main(int argc, char *argv[]){
 						}
 					}
 				}
+				fclose(fTxt);
 				break;
 			case 'i':
+				fTxt = fopen(nomeTxt, "a");
 				sscanf(line, "i %d %lf %lf ",&id, &x, &y);
 				fprintf(fTxt, "i %d %.2f %.2f\n", id, x, y); 
 				if ((linha = search_id(listC, id, 1))){
@@ -230,6 +228,7 @@ main(int argc, char *argv[]){
 					else
 						fprintf(fTxt, "NAO\n");
 				}
+				fclose(fTxt);
 				break;
 
 			case 'h':
@@ -252,6 +251,7 @@ main(int argc, char *argv[]){
 				point[1] = y;
 				 city.arvore_quadra= insert_quadra(city, createQuadra(fill_q, strk_q, cep, x, y, w, h), point);
 				drawQuadra(fDraw, q);
+				free(q);
 				break;
 
 			case 's':
@@ -275,6 +275,7 @@ main(int argc, char *argv[]){
 
 			case 'a':
 				sscanf(line, "a %d %s", &id, suffix);
+				Lista appnd = createList();
 				leitura = criaString(leitura, "-", suffix);
 				leitura = criaString(dir, leitura, ".svg");
 				printf("end: %s", path);
@@ -288,25 +289,27 @@ main(int argc, char *argv[]){
 
 				display(listR, fWrite, drawRect);
 
-				if((linha = search_id(listC, id, 0)) != NULL){
+				if((appnd = search_id(listC, id, 0)) != NULL){
 
-					manipulate(linha, listC, fWrite, drawLineCToC);
-					manipulate(linha, listR, fWrite, drawLineCToR);
+					manipulate(appnd, listC, fWrite, drawLineCToC);
+					manipulate(appnd, listR, fWrite, drawLineCToR);
 				}
-				else if((linha = search_id(listR, id, 0)) != NULL){
-					manipulate(linha, listC, fWrite, drawLineRToC);
-					manipulate(linha, listR, fWrite, drawLineRToR);
+				else if((appnd = search_id(listR, id, 0)) != NULL){
+					manipulate(appnd, listC, fWrite, drawLineRToC);
+					manipulate(appnd, listR, fWrite, drawLineRToR);
 
 				}
 				fprintf(fWrite, "</svg>");
 
 				fclose(fWrite);
+				destroy(appnd);
 				break;
 			default:
 				break;
 		}
-
 	}
+	fclose(fDraw);
+	fclose(fRead);
 	if(ec != NULL){
 		int num;
 		ec[strlen(ec) -3] = 0;
@@ -371,14 +374,8 @@ main(int argc, char *argv[]){
 			qry_name = get_last_slash(qry);
 		char *qry_nameString = criaString(leitura, "-", qry_name);
 		qry_name = criaString(dir, qry_nameString, ".svg");
-		fSvgQry = fopen(qry_name, "w");
-
-		if(!fSvgQry){
-			fprintf(stderr, "bugou ao criar file");
-			exit(-1);
-		}
-		startSvg(fSvgQry);
-		/* while(!feof(fQry)){ */
+				/* while(!feof(fQry)){ */
+		fTxt = fopen(nomeTxt, "a");
 		while(fgets(line,1000,fQry) != NULL){
 
 			if(strncmp(line, "dq", 2) == 0){
@@ -386,8 +383,8 @@ main(int argc, char *argv[]){
 				sscanf(line, "dq %lf %lf %lf %lf", &x, &y, &w, &h);
 
 				rect = createRect("", "", w, h, x, y);
-				city.arvore_quadra = deleteQuadraInRect(rect, city.arvore_quadra, fTxt);
-				drawRectPontilhado(fSvgQry, rect);
+				deleteQuadraInRect(rect, city.arvore_quadra, fTxt);
+				/* drawRectPontilhado(fSvgQry, rect); */
 				free(rect);
 			}
 			else if(strncmp(line, "q?", 2) == 0){
@@ -398,7 +395,7 @@ main(int argc, char *argv[]){
 				searchSemaforoInRect(rect, city.arvore_semaforo, fTxt);
 				searchHidranteInRect(rect, city.arvore_hidrante, fTxt);
 				searchTorreInRect(rect, city.arvore_torre, fTxt);
-				drawRectPontilhado(fSvgQry, rect);
+				/* drawRectPontilhado(fSvgQry, rect); */
 				free(rect);
 			}
 			else if(strncmp(line, "Q?", 2) == 0){
@@ -411,15 +408,14 @@ main(int argc, char *argv[]){
 				searchTorreInCircle(c, city.arvore_torre, fTxt);
 
 
-				drawCirclePontilhado(fSvgQry, c);
+				/* drawCirclePontilhado(fSvgQry, c); */
 				free(c);
 			}
 			else if(strncmp(line, "Dq", 2) == 0){
 				sscanf(line, "Dq %lf %lf %lf", &r, &x, &y);
 				c = createCircle("", "", r, x, y);
-				
-				city.arvore_quadra = deleteQuadraInCircle(c, city.arvore_quadra, fTxt);
-				drawCirclePontilhado(fSvgQry, c);
+				deleteQuadraInCircle(c, city.arvore_quadra, fTxt);
+				/* drawCirclePontilhado(fSvgQry, c); */
 				free(c);
 			}
 			else if(strncmp(line, "dle", 3)==0){
@@ -427,18 +423,18 @@ main(int argc, char *argv[]){
 
 				rect = createRect("", "", w, h, x, y);
 				if(line[4] == 'r' || line[5] == 'r' || line[6] == 'r'){
-					city.arvore_torre = deleteTorreInRect(rect, city.arvore_torre, fTxt);
+					deleteTorreInRect(rect, city.arvore_torre, fTxt);
 				}
 
 				if(line[4] == 'h' || line[5] == 'h' || line[6] == 'h'){
 					//remove h
-					city.arvore_hidrante = deleteHidranteInRect(rect, city.arvore_hidrante, fTxt);
+					deleteHidranteInRect(rect, city.arvore_hidrante, fTxt);
 				}
 				if(line[4] == 's' || line[5] == 's' || line[6] == 's'){
 					//remove r
-					city.arvore_semaforo = deleteSemaforoInRect(rect, city.arvore_semaforo, fTxt);
+					deleteSemaforoInRect(rect, city.arvore_semaforo, fTxt);
 				}
-				drawRectPontilhado(fSvgQry, rect);
+				/* drawRectPontilhado(fSvgQry, rect); */
 				free(rect);
 			}
 			else if(strncmp(line, "Dle", 3) == 0){
@@ -446,15 +442,15 @@ main(int argc, char *argv[]){
 				c = createCircle("", "", r, x, y);
 
 				if(line[4] == 'h' || line[5] == 'h' || line[6] == 'h'){
-					city.arvore_hidrante = deleteHidranteInCircle(c, city.arvore_hidrante, fTxt);
+					deleteHidranteInCircle(c, city.arvore_hidrante, fTxt);
 				}
 				if(line[4] == 'r' || line[5] == 'r' || line[6] == 'r'){
-					city.arvore_torre = deleteTorreInCircle(c, city.arvore_torre, fTxt);
+					deleteTorreInCircle(c, city.arvore_torre, fTxt);
 				}
 				if(line[4] == 's' || line[5] == 's' || line[6] == 's'){
-					city.arvore_semaforo = deleteSemaforoInCircle(c, city.arvore_semaforo, fTxt);
+					deleteSemaforoInCircle(c, city.arvore_semaforo, fTxt);
 				}
-				drawCirclePontilhado(fSvgQry, c);
+				/* drawCirclePontilhado(fSvgQry, c); */
 				free(c);
 			}
 			else if(strncmp(line, "cc", 2) == 0){
@@ -487,7 +483,6 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "crd?", 4) == 0){
 
 				sscanf(line, "crd? %s", cep);
-				printf("%s\n", cep);
 				StQuadra *sq;
 				StTorre *st;
 				StHidrante *sh;
@@ -511,7 +506,7 @@ main(int argc, char *argv[]){
 				//
 				sscanf(line, "m? %s", cep);
 				if(search_cep(cep, city.arvore_quadra) == NULL){
-					printf("CEP da quadra nao encontrado!\n %s", cep);
+					printf("\nCEP da quadra nao encontrado!\n %s", cep);
 				}
 				else{
 					fprintf(fTxt, "\n----Moradores no Cep %s ----\n", cep);
@@ -525,8 +520,7 @@ main(int argc, char *argv[]){
 						fprintf(fTxt, "Endereco => %s/%c/%d\n" , morador_get_cep(sm), morador_get_face(sm),
 								morador_get_num(sm));
 					}
-					//need to handle freeing memory
-					destroy(mor_quadra);
+					destroyList(mor_quadra);
 				}
 			}
 			else if(strncmp(line, "mr?", 3) == 0){
@@ -540,50 +534,59 @@ main(int argc, char *argv[]){
 				//imprime dados do morador indicado pelo cpf
 				char cpf[50];
 				sscanf(line, "dm? %s", cpf);
-				StMorador  *sm = (StMorador *) search(city.moradores, cpf);
-				StPessoa *sp = (StPessoa *) search(city.pessoas, cpf);
+				StMorador  *sm = searchMorador(city.moradores, cpf);
+				StPessoa *sp = searchPessoa(city.pessoas, cpf);
 				if(sm != NULL && sp != NULL){
 				fprintf(fTxt, "\nDados de => %s %s\n", sp->nome, sp->sobrenome);
-					fprintf(fTxt, "Endereco => %s/%c/%d\n", morador_get_cep(sm),
-						morador_get_face(sm), 
-						morador_get_num(sm));
+					fprintf(fTxt, "Endereco => %s/%c/%d\n",
+							morador_get_cep(sm),
+							morador_get_face(sm), 
+							morador_get_num(sm));
 
-					insert(city.mor, sm, 0);
-				}
-				else{
-					printf("Pessoa nao encontrada. Pode estar morta!\n");
-				
+					StMorador *smm = createMorador(
+							sm->cpf,
+							morador_get_cep(sm),
+							morador_get_face(sm),
+							morador_get_num(sm),
+							morador_get_comp(sm));
+					insert(city.mor, smm, 0);
 				}
 			}
 			else if(strncmp(line, "de?", 3) == 0){
 				//imprime todos os dados do estabelecimento comercial identificado por cnpj
 				char cnpj[50];
+				StComercioTipo *sct= NULL;
 				sscanf(line, "de? %s", cnpj);
 				StComercio *sc = searchComercio(city.comercio, cnpj);
-				StComercioTipo *sct = searchComercioTipo(city.tipo_comercio, estabelecimento_get_codt(sc));
-				fprintf(fTxt, "\nEstabelecimento comercial identificado por -> %s\n", sc->cnpj);
-				fprintf(fTxt, "Nome => %s\nDescricao: %s\nEndereco %s/%c/%d\n", sc->nome, sct->descricao,
-						estabelecimento_get_cep(sc),
-						estabelecimento_get_face(sc),
-						estabelecimento_get_num(sc));
-				insert(city.est, sc, 0);
+				if(sc != NULL)
+					sct = searchComercioTipo(city.tipo_comercio, estabelecimento_get_codt(sc));
+				if(sc != NULL && sct != NULL){
+					fprintf(fTxt, "\nEstabelecimento comercial identificado por -> %s\n", sc->cnpj);
+					fprintf(fTxt, "Nome => %s\nDescricao: %s\nEndereco %s/%c/%d\n",
+							sc->nome,
+							sct->descricao,
+							estabelecimento_get_cep(sc),
+							estabelecimento_get_face(sc),
+							estabelecimento_get_num(sc));
+
+					
+					StComercio *scc = createComercio(
+							sc->cnpj,
+							sc->codt,
+							estabelecimento_get_cep(sc),
+							estabelecimento_get_face(sc),
+							estabelecimento_get_num(sc),
+							sc->nome
+							);
+					insert(city.est, scc, 0);
+				}
 
 			}
 			else if(strncmp(line, "rip", 3) == 0){
 				//pessoa morreu
 				char cpf[50];
 				sscanf(line, "rip %s", cpf);
-				StPessoa *sp = searchPessoa(city.pessoas, cpf);
-				StMorador *sm = searchMorador(city.moradores, cpf);
-				if(sp != NULL && sm != NULL){
-					if(sp->sexo == 'm' || sp->sexo == 'M'){
-						fprintf(fTxt, "RIP %s %s, portador %s, do sexo Masculino, nascido a %s, residia no endereco %s/%d/%c", sp->nome, sp->sobrenome, sp->cpf, sp->nasc, morador_get_cep(sm), morador_get_num(sm), morador_get_face(sm));
-					}
-					else{
-						fprintf(fTxt, "RIP %s %s, portador %s, do sexo Feminino, nascida a %s, residia no endereco %s/%d/%c", sp->nome, sp->sobrenome, sp->cpf, sp->nasc, morador_get_cep(sm), morador_get_num(sm), morador_get_face(sm));
-					}
-					remove_hash(city.pessoas, cpf);
-				}
+				kill_pessoa(city, cpf, fTxt);
 			}
 			else if(strncmp(line, "ecq?", 4) == 0){
 				//estabelecimento comercial numa dada regiao
@@ -596,8 +599,7 @@ main(int argc, char *argv[]){
 						StComercio * sc = (StComercio *) hd->data;
 						fprintf(fTxt, "Cnpj => %s\nNome =>%s\nTipo =>%s\n",sc->cnpj, sc->nome, sc->codt);
 					}
-					destroy(estbl_quadra);
-
+					destroyList(estbl_quadra);
 			}
 			else if(strncmp(line, "ecr?", 4) == 0){
 				char tp[50];
@@ -619,7 +621,7 @@ main(int argc, char *argv[]){
 								estabelecimento_get_face(sc), 
 								estabelecimento_get_num(sc));
 					}
-					destroy(estblc);
+					destroyList(estblc);
 				}
 			}
 			else if(strncmp(line, "tecq?", 5) == 0){
@@ -633,7 +635,7 @@ main(int argc, char *argv[]){
 					StComercio *sc = (StComercio *)hd->data;
 					fprintf(fTxt, "Tipo => %s\n", sc->codt);
 				}
-				destroy(estbl_quadra);
+				destroyList(estbl_quadra);
 			}
 			else if(strncmp(line, "tecr?", 5) == 0){
 				/* Tipos de estabelecimentos numa dada regiao */
@@ -647,33 +649,48 @@ main(int argc, char *argv[]){
 				int num;
 				sscanf(line, "hmpe? %s %c %d", cep, &face, &num);
 				Address a = createAddress(cep, face, num, "");
-				printf("%lf\n", nn(city.arvore_hidrante, city_get_ponto(city, a), hmp));
+				insert(hmpeList, a, 0);
+				
+
+			}
+			else if(strncmp(line, "hmp?", 4) == 0){
+				char c[50];
+				sscanf(line, "hmp? %s", c);
+				kd_search(city.arvore_torre, hmpList, compareTorreId, c); 
+				
 			}
 			else if(strncmp(line, "fec", 3) == 0){
 				char cnpj[50];
 				sscanf(line, "fec %s", cnpj);
 				StComercio *sc = remove_hash(city.comercio, cnpj);
-				fprintf(fTxt, "\n----Estabelecimento comercial fechado ----\n");
-				fprintf(fTxt, "Nome %s", sc->nome);
-				free(sc);
+				if(sc != NULL){
+					fprintf(fTxt, "\n----Estabelecimento comercial fechado ----\n");
+					fprintf(fTxt, "Nome => %s | CPNJ => %s | TIPO => %s\n", sc->nome, sc->cnpj, sc->codt);
+				}
+				if(sc != NULL)
+					free(sc);
+			}
+			else if(strncmp(line, "mudec", 5) == 0){
+				char cnpj[50], cep[50], face;
+				int num;
+				sscanf(line, "mudec %s %s %c %d", cnpj, cep, &face, &num);
+				Address novo = createAddress(cep, face, num, "");
+				mudar_estbl(city, cnpj, novo, fTxt);
 			}
 			else if(strncmp(line, "mud", 3) == 0){
 				char cpf[50], cep[50], face, comp[50];
 				int num;
 				sscanf(line, "mud %s %s %c %d %s", cpf, cep, &face, &num, comp);
-				StMorador *sm = searchMorador(city.moradores, cpf);
-				StPessoa *sp = searchPessoa(city.pessoas, cpf);
-				fprintf(fTxt, "\n----%s %s mudou ----\n", sp->nome, sp->sobrenome);
-				fprintf(fTxt, "Antigo endereco => %s/%c/%d\n", morador_get_cep(sm), morador_get_face(sm), morador_get_num(sm));
-				Ponto old = city_get_ponto(city, sm->addr);
-				sm->addr = changeAddress(sm->addr, cep, face, num, comp);
-				Ponto new = city_get_ponto(city, sm->addr);
-				fprintf(fTxt, "Novo endereco => %s/%c/%d\n", morador_get_cep(sm), morador_get_face(sm), morador_get_num(sm));
 
-				drawLineMudanca(fSvgQry,old, new);
+				Address novo = createAddress(cep, face, num, comp);
+				mudar_pessoa(city, cpf, novo, fTxt);
 			}
-
-
+			
+			else if(strncmp(line, "dpr", 3) == 0){
+				sscanf(line, "dpr %lf %lf %lf %lf", &x, &y, &w, &h);
+				Rect r = createRect("", "", w, h, x, y);
+				desapropriar(city, r, fTxt);
+			}
 		}
 
 		/*
@@ -682,35 +699,41 @@ main(int argc, char *argv[]){
 
 		//it's time to print
 
-
-		
-		traverseTreeQuadra(city.arvore_quadra, drawQuadra, fSvgQry);
-		traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, fSvgQry);
-		traverseTreeHidrante(city.arvore_hidrante, drawHidrante, fSvgQry);
-		traverseTreeTorre(city.arvore_torre, drawTorre, fSvgQry);
-		Node *n;
-		for(n = getFirst(city.mor); n != NULL; n = n->next){
-			drawMorador(fSvgQry, city, n->data);
-		}
-		for(n = getFirst(city.est); n != NULL; n = n->next){
-			drawEstabelecimento(fSvgQry, city, n->data);
+		fSvgQry = fopen(qry_name, "w");
+		if(!fSvgQry){
+			fprintf(stderr, "bugou ao criar file");
+			exit(-1);
 		}
 
-		
-		//had to do this because the circle on svg would be printed before other elements and then be hidden
+		startSvg(fSvgQry);
+		drawCidade(city, fSvgQry);
+
 		if(crb){
-
-				/* pointt(city.arvore_torre, closest_kd(city.arvore_torre), fSvgQry, fTxt ); */
+			Ponto p;
+			printa_closest(city.arvore_torre, closest_kd(city.arvore_torre, tmp,&p), fSvgQry, fTxt, tmp, printa_closest_torre);
 		}
-
+		Node *nod;
+		for(nod = getFirst(hmpList); nod != NULL; nod = nod->next){
+			StTorre *st = (StTorre *) nod->data;
+			Ponto p = createPonto(st->x, st->y);
+			Ponto best;
+			float clos = nn(city.arvore_hidrante, p, hmp, &best);
+			printa_closest_given_radio(city.arvore_hidrante, p,best, clos, fSvgQry, fTxt);
+			fprintf(fTxt, "Id Radio => %s | COR => %s \n", st->id, st->fill);
+		}
+		for(nod = getFirst(hmpeList); nod != NULL; nod = nod->next){
+			Ponto best;
+			float hid = nn(city.arvore_hidrante, city_get_ponto(city, nod->data), hmp, &best);
+			printa_closest_given_p(city.arvore_hidrante, city_get_ponto(city, nod->data), best, hid, fSvgQry, fTxt);
+		}
 		free(qry);
 		free(qry_name);
 		free(qry_nameString);
 		fprintf(fSvgQry, "\n</svg>\n");
 		fclose(fSvgQry);
+		fclose(fQry);
 	}
-
-	
+	fDraw = fopen(nomeSvg, "a");
 	Node *nod;
 	for(nod = getFirst(listC); nod != NULL; nod = nod->next){
 		StCircle *sc = (StCircle *) nod->data;
@@ -720,10 +743,9 @@ main(int argc, char *argv[]){
 		StRect *sr = (StRect *) nod->data;
 		drawRect(fDraw, sr);
 	}
-	
 	fprintf(fDraw, "</svg>");
-
-	//is there more allocated variables? 
+	//free them all
+	fclose(fDraw);
 	free(path);
 	free(dir);
 	free(leitura);
@@ -732,18 +754,12 @@ main(int argc, char *argv[]){
 	free(nomePath);
 	free(ec);
 	free(pm);
-
-
-	fclose(fRead);
-	fclose(fTxt);
-	fclose(fDraw);
-
 	//destroying lists
 	free_cidade(city);
 	destroy(listC);
 	destroy(listR);
-	destroy(linha2);
-	destroy(linha);
+	printf("\nPrograma executado\n");
+
 	return 0;
 }
 

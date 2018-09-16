@@ -3,7 +3,6 @@ DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
-
 SOURCEDIR = src/modules
 siguel : $(DEPS)
 	$(CC)  $(FLAGS) $(DEPS) -o siguel 
@@ -58,4 +57,4 @@ torre.o : $(SOURCEDIR)/Torre/torre.c
 kdtree.o : $(SOURCEDIR)/Tree/kdtree.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Tree/kdtree.c
 clean: 
-	rm *.o
+	rm -rf *.o vgcore* 
