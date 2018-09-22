@@ -104,7 +104,6 @@ KdTree delete_kd_node(KdTree kd, void *data, float point[], int depth){
    }
    else{
       if(point[cd] < n->point[cd]){
-
 	 n->left = (KdNode *) delete_kd_node(n->left, data, point, depth+1);
       }
       else{

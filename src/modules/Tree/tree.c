@@ -10,6 +10,7 @@ typedef struct node{
 
 // AVL TREE 
 
+
 Tree newTree(void *data){
 	Tree t = malloc(sizeof(Node));
 	Node *n = (Node *) t;
