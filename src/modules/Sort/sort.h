@@ -12,5 +12,9 @@ void build_max_heap_x(Ponto *p, int n);
 void build_max_heap_y(Ponto *p, int n);
 void heap_sort_y(Ponto *p, int length);
 void heap_sort_x(Ponto *p, int length);
-
+int  *counting_sort(int *A,  int k, int n);
+void quick_sort(float *a, int p, int q);
+int partition(float *a, int p, int q);
+void swap(float *a, float *b);
 #endif
+
