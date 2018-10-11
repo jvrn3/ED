@@ -20,8 +20,17 @@ Hash new_hash_table(){
 	}
 	return ht;
 }
+Hash new_hash_table_n(int n){
+	/*
+	 * change the value of HASH_SIZE
+	 * */
+	HASH_SIZE = n;
+	return new_hash_table();
+}
 void put(HashTable *ht, char *key, void *data){
 	int index = hash(key);
+	if(index > HASH_SIZE)
+		return;
 	if(ht->table[index] == NULL){
 		ht->table[index] = createList();
 	}

@@ -81,27 +81,27 @@ void heap_sort_y(Ponto *p, int length){
 	}
 }
 //sorting in linear order for Integers
-int *counting_sort(int *A,  int k, int n){
-	int c[k];
-	for(int i = 0; i < k; i++)
-		c[i] = 0;
-
-	for(int j = 0; j < n ; j++)
-		c[A[j]] = c[A[j]]++;
-
-	for(int i = 1; i < k; i++)
-		c[i] = c[i] + c[i-1];
-
-
-	int *B = malloc(sizeof(A) * n);
-	for(int i =0 ; i < n; i++)
-		B[i] = 0;
-	for(int j = n-1; j >= 0; j--){
-		B[c[A[j]]] = A[j];
-		c[A[j]] = c[A[j]] - 1;
-	}
-	return B;
-}
+/* int *counting_sort(int *A,  int k, int n){ */
+/* 	int c[k]; */
+/* 	for(int i = 0; i < k; i++) */
+/* 		c[i] = 0; */
+/*  */
+/* 	for(int j = 0; j < n ; j++) */
+/* 		c[A[j]] = c[A[j]]++; */
+/*  */
+/* 	for(int i = 1; i < k; i++) */
+/* 		c[i] = c[i] + c[i-1]; */
+/*  */
+/*  */
+/* 	int *B = malloc(sizeof(A) * n); */
+/* 	for(int i =0 ; i < n; i++) */
+/* 		B[i] = 0; */
+/* 	for(int j = n-1; j >= 0; j--){ */
+/* 		B[c[A[j]]] = A[j]; */
+/* 		c[A[j]] = c[A[j]] - 1; */
+/* 	} */
+/* 	return B; */
+/* } */
 /*
  * function should be called first with array -> 0 -> size of array.
  */

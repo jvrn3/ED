@@ -383,6 +383,7 @@ KdTree remove_semaforo(KdTree t, Semaforo s, float point[]){
 KdTree remove_torre(KdTree t, Torre to, float point[]){
 	return delete_kd_node(t, to, point, 0);
 }
+//this kind of search should be implemented using range search algorithm
 void searchQuadraInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;

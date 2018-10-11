@@ -28,4 +28,5 @@ int compare(void *, void *);
 Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *), void *key);
 int get_hash_max();
 void *remove_hash(HashTable *ht, char *key);
+Hash new_hash_table_n(int n);
 #endif
