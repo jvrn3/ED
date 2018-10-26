@@ -39,14 +39,6 @@ Ponto tmp(Torre t){
 	StTorre *st = (StTorre *) t;
 	return createPonto(st->x, st->y);
 }
-Address changeAddress(Address a, char *cep, char face, int num, char *comp){
-	StAddress *sa = (StAddress *) a;
-	strcpy(sa->cep, cep);
-	strcpy(sa->comp, comp);
-	sa->face= face;
-	sa->num = num;
-	return sa;
-}
 Ponto city_get_ponto(Cidade c, Address a){
 	Quadra q = search(c.cep_quadra, address_get_cep(a));
 	if(q == NULL){
@@ -127,6 +119,7 @@ int _compareCodtEstblc(void *h, void *k){
 	char *codt = estabelecimento_get_codt(hd->data);
 	if(strcmp(codt, key) == 0)
 		return 1;
+	
 	else
 		return 0;
 }

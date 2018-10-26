@@ -9,8 +9,8 @@ typedef struct stCircle{
 	char border[50];
 	char inside[50];
 	double r,
-				 x,
-				 y;
+		   x,
+		   y;
 }StCircle;
 
 Circle createCircle(char *border, char *inside, double r, double x, double y);

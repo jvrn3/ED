@@ -49,7 +49,7 @@ typedef struct cidade{
 }Cidade;
 
 Cidade createCity();
-Address changeAddress(Address a, char *cep, char face, int num, char *comp);
+// Address changeAddress(Address a, char *cep, char face, int num, char *comp);
 Ponto hmp(Hidrante h);
 Ponto tmp(Torre t);
 Ponto city_get_ponto(Cidade c, Address a);

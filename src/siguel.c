@@ -9,6 +9,7 @@
 #include "modules/Hash/hash_table.h"
 /*
  *@author: João Vitor Roma Neto
+		   Rafael Yukio Umemoto
  * 
  *
  * */ 

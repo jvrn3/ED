@@ -1,5 +1,13 @@
 #include "address.h"
 
+typedef struct stAddress{
+	char cep[50];
+	char face;
+	int num;
+	char comp[50];
+
+}StAddress;
+
 Address createAddress(char *cep, char face, int num, char *comp){
 	StAddress *sa = malloc(sizeof(StAddress));
 
@@ -26,4 +34,13 @@ int address_get_num(Address a){
 char *address_get_comp(Address a){
 	StAddress *sa = (StAddress *) a;
 	return sa->comp;
+}
+
+Address changeAddress(Address a, char *cep, char face, int num, char *comp){
+	StAddress *sa = (StAddress *) a;
+	strcpy(sa->cep, cep);
+	strcpy(sa->comp, comp);
+	sa->face= face;
+	sa->num = num;
+	return sa;
 }
