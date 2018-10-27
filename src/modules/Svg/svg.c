@@ -30,51 +30,50 @@ void drawCircle(FILE *svgName, Circle c){
 
 }
 void drawQuadra(FILE *svgName, Quadra r){
-	StQuadra *sr = (StQuadra *) r;
+	Quadra sr = r;
 	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" fill=\"%s\" stroke=\"%s\"/>\n", 
-			sr->x,
-			sr->y,
-			sr->larg,
-			sr->alt,
-			sr->fill,
-			sr->strk);
+			quadra_get_x(sr),
+			quadra_get_y(sr),
+			quadra_get_w(sr),
+			quadra_get_h(sr),
+			quadra_get_fill(sr),
+			quadra_get_strk(sr)
+		   );
 	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"black\" font-size=\"12\">%s</text>\n",
-			sr->x + sr->larg/2,
-			sr->y + sr->alt/2,
-			sr->cep);
+			quadra_get_x(sr) + quadra_get_w(sr)/2,
+			quadra_get_y(sr) + quadra_get_h(sr)/2,
+			quadra_get_cep(sr));
 }
 
 void drawHidrante(FILE *svgName, Hidrante h){
-	StHidrante *sh = (StHidrante *) h;
+	Hidrante sh = h;
 fprintf(svgName, "<circle r=\"10.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">H</text>\n", 
-			sh->x,
-			sh->y,
-			sh->strk,
-			sh->fill, 
-			sh->x - 5,
-			sh->y + 5
+		hidrante_get_x(sh),
+		hidrante_get_y(sh),
+		hidrante_get_strk(sh),
+		hidrante_get_fill(sh),
+		hidrante_get_x(sh) - 5,
+		hidrante_get_y(sh) + 5
 			);
-
 }
 void drawSemaforo(FILE *svgName, Semaforo s){
-	StSemaforo *sh = (StSemaforo *) s;
+	Semaforo sh =  s;
 	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"5\" height=\"15\" fill=\"%s\" stroke=\"%s\"/>\n", 
-			sh->x,
-			sh->y,
-			sh->fill,
-			sh->strk);
+			semaforo_get_x(sh),
+			semaforo_get_y(sh),
+			semaforo_get_fill(sh),
+			semaforo_get_strk(sh));
 }
 void drawTorre(FILE *svgName, Torre t){
-	StTorre *st = (StTorre *) t;
+	Torre st = t;
 	fprintf(svgName, "<circle r=\"10.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n", 
-			st->x,
-			st->y,
-			st->strk,
-			st->fill);
+			torre_get_x(st),
+			torre_get_y(st),
+			torre_get_strk(st),
+			torre_get_fill(st));
 	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">T</text>\n",
-			st->x - 5, 
-			st->y + 5
-			);
+			torre_get_x(st) - 5,
+			torre_get_y(st) + 5);
 
 }
 void drawRect(FILE *svgName, Rect r){

@@ -4,18 +4,17 @@
 #include <string.h>
 
 typedef void *Semaforo;
-
-typedef struct stSemaforo{
-  char fill[50], strk[50];
-  char id[50];
-  double x, y;
-
-}StSemaforo;
-
 Semaforo createSemaforo(char *fill, char *strk, char *id, double x, double y);
 #endif
 int compareSemaforoX(Semaforo a, Semaforo b);
 int compareSemaforoY(Semaforo a, Semaforo b);
 float semaforoPointInX(Semaforo s);
 float semaforoPointInY(Semaforo s);
+char *semaforo_get_fill(Semaforo s);
+char *semaforo_get_strk(Semaforo s);
+char *semaforo_get_id(Semaforo s);
+float semaforo_get_x(Semaforo s);
+float semaforo_get_y(Semaforo s);
+void semaforo_set_fill(Semaforo s, char *color);
+void semaforo_set_strk(Semaforo s, char *color);
 

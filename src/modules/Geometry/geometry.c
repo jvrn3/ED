@@ -120,8 +120,8 @@ int isInsideR(Rect r, double x, double y){
 
 int isQuadraInsideRect(Quadra q, Rect b){
     Rect r;
-    StQuadra *sq = (StQuadra *) q;
-    r = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
+    Quadra sq = q;
+    r = createRect("", "", quadra_get_w(sq), quadra_get_h(sq), quadra_get_x(sq), quadra_get_y(sq)); 
     if(isRectInsideRect(r, b)){
 	free(r);
 	return 1;
@@ -131,8 +131,8 @@ int isQuadraInsideRect(Quadra q, Rect b){
 }
 int isQuadraInsideCircle(Quadra q, Circle b){
     Rect r;
-    StQuadra *sq = (StQuadra *) q;
-    r = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
+    Quadra sq = q;
+    r = createRect("", "", quadra_get_w(sq), quadra_get_h(sq), quadra_get_x(sq), quadra_get_y(sq)); 
     if(isRectInsideCircle(b, r)){
 	free(r);
 	return 1;
@@ -142,38 +142,38 @@ int isQuadraInsideCircle(Quadra q, Circle b){
 
 }
 int isTorreInsideRect(Torre t, Rect r){
-    StTorre *st = (StTorre *) t;
-    if(isInsideR(r, st->x, st->y))
+    Torre st = t;
+    if(isInsideR(r, torre_get_x(st), torre_get_y(st)))
 	return 1;
     return 0;
 }
 int isTorreInsideCircle(Torre t, Circle c){
-    StTorre *st = (StTorre *) t;
-    if(isInsideC(c, st->x, st->y))
+    Torre st = t;
+    if(isInsideC(c, torre_get_x(st), torre_get_y(st)))
 	return 1;
     return 0;
 }
 int isHidranteInsideRect(Hidrante h, Rect r){
-    StHidrante *sh = (StHidrante *) h;
-    if(isInsideR(r, sh->x, sh->y))
+    Hidrante sh =  h;
+    if(isInsideR(r, hidrante_get_x(sh), hidrante_get_y(sh)))
 	return 1;
     return 0;
 }
 int isHidranteInsideCircle(Hidrante h, Circle c){
-    StHidrante *sh = (StHidrante *) h;
-    if(isInsideC(c, sh->x, sh->y))
+    Hidrante sh =  h;
+    if(isInsideC(c, hidrante_get_x(sh), hidrante_get_y(sh)))
 	return 1;
     return 0;
 }
 int isSemaforoInsideRect(Semaforo s, Rect r){
-    StSemaforo *ss = (StSemaforo *) s;
-    if(isInsideR(r, ss->x, ss->y))
+    Semaforo ss = s;
+    if(isInsideR(r, semaforo_get_x(ss), semaforo_get_y(ss)))
 	return 1;
     return 0;
 }
 int isSemaforoInsideCircle(Semaforo s, Circle c){
-    StSemaforo *ss = (StSemaforo *) s;
-    if(isInsideC(c, ss->x, ss->y))
+    Semaforo ss = s;
+    if(isInsideC(c, semaforo_get_x(ss), semaforo_get_y(ss)))
 	return 1;
     return 0;
 }

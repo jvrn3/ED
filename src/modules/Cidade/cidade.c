@@ -32,12 +32,12 @@ Cidade createCity(){
 	return city;
 }
 Ponto hmp(Hidrante h){
-	StHidrante *sh = (StHidrante *) h;
-	return createPonto(sh->x, sh->y);
+	Hidrante sh =h;
+	return createPonto(hidrante_get_x(sh), hidrante_get_y(sh));
 }
 Ponto tmp(Torre t){
-	StTorre *st = (StTorre *) t;
-	return createPonto(st->x, st->y);
+	Torre st = t;
+	return createPonto(torre_get_x(st), torre_get_y(st));
 }
 Ponto city_get_ponto(Cidade c, Address a){
 	Quadra q = search(c.cep_quadra, address_get_cep(a));
@@ -68,7 +68,7 @@ Ponto city_get_ponto(Cidade c, Address a){
 	return p;
 }
 Comercio searchComercioTipo(Hash h, char *key){
-	StComercioTipo *sct = (StComercioTipo *) search(h, key);
+	Comercio sct = search(h, key);
 	if(sct == NULL){
 		printf("Tipo nao encontrado\n");
 		return NULL;
@@ -76,7 +76,7 @@ Comercio searchComercioTipo(Hash h, char *key){
 	return sct;
 }
 Pessoa searchPessoa(Hash h, char *key){
-	StPessoa *sp= (StPessoa *) search(h, key);
+	Pessoa sp= search(h, key);
 	if(sp == NULL){
 		printf("Pessoa nao encontrada ");
 		return NULL;
@@ -84,7 +84,7 @@ Pessoa searchPessoa(Hash h, char *key){
 	return sp;
 }
 Quadra searchQuadra(Hash h, char *key){
-	StQuadra *sq = (StQuadra *) search(h, key);
+	Quadra sq = search(h, key);
 	if(sq == NULL){
 		printf("Cep nao encontrado\n");
 		return NULL;
@@ -92,7 +92,7 @@ Quadra searchQuadra(Hash h, char *key){
 	return sq;
 }
 Comercio searchComercio(Hash h, char *key){
-	StComercio *sc = (StComercio *) search(h, key);
+	Comercio sc = search(h, key);
 	if(sc == NULL){
 		printf("Comercio nao encontrado\n");
 		return NULL;
@@ -100,15 +100,15 @@ Comercio searchComercio(Hash h, char *key){
 	return sc;
 }
 Morador searchMorador(Hash h, char *key){
-	StMorador *sm = (StMorador *) search(h, key);
+	Morador sm = search(h, key);
 	if(sm == NULL){
 		return NULL;
 	}
 	return sm;
 }
 char *get_sexo(Pessoa p){
-	StPessoa *sp = (StPessoa *) p;
-	if(sp->sexo == 'm' || sp->sexo == 'M')
+	Pessoa sp = p;
+	if(pessoa_get_sexo(sp) == 'm' || pessoa_get_sexo(sp) == 'M')
 		return "Masculino";
 	else
 		return "Feminino";
@@ -150,11 +150,11 @@ void _hashSearchEstblcInRect(Cidade c, Rect r, FILE *fTxt){
 		if(ht->table[i] != NULL){
 			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
 				HashData *hd = (HashData *) n->data;
-				StComercio *sc  = (StComercio *) hd->data;
-				Ponto p = city_get_ponto(c, sc->address);
+				Comercio sc  = hd->data;
+				Ponto p = city_get_ponto(c, estabelecimento_get_address(sc));
 				if(isInsideR(r, p.x, p.y)){
 					fprintf(fTxt, "Nome => %s\nEndereco => %s/%c/%d\n",
-								sc->nome,
+								estabelecimento_get_nome(sc),
 								estabelecimento_get_cep(sc),
 								estabelecimento_get_face(sc),
 								estabelecimento_get_num(sc));
@@ -172,16 +172,16 @@ void _hashRemoveEstblcInRect(Cidade c, Rect r, FILE *fTxt){
 		if(ht->table[i] != NULL){
 			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
 				HashData *hd = (HashData *) n->data;
-				StComercio *sc = (StComercio *) hd->data;
-				Ponto p = city_get_ponto(c, sc->address);
+				Comercio sc = hd->data;
+				Ponto p = city_get_ponto(c, estabelecimento_get_address(sc));
 				if(isInsideR(r, p.x, p.y)){
 					fprintf(fTxt, "Nome => %s\nEndereco => %s/%c/%d\n",
-							sc->nome,
+							estabelecimento_get_nome(sc),
 							estabelecimento_get_cep(sc),
 							estabelecimento_get_face(sc),
 							estabelecimento_get_num(sc));
 					char cnpj[50];
-					strcpy(cnpj, sc->cnpj);
+					strcpy(cnpj, estabelecimento_get_cnpj(sc));
 					insert(list_cnpj, cnpj, 0);
 				}
 			}
@@ -203,14 +203,14 @@ void _hashRemoveMoradorInRect(Cidade c, Rect r, FILE *fTxt){
 		if(ht->table[i] != NULL){
 			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
 				HashData *hd = (HashData *) n->data;
-				StMorador *sm = (StMorador *) hd->data;
-				Ponto p = city_get_ponto(c, sm->addr);
+				Morador sm = hd->data;
+				Ponto p = city_get_ponto(c, morador_get_addr(sm));
 				if(isInsideR(r, p.x, p.y)){
 					fprintf(fTxt, "Morador com o cpf %s removido",
-							sm->cpf
+						morador_get_cpf(sm)
 						   );
 					char cpf[50];
-					strcpy(cpf, sm->cpf);
+					strcpy(cpf, morador_get_cpf(sm));
 					insert(list_cpf, cpf, 0);
 				}
 			}
@@ -231,13 +231,13 @@ void _hashSearchTipoInRect(Cidade c, Rect r, char *key, FILE *fTxt){
 		if(ht->table[i] != NULL){
 			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
 				HashData *hd = (HashData *) n->data;
-				StComercio *sc = (StComercio *) hd->data;
+				Comercio sc = hd->data;
 				//se codt == codt pesquisado, entao
-				if(strcmp(key, sc->codt) == 0){
-					Ponto p = city_get_ponto(c, sc->address);
+				if(strcmp(key, estabelecimento_get_address(sc)) == 0){
+					Ponto p = city_get_ponto(c, estabelecimento_get_address(sc));
 					if(isInsideR(r, p.x, p.y)){
 						fprintf(fTxt, "Nome => %s\nEndereco => %s/%c/%d\n",
-								sc->nome,
+								estabelecimento_get_nome(sc),
 								estabelecimento_get_cep(sc),
 								estabelecimento_get_face(sc),
 								estabelecimento_get_num(sc));
@@ -251,7 +251,7 @@ void _hashSearchTipoInRect(Cidade c, Rect r, char *key, FILE *fTxt){
 }
 void _hashSearchQuadraInRect(Cidade c, Rect r, FILE *fTxt){
 	HashTable *ht = (HashTable *) c.moradores;
-	StQuadra *sq;
+	Quadra sq;
 	Node *n;
 	char *quadra;
 	fprintf(fTxt, "\n---- Moradores dentro do retangulo ---- \n");
@@ -263,10 +263,10 @@ void _hashSearchQuadraInRect(Cidade c, Rect r, FILE *fTxt){
 				quadra = morador_get_cep(hd->data);
 				sq = searchQuadra(c.cep_quadra, quadra);
 				if(sq != NULL){
-					Rect r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y);
+					Rect r2 = createRect("", "", quadra_get_w(sq), quadra_get_h(sq), quadra_get_x(sq), quadra_get_y(sq));
 					if(isRectInsideRect(r2, r)){
-						StPessoa *sp = (StPessoa *)search(c.pessoas, hd->key);
-						fprintf(fTxt, "Nome %s %s\n", sp->nome, sp->sobrenome);
+						Pessoa sp = search(c.pessoas, hd->key);
+						fprintf(fTxt, "Nome %s %s\n", pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
 						fprintf(fTxt, "Endereco %s/%c/%d\n", morador_get_cep(hd->data), 
 								morador_get_face(hd->data), 
 								morador_get_num(hd->data));
@@ -294,12 +294,12 @@ KdTree insert_semaforo(Cidade c, Semaforo s, float point[]){
 Quadra search_cep(char *cep, KdTree kd_quadra){
 	if(kd_quadra != NULL){
 		KdNode *kd = (KdNode *) kd_quadra;
-		StQuadra *sq = (StQuadra *) kd->data;
-		if(strcmp(cep, sq->cep) == 0){
+		Quadra sq = kd->data;
+		if(strcmp(cep, quadra_get_cep(sq)) == 0){
 			return sq;
 		}
 		else{
-			StQuadra *found = search_cep(cep, kd->left);
+			Quadra found = search_cep(cep, kd->left);
 			if(found == NULL)
 				found = search_cep(cep, kd->right);
 
@@ -312,11 +312,11 @@ Quadra search_cep(char *cep, KdTree kd_quadra){
 Semaforo search_id_sem(char *id, KdTree kd_sem){
 	if(kd_sem != NULL){
 		KdNode *kd = (KdNode *) kd_sem;
-		StSemaforo *ss = (StSemaforo *) kd->data;
-		if(strcmp(id, ss->id) == 0)
+		Semaforo ss = kd->data;
+		if(strcmp(id, semaforo_get_id(ss)) == 0)
 			return ss;
 		else{
-			StSemaforo *found = search_id_sem(id, kd->left);
+			Semaforo found = search_id_sem(id, kd->left);
 			if(found == NULL)
 				found = search_id_sem(id, kd->right);
 
@@ -329,12 +329,11 @@ Semaforo search_id_sem(char *id, KdTree kd_sem){
 Hidrante search_id_hi(char *id, KdTree kd_hi){
 	if(kd_hi != NULL){
 		KdNode *kd = (KdNode *) kd_hi;
-		StHidrante *sh = (StHidrante *) kd->data;
-
-		if(strcmp(id, sh->id) == 0)
-			return sh;
+		Hidrante h_id = hidrante_get_id(kd->data);
+		if(strcmp(id, h_id) == 0)
+			return kd->data;
 		else{
-			StHidrante *found = search_id_hi(id, kd->left);
+			Hidrante found = search_id_hi(id, kd->left);
 
 			if(found == NULL)
 				found = search_id_hi(id, kd->right);
@@ -348,12 +347,12 @@ Hidrante search_id_hi(char *id, KdTree kd_hi){
 Torre search_id_to(char *id, KdTree kd_to){
 	if(kd_to != NULL){
 		KdNode *kd = (KdNode *) kd_to;
-		StTorre *st = (StTorre *) kd->data;
+		Torre st = kd->data;
 
-		if(strcmp(id, st->id) == 0)
+		if(strcmp(id, torre_get_id(st)) == 0)
 			return st;
 		else{
-			StTorre *found = search_id_to(id, kd->left);
+			Torre found = search_id_to(id, kd->left);
 
 			if(found == NULL)
 				found = search_id_to(id, kd->right);
@@ -380,23 +379,23 @@ KdTree remove_torre(KdTree t, Torre to, float point[]){
 void searchQuadraInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StQuadra *sq;
+	Quadra sq;
 	Rect r2;
 	KdNode *kd = (KdNode *) k;
 	searchQuadraInRect(r, kd->left, fTxt);
 	searchQuadraInRect(r, kd->right, fTxt);
-	sq = (StQuadra *) kd->data;
-	r2 = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
+	sq =  kd->data;
+	r2 = createRect("", "", quadra_get_w(sq), quadra_get_h(sq), quadra_get_x(sq), quadra_get_y(sq));
 
 	if(isRectInsideRect(r2, r)){
 		fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
-			sq->cep,
-			sq->fill,
-			sq->strk, 
-			sq->x,
-			sq->y,
-			sq->larg,
-			sq->alt);
+				quadra_get_cep(sq),
+				quadra_get_fill(sq),
+				quadra_get_strk(sq),
+				quadra_get_x(sq),
+				quadra_get_y(sq),
+				quadra_get_w(sq),
+				quadra_get_h(sq));
 	}
 	free(r2);
 	r2 = NULL;
@@ -404,42 +403,41 @@ void searchQuadraInRect(Rect r, KdTree k, FILE *fTxt){
 void searchQuadraInCircle(Circle c, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StQuadra *sq;
+	Quadra sq;
 	Rect r;
 	KdNode *kd = (KdNode *) k;
 	searchQuadraInCircle(c, kd->left, fTxt);
 	searchQuadraInCircle(c, kd->right, fTxt);
-	sq = (StQuadra *) kd->data;
-	r = createRect("", "", sq->larg, sq->alt, sq->x, sq->y); 
+	sq = kd->data;
+	r = createRect("", "", quadra_get_w(sq), quadra_get_h(sq), quadra_get_x(sq), quadra_get_y(sq));
 	if(isRectInsideCircle(c, r)){
 		fprintf(fTxt, "Quadra Cep=%s Fill=%s Stroke=%s X=%lf Y=%lf W=%lf H=%lf\n",
-				sq->cep,
-				sq->fill,
-				sq->strk, 
-				sq->x,
-				sq->y,
-				sq->larg,
-				sq->alt);
-
+				quadra_get_cep(sq),
+				quadra_get_fill(sq),
+				quadra_get_strk(sq),
+				quadra_get_x(sq),
+				quadra_get_y(sq),
+				quadra_get_w(sq),
+				quadra_get_h(sq));
 	}
 	free(r);
 	r = NULL;
 }
 void file_quadra_d(Quadra q, FILE *fTxt){
-	StQuadra *sq = (StQuadra *) q;
-	fprintf(fTxt, "CEP REMOVIDO %s\n", sq->cep);
+	Quadra sq =  q;
+	fprintf(fTxt, "CEP REMOVIDO %s\n", quadra_get_cep(sq));
 }
 void file_semaforo_d(Semaforo s, FILE *fTxt){
-	StSemaforo *ss = (StSemaforo *) s;
-	fprintf(fTxt, "SEMAFORO %s REMOVIDO\n",ss->id);
+	Semaforo ss =  s;
+	fprintf(fTxt, "SEMAFORO %s REMOVIDO\n",semaforo_get_id(ss));
 }
 void file_hidrante_d(Hidrante h, FILE *fTxt){
-	StHidrante *sh = (StHidrante *)h;
-	fprintf(fTxt, "HIDRANTE %s REMOVIDO\n", sh->id);
+	Hidrante sh = h;
+	fprintf(fTxt, "HIDRANTE %s REMOVIDO\n", hidrante_get_id(sh));
 }
 void file_torre_d(Torre t, FILE *fTxt){
-	StTorre *st = (StTorre *) t;
-	fprintf(fTxt, "TORRE %s REMOVIDA", st->id);
+	Torre st = t;
+	fprintf(fTxt, "TORRE %s REMOVIDA", torre_get_id(st));
 }
 void deleteQuadraInRect(Rect r, KdTree k, FILE *fTxt){
 	kd_remove(k, isQuadraInsideRect, r, file_quadra_d, fTxt);
@@ -450,20 +448,20 @@ void deleteQuadraInCircle(Circle c, KdTree k, FILE *fTxt ){
 void searchSemaforoInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StSemaforo *ss;
+	Semaforo ss;
 	Rect r2;
 	KdNode *kd = (KdNode *) k;
 	searchSemaforoInRect(r, kd->left, fTxt);
 	searchSemaforoInRect(r, kd->right, fTxt);
-	ss = (StSemaforo *) kd->data;
-	r2 = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
+	ss =  kd->data;
+	r2 = createRect(semaforo_get_strk(ss), semaforo_get_fill(ss), 5, 15, semaforo_get_x(ss), semaforo_get_y(ss));
 	if(isRectInsideRect(r2, r)){
 		fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",
-				ss->id,
-				ss->fill,
-				ss->strk, 
-				ss->x,
-				ss->y);
+				semaforo_get_id(ss),
+				semaforo_get_fill(ss),
+				semaforo_get_strk(ss),
+				semaforo_get_x(ss),
+				semaforo_get_y(ss));
 	}
 	free(r2);
 	r2 = NULL;
@@ -471,21 +469,21 @@ void searchSemaforoInRect(Rect r, KdTree k, FILE *fTxt){
 void searchSemaforoInCircle(Circle c, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StSemaforo *ss;
+	Semaforo ss;
 	Rect r;
 	KdNode *kd = (KdNode *) k;
 	searchSemaforoInCircle(c, kd->left, fTxt);
 	searchSemaforoInCircle(c, kd->right, fTxt);
 
-	ss = (StSemaforo *) kd->data;
-	r = createRect(ss->strk, ss->fill, 5, 15, ss->x, ss->y);
+	ss = kd->data;
+	r = createRect(semaforo_get_strk(ss), semaforo_get_fill(ss), 5, 15, semaforo_get_x(ss), semaforo_get_y(ss));
 	if(isRectInsideCircle(c,r)){
 		fprintf(fTxt, "Semaforo ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n",
-				ss->id,
-				ss->fill,
-				ss->strk, 
-				ss->x,
-				ss->y);
+				semaforo_get_id(ss),
+				semaforo_get_fill(ss),
+				semaforo_get_strk(ss),
+				semaforo_get_x(ss),
+				semaforo_get_y(ss));
 	}
 	free(r);
 }
@@ -500,20 +498,25 @@ void deleteSemaforoInCircle(Circle c, KdTree k, FILE *fTxt){
 void searchHidranteInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StHidrante *sh;
+	Hidrante sh;
 	Circle c;
 	KdNode *kd = (KdNode *) k;
 	searchHidranteInRect(r, kd->left, fTxt);
 	searchHidranteInRect(r, kd->right, fTxt);
-	sh = (StHidrante *) kd->data;
-	c = createCircle(sh->strk, sh->fill, 10,sh->x, sh->y );
+	sh = kd->data;
+	c = createCircle(hidrante_get_strk(sh),
+			hidrante_get_fill(sh), 
+			10,
+			hidrante_get_x(sh),
+			hidrante_get_y(sh));
+
 	if(isCircleInsideRect(c, r)){
 		fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-				sh->id,
-				sh->fill,
-				sh->strk,
-				sh->x,
-				sh->y
+				hidrante_get_id(sh),
+				hidrante_get_fill(sh),
+				hidrante_get_strk(sh),
+				hidrante_get_x(sh),
+				hidrante_get_y(sh)
 			   );
 
 	}
@@ -522,21 +525,27 @@ void searchHidranteInRect(Rect r, KdTree k, FILE *fTxt){
 void searchHidranteInCircle(Circle c, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StHidrante *sh;
+	Hidrante sh;
 	Circle c2;
 	KdNode *kd = (KdNode *) k;
 	searchHidranteInCircle(c, kd->left, fTxt);
 	searchHidranteInCircle(c, kd->right, fTxt);
-	sh = (StHidrante *) kd->data;
-	c2 = createCircle(sh->strk, sh->fill, 10,sh->x, sh->y );
+	sh = kd->data;
+	c2 = createCircle(hidrante_get_strk(sh),
+			hidrante_get_fill(sh), 
+			10,
+			hidrante_get_x(sh),
+			hidrante_get_y(sh));
+
+
 	if(isCircleInsideCircle(c2, c)){
 		fprintf(fTxt, "Hidrante ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-				sh->id,
-				sh->fill,
-				sh->strk,
-				sh->x,
-				sh->y
-				);
+				hidrante_get_id(sh),
+				hidrante_get_fill(sh),
+				hidrante_get_strk(sh),
+				hidrante_get_x(sh),
+				hidrante_get_y(sh)
+			   );
 	}
 	free(c2);
 
@@ -551,22 +560,22 @@ void deleteHidranteInCircle(Circle c, KdTree k, FILE *fTxt){
 void searchTorreInRect(Rect r, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StTorre *st;
+	Torre st;
 	Circle c;
 	KdNode *kd = (KdNode *) k;
 
 	searchTorreInRect(r, kd->left, fTxt);
 	searchTorreInRect(r, kd->right, fTxt);
 
-	st = (StTorre *) kd->data;
-	c = createCircle(st->strk, st->fill, 10, st->x, st->y);
+	st =  kd->data;
+	c = createCircle(torre_get_strk(st), torre_get_fill(st), 10, torre_get_x(st), torre_get_y(st));
 	if(isCircleInsideRect(c, r)){
 		fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-				st->id,
-				st->fill,
-				st->strk,
-				st->x,
-				st->y
+				torre_get_id(st),
+				torre_get_fill(st),
+				torre_get_strk(st),
+				torre_get_x(st),
+				torre_get_y(st)
 			   );
 	}
 	free(c);
@@ -574,20 +583,20 @@ void searchTorreInRect(Rect r, KdTree k, FILE *fTxt){
 void searchTorreInCircle(Circle c, KdTree k, FILE *fTxt){
 	if(k == NULL)
 		return;
-	StTorre *st;
+	Torre st;
 	Circle c2;
 	KdNode *kd = (KdNode *) k;
 	searchTorreInCircle(c, kd->left, fTxt);
 	searchTorreInCircle(c, kd->right, fTxt);
-	st = (StTorre *) kd->data;
-	c2 = createCircle(st->strk, st->fill, 10, st->x, st->y);
+	st = kd->data;
+	c2 = createCircle(torre_get_strk(st), torre_get_fill(st), 10, torre_get_x(st), torre_get_y(st));
 	if(isCircleInsideCircle(c2, c)){
 		fprintf(fTxt, "Torre ID=%s Fill=%s Stroke=%s X=%lf Y=%lf\n", 
-				st->id,
-				st->fill,
-				st->strk,
-				st->x,
-				st->y
+				torre_get_id(st),
+				torre_get_fill(st),
+				torre_get_strk(st),
+				torre_get_x(st),
+				torre_get_y(st)
 			   );
 	}
 	free(c2);
@@ -622,7 +631,7 @@ void traverseTreeQuadra(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 	if(kd == NULL)
 		return;
 	KdNode *knode = (KdNode *)kd;
-	StQuadra *sq = (StQuadra *) knode->data;
+	Quadra sq = knode->data;
 	if(knode->used != 0)
 		func(f, sq);
 	if(knode->left != NULL)
@@ -635,7 +644,7 @@ void traverseTreeSemaforo(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 	if(kd == NULL)
 		return;
 	KdNode *knode = (KdNode *)kd;
-	StSemaforo *sq = (StSemaforo *) knode->data;
+	Semaforo sq = knode->data;
 	if(knode->used != 0)
 		func(f, sq);
 	if(knode->left != NULL)
@@ -648,7 +657,7 @@ void traverseTreeTorre(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 	if(kd == NULL)
 		return;
 	KdNode *knode = (KdNode *)kd;
-	StTorre *sq = (StTorre *) knode->data;
+	Torre sq = knode->data;
 	if(knode->used != 0)
 		func(f, sq);
 	if(knode->left != NULL)
@@ -661,7 +670,7 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 	if(kd == NULL)
 		return;
 	KdNode *knode = (KdNode *)kd;
-	StHidrante *sq = (StHidrante *) knode->data;
+	Hidrante sq = knode->data;
 	if(knode->used != 0)
 		func(f, sq);
 	if(knode->left != NULL)
@@ -671,20 +680,20 @@ void traverseTreeHidrante(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 }
 
 void printa_closest_torre(FILE *fSvg, FILE *fTxt, void *sa, void *sb, float dist){
-	StTorre *a = (StTorre *) sa;
-	StTorre *b = (StTorre *) sb;
+	Torre a = sa;
+	Torre b = sb;
 	fprintf(fTxt, "\n----Torres mais proximas----\n");
 	fprintf(fSvg, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
 			15.0,
-			a->x,
-			a->y);
+			torre_get_x(a),
+			torre_get_y(a));
 	fprintf(fSvg, "<circle r=\"%.2lf\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"black\" fill-opacity=\"0\" stroke-dasharray=\"5,5\" stroke-width=\"3\"/>\n",
 			15.0,
-			b->x,
-			b->y);
+			torre_get_x(b),
+			torre_get_y(b));
 	fprintf(fTxt, "IDs => %s | %s | Distancia %lf\n", 
-			a->id,
-			b->id,
+			torre_get_id(a),
+			torre_get_id(b),
 			dist);
 }
 void printa_closest_given_radio(KdTree k, Ponto p, Ponto q, float dist, FILE *fSvg, FILE *fTxt){
@@ -692,10 +701,13 @@ void printa_closest_given_radio(KdTree k, Ponto p, Ponto q, float dist, FILE *fS
 		return;
 	KdNode *kd = (KdNode *) k;
 	float ponto[] = {q.x, q.y};
-	StHidrante *sh = (StHidrante *) search_tree(k, ponto, 0);
+	Hidrante sh = search_tree(k, ponto, 0);
 	if(sh != NULL){
-		StHidrante *sh = (StHidrante *) kd->data;
-		fprintf(fTxt, "\n----HIDRANTE MAIS PROXIMO DA RADIO----\nID => %s | COR => %s | Distancia radio x hidrante %lf",sh->id, sh->fill, dist);
+		Hidrante sh = kd->data;
+		fprintf(fTxt, "\n----HIDRANTE MAIS PROXIMO DA RADIO----\nID => %s | COR => %s | Distancia radio x hidrante %lf",
+				hidrante_get_id(sh),
+				hidrante_get_fill(sh),
+				dist);
 		drawLinePontilhado(fSvg, p, q);
 	}
 }
@@ -703,9 +715,11 @@ void printa_closest_given_p(KdTree k, Ponto p, Ponto q, float dist, FILE *fSvg, 
 	if(k == NULL)
 		return;
 	float ponto[] = {q.x, q.y};
-	StHidrante *sh = (StHidrante *) search_tree(k, ponto, 0);
+	Hidrante sh = search_tree(k, ponto, 0);
 	if(sh != NULL){
-		fprintf(fTxt, "\n----HIDRANTE MAIS PROXIMO----\nID HIDRANTE => %s | COR =>%s | Distancia ponto x hidrante => %lf",sh->id, sh->fill, dist);
+		fprintf(fTxt, "\n----HIDRANTE MAIS PROXIMO----\nID HIDRANTE => %s | COR =>%s | Distancia ponto x hidrante => %lf",
+				hidrante_get_id(sh),
+				hidrante_get_fill(sh), dist);
 		drawLinePontilhado(fSvg, p, q);
 		fprintf(fSvg, "<text x=\"%.2f\" y=\"%.2f\" fill=\"black\" font-size=\"12\">%s</text>\n", p.x, p.y, "X");
 		
@@ -741,8 +755,8 @@ int printa_closest(KdTree k, float dist, FILE *fSvg, FILE *fTxt, Ponto (*getPont
 	return 0;
 }
 int compareTorreId(Torre t, char *key){
-	StTorre *st = (StTorre *) t;
-	if(strcmp(st->id, key) == 0)
+	Torre st = t;
+	if(strcmp(torre_get_id(st), key) == 0)
 		return 1;
 	return 0;
 }
@@ -756,15 +770,15 @@ void desapropriar(Cidade city, Rect r, FILE *fTxt){
 
 }
 void kill_pessoa(Cidade c, char *cpf, FILE *fTxt){
-	StPessoa *sp = searchPessoa(c.pessoas, cpf);
-	StMorador *sm = searchMorador(c.moradores, cpf);
+	Pessoa sp = searchPessoa(c.pessoas, cpf);
+	Morador sm = searchMorador(c.moradores, cpf);
 	if(sp != NULL){
-		if(sp->sexo == 'm' || sp->sexo == 'M')
+		if(pessoa_get_sexo(sp) == 'm' || pessoa_get_sexo(sp) == 'M')
 			fprintf(fTxt, "RIP %s %s, portador %s, do sexo Masculino, nascido a %s\n",
-					sp->nome, sp->sobrenome, sp->cpf, sp->nasc);
+					pessoa_get_nome(sp), pessoa_get_sobrenome(sp), pessoa_get_cpf(sp), pessoa_get_nasc(sp));
 		else
 			fprintf(fTxt, "RIP %s %s, portador %s, do sexo Feminino, nascida a %s\n",
-					sp->nome, sp->sobrenome, sp->cpf, sp->nasc);
+					pessoa_get_nome(sp), pessoa_get_sobrenome(sp), pessoa_get_cpf(sp), pessoa_get_nasc(sp));
 
 		remove_hash(c.pessoas, cpf);
 	}
@@ -774,7 +788,7 @@ void kill_pessoa(Cidade c, char *cpf, FILE *fTxt){
 				morador_get_face(sm),
 				morador_get_num(sm));
 
-		Ponto q = city_get_ponto(c, sm->addr);
+		Ponto q = city_get_ponto(c, morador_get_addr(sm));
 		Ponto *p = malloc(sizeof(Ponto));
 		p->x = q.x;
 		p->y = q.y;
@@ -783,25 +797,20 @@ void kill_pessoa(Cidade c, char *cpf, FILE *fTxt){
 	}
 }
 void mudar_pessoa(Cidade c, char *cpf, Address novo, FILE *fTxt){
-	StPessoa *sp = searchPessoa(c.pessoas, cpf);
-	StMorador *sm = searchMorador(c.moradores, cpf);
+	Pessoa sp = searchPessoa(c.pessoas, cpf);
+	Morador sm = searchMorador(c.moradores, cpf);
 	if(sp == NULL || sm == NULL)
 		return;
 	fprintf(fTxt, "\n----%s %s mudou ----\n",
-			sp->nome, sp->sobrenome);
+			pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
 	fprintf(fTxt, "Antigo endereco => %s/%c/%d\n",
 			morador_get_cep(sm),
 			morador_get_face(sm),
 			morador_get_num(sm));
 
-	Ponto old = city_get_ponto(c, sm->addr);
-	sm->addr = changeAddress(
-			sm->addr,
-			address_get_cep(novo),
-			address_get_face(novo),
-			address_get_num(novo),
-			address_get_comp(novo));
-	Ponto new = city_get_ponto(c, sm->addr);
+	Ponto old = city_get_ponto(c, morador_get_addr(sm));
+	
+	Ponto new = city_get_ponto(c, morador_get_addr(sm));
 
 	fprintf(fTxt, "Novo endereco => %s/%c/%d\n",
 			morador_get_cep(sm),
@@ -813,20 +822,17 @@ void mudar_pessoa(Cidade c, char *cpf, Address novo, FILE *fTxt){
 	insert(c.mud, old_new, 0);
 }
 void mudar_estbl(Cidade c, char *cnpj, Address novo, FILE *fTxt){
-	StComercio *sc = searchComercio(c.comercio, cnpj);
+	Comercio sc = searchComercio(c.comercio, cnpj);
 	if(sc == NULL)
 		return;
-	fprintf(fTxt, "\n---- %s mudou---\n", sc->nome);
+	fprintf(fTxt, "\n---- %s mudou---\n", estabelecimento_get_nome(sc));
 	fprintf(fTxt, "Antigo endereco => %s/%c/%d\n",
 			estabelecimento_get_cep(sc),
 			estabelecimento_get_face(sc),
 			estabelecimento_get_num(sc));
-	Ponto old = city_get_ponto(c, sc->address);
-	sc->address = changeAddress(sc->address,
-			address_get_cep(novo),
-			address_get_face(novo), 
-			address_get_num(novo), "");
-	Ponto new = city_get_ponto(c, sc->address);
+	Ponto old = city_get_ponto(c, estabelecimento_get_address(sc));
+	estabelecimento_set_address(sc, novo);
+		Ponto new = city_get_ponto(c, estabelecimento_get_address(sc));
 	fprintf(fTxt, "Novo endereco => %s/%c/%d\n",
 			estabelecimento_get_cep(sc),
 			estabelecimento_get_face(sc),
@@ -845,12 +851,12 @@ void drawCidade(Cidade c, FILE *fSvgQry){
 	
 	Node *n;
 	for(n = getFirst(c.mor); n != NULL; n = n->next){
-		StMorador *sm = (StMorador *)n->data;
-		drawMorador(fSvgQry, city_get_ponto(c, sm->addr), sm->cpf);
+		Morador sm = n->data;
+		drawMorador(fSvgQry, city_get_ponto(c, morador_get_addr(sm)), morador_get_cpf(sm));
 	}
 	for(n = getFirst(c.est); n != NULL; n = n->next){
-		StComercio *sc = (StComercio *) n->data;
-		drawEstabelecimento(fSvgQry, city_get_ponto(c, sc->address));
+		Comercio sc = n->data;
+		drawEstabelecimento(fSvgQry, city_get_ponto(c, estabelecimento_get_address(sc)));
 	}
 	for(n = getFirst(c.mud); n != NULL; n = n->next){
 		Ponto *p = n->data;

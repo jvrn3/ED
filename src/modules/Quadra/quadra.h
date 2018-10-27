@@ -2,13 +2,6 @@
 #define QUADRA_H
 
 
-typedef struct stQuadra{
-  char fill[50], strk[50];
-  char cep[50];
-
-  double x, y, larg, alt;
-}StQuadra;
-
 typedef void *Quadra;
 
 
@@ -22,6 +15,14 @@ float quadra_get_x(Quadra q);
 float quadra_get_y(Quadra q);
 float quadra_get_h(Quadra q);
 float quadra_get_w(Quadra q);
+char *quadra_get_fill(Quadra q);
+char *quadra_get_strk(Quadra q);
+char *quadra_get_cep(Quadra q);
+void quadra_set_fill(Quadra q, char *color);
+void quadra_set_strk(Quadra q, char *color);
+
+
+
 
 
 

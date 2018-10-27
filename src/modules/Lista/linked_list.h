@@ -22,7 +22,6 @@ typedef struct stList{
 }StList;
 
 
-
 Lista createList();
 
 int length(Lista l);

@@ -1,18 +1,13 @@
 #ifndef PESSOA_H
 #define PESSOA_H
-#include <stdlib.h>
-#include <string.h>
-/* */
 typedef void *Pessoa;
-typedef struct stPessoa{
-	char cpf[50];
-	char nome[50];
-	char sobrenome[50];
-	char sexo;
-	char nasc[100];
-	int vivo;
-
-}StPessoa;
-#endif
 
 Pessoa createPessoa(char *cpf, char *nome, char *sobrenome, char sexo, char *nascimento);
+char *pessoa_get_cpf(Pessoa p);
+char *pessoa_get_nome(Pessoa p);
+char *pessoa_get_sobrenome(Pessoa p);
+char pessoa_get_sexo(Pessoa p);
+char *pessoa_get_nasc(Pessoa p);
+#endif
+
+

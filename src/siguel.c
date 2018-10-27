@@ -456,47 +456,47 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "cc", 2) == 0){
 				sscanf(line, "cc %s %s %s", cep, tmp_strk, tmp_fill);
-				StQuadra *sq;
-				StTorre *st;
-				StHidrante *sh;
-				StSemaforo *ss;
+				Quadra sq;
+				Torre st;
+				Hidrante sh;
+				Semaforo ss;
 
-				sq = (StQuadra *) search_cep(cep, city.arvore_quadra);
+				sq = search_cep(cep, city.arvore_quadra);
 				if(sq != NULL){
-					strcpy(sq->fill, tmp_fill);
-					strcpy(sq->strk, tmp_strk);
+					quadra_set_fill(sq, tmp_fill);
+					quadra_set_strk(sq, tmp_strk);
 				}
 
-				else if((ss = (StSemaforo *) search_id_sem(cep, city.arvore_semaforo)) != NULL){
-					strcpy(ss->fill, tmp_fill);
-					strcpy(ss->strk, tmp_strk);
+				else if((ss =  search_id_sem(cep, city.arvore_semaforo)) != NULL){
+					semaforo_set_fill(ss, tmp_fill);
+					semaforo_set_strk(ss, tmp_strk);
 				}
-				else if((st = (StTorre *) search_id_to(cep, city.arvore_torre) )!= NULL){
-					strcpy(st->fill, tmp_fill);
-					strcpy(st->strk, tmp_strk);
+				else if((st = search_id_to(cep, city.arvore_torre) )!= NULL){
+					torre_set_fill(st, tmp_fill);
+					torre_set_strk(st, tmp_strk);
 
 				}
-				else if((sh = (StHidrante *) search_id_hi(cep, city.arvore_hidrante)) != NULL){
-					strcpy(sh->fill, tmp_fill);
-					strcpy(sh->strk, tmp_strk);
+				else if((sh =search_id_hi(cep, city.arvore_hidrante)) != NULL){
+					hidrante_set_fill(sh, tmp_fill);
+					hidrante_set_strk(sh, tmp_strk);
 				}
 			}
 			else if(strncmp(line, "crd?", 4) == 0){
 
 				sscanf(line, "crd? %s", cep);
-				StQuadra *sq;
-				StTorre *st;
-				StHidrante *sh;
-				StSemaforo *ss;
-				sq = (StQuadra *) search_cep(cep, city.arvore_quadra);
+				Quadra sq;
+				Torre st;
+				Hidrante sh;
+				Semaforo ss;
+				sq = search_cep(cep, city.arvore_quadra);
 				if(sq != NULL)
-					fprintf(fTxt, "%lf %lf %lf %lf QUADRA\n", sq->x, sq->y, sq->larg, sq->alt);
-				else if((ss = (StSemaforo *) search_id_sem(cep, city.arvore_semaforo)) != NULL)
-					fprintf(fTxt, "%lf %lf SEMAFORO\n", ss->x, ss->y);
-				else if((st = (StTorre *) search_id_to(cep, city.arvore_torre) )!= NULL)
-					fprintf(fTxt, "%lf %lf TORRE\n", st->x, st->y);
-				else if((sh = (StHidrante *) search_id_hi(cep, city.arvore_hidrante)) != NULL)
-					fprintf(fTxt, "%lf %lf HIDRANTE\n", sh->x, sh->y);
+					fprintf(fTxt, "%lf %lf %lf %lf QUADRA\n", quadra_get_x(sq), quadra_get_y(sq), quadra_get_w(sq), quadra_get_h(sq));
+				else if((ss = search_id_sem(cep, city.arvore_semaforo)) != NULL)
+					fprintf(fTxt, "%lf %lf SEMAFORO\n", semaforo_get_x(ss), semaforo_get_y(ss));
+				else if((st = search_id_to(cep, city.arvore_torre) )!= NULL)
+					fprintf(fTxt, "%lf %lf TORRE\n", torre_get_x(st), torre_get_y(st));
+				else if((sh = search_id_hi(cep, city.arvore_hidrante)) != NULL)
+					fprintf(fTxt, "%lf %lf HIDRANTE\n", hidrante_get_x(sh), hidrante_get_y(sh));
 			}
 			/* closest pair */
 			else if(strncmp(line, "crb?", 4) == 0){
@@ -515,9 +515,9 @@ main(int argc, char *argv[]){
 					Node *n;
 					for(n = getFirst(mor_quadra); n != NULL; n = n->next){
 						HashData *hd =(HashData *) n->data;
-						StPessoa *sp = (StPessoa *) search(city.pessoas, hd->key);
-						fprintf(fTxt, "Nome => %s %s\n", sp->nome, sp->sobrenome);
-						StMorador *sm = (StMorador *) hd->data;
+						Pessoa sp = search(city.pessoas, hd->key);
+						fprintf(fTxt, "Nome => %s %s\n", pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
+						Morador sm =  hd->data;
 						fprintf(fTxt, "Endereco => %s/%c/%d\n" , morador_get_cep(sm), morador_get_face(sm),
 								morador_get_num(sm));
 					}
@@ -535,17 +535,17 @@ main(int argc, char *argv[]){
 				//imprime dados do morador indicado pelo cpf
 				char cpf[50];
 				sscanf(line, "dm? %s", cpf);
-				StMorador  *sm = searchMorador(city.moradores, cpf);
-				StPessoa *sp = searchPessoa(city.pessoas, cpf);
+				Morador  sm = searchMorador(city.moradores, cpf);
+				Pessoa sp = searchPessoa(city.pessoas, cpf);
 				if(sm != NULL && sp != NULL){
-				fprintf(fTxt, "\nDados de => %s %s\n", sp->nome, sp->sobrenome);
+				fprintf(fTxt, "\nDados de => %s %s\n", pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
 					fprintf(fTxt, "Endereco => %s/%c/%d\n",
 							morador_get_cep(sm),
 							morador_get_face(sm), 
 							morador_get_num(sm));
 
-					StMorador *smm = createMorador(
-							sm->cpf,
+					Morador smm = createMorador(
+							morador_get_cpf(sm),
 							morador_get_cep(sm),
 							morador_get_face(sm),
 							morador_get_num(sm),
@@ -556,28 +556,28 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "de?", 3) == 0){
 				//imprime todos os dados do estabelecimento comercial identificado por cnpj
 				char cnpj[50];
-				StComercioTipo *sct= NULL;
+				Comercio sct= NULL;
 				sscanf(line, "de? %s", cnpj);
-				StComercio *sc = searchComercio(city.comercio, cnpj);
+				Comercio sc = searchComercio(city.comercio, cnpj);
 				if(sc != NULL)
 					sct = searchComercioTipo(city.tipo_comercio, estabelecimento_get_codt(sc));
 				if(sc != NULL && sct != NULL){
-					fprintf(fTxt, "\nEstabelecimento comercial identificado por -> %s\n", sc->cnpj);
+					fprintf(fTxt, "\nEstabelecimento comercial identificado por -> %s\n", estabelecimento_get_nome(sc));
 					fprintf(fTxt, "Nome => %s\nDescricao: %s\nEndereco %s/%c/%d\n",
-							sc->nome,
-							sct->descricao,
+							estabelecimento_get_nome(sc),
+							estabelecimento_get_descricao(sct),
 							estabelecimento_get_cep(sc),
 							estabelecimento_get_face(sc),
 							estabelecimento_get_num(sc));
 
 					
-					StComercio *scc = createComercio(
-							sc->cnpj,
-							sc->codt,
+					Comercio scc = createComercio(
+							estabelecimento_get_cnpj(sc),
+							estabelecimento_get_cnpj(sc),
 							estabelecimento_get_cep(sc),
 							estabelecimento_get_face(sc),
 							estabelecimento_get_num(sc),
-							sc->nome
+							estabelecimento_get_nome(sc)
 							);
 					insert(city.est, scc, 0);
 				}
@@ -597,8 +597,11 @@ main(int argc, char *argv[]){
 					fprintf(fTxt, "\n---- Estebelecimentos comerciais no cep %s ----\n", cep);
 					for(n = getFirst(estbl_quadra); n != NULL; n = n->next){
 						HashData *hd = (HashData *) n->data;
-						StComercio * sc = (StComercio *) hd->data;
-						fprintf(fTxt, "Cnpj => %s\nNome =>%s\nTipo =>%s\n",sc->cnpj, sc->nome, sc->codt);
+						/* StComercio * sc = (StComercio *) hd->data; */
+						Comercio sc = hd->data;
+						fprintf(fTxt, "Cnpj => %s\nNome =>%s\nTipo =>%s\n",estabelecimento_get_cnpj(sc),
+								estabelecimento_get_nome(sc),
+								estabelecimento_get_codt(sc));
 					}
 					destroyList(estbl_quadra);
 			}
@@ -616,8 +619,8 @@ main(int argc, char *argv[]){
 					fprintf(fTxt, "\n---- Estabelecimentos comerciais do tipo %s ----\n", tp);
 					for(n = getFirst(estblc); n != NULL; n = n->next){
 						HashData *hd = (HashData *) n->data;
-						StComercio *sc = (StComercio *) hd->data;
-						fprintf(fTxt, "Nome => %s\nEndereco =>%s/%c/%d\n", sc->nome,
+						Comercio sc = hd->data;
+						fprintf(fTxt, "Nome => %s\nEndereco =>%s/%c/%d\n", estabelecimento_get_nome(sc),
 								estabelecimento_get_cep(sc),
 								estabelecimento_get_face(sc), 
 								estabelecimento_get_num(sc));
@@ -633,8 +636,8 @@ main(int argc, char *argv[]){
 				fprintf(fTxt, "\n----Tipos de comercio da quadra com o CEP %s----\n", cep);
 				for(n = getFirst(estbl_quadra); n != NULL; n = n->next){
 					HashData *hd = n->data;
-					StComercio *sc = (StComercio *)hd->data;
-					fprintf(fTxt, "Tipo => %s\n", sc->codt);
+					Comercio sc = hd->data;
+					fprintf(fTxt, "Tipo => %s\n", estabelecimento_get_codt(sc));
 				}
 				destroyList(estbl_quadra);
 			}
@@ -663,10 +666,12 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "fec", 3) == 0){
 				char cnpj[50];
 				sscanf(line, "fec %s", cnpj);
-				StComercio *sc = remove_hash(city.comercio, cnpj);
+				Comercio sc = remove_hash(city.comercio, cnpj);
 				if(sc != NULL){
 					fprintf(fTxt, "\n----Estabelecimento comercial fechado ----\n");
-					fprintf(fTxt, "Nome => %s | CPNJ => %s | TIPO => %s\n", sc->nome, sc->cnpj, sc->codt);
+					fprintf(fTxt, "Nome => %s | CPNJ => %s | TIPO => %s\n", estabelecimento_get_nome(sc), 
+							estabelecimento_get_cnpj(sc),
+							estabelecimento_get_codt(sc));
 				}
 				if(sc != NULL)
 					free(sc);
@@ -715,12 +720,12 @@ main(int argc, char *argv[]){
 		}
 		Node *nod;
 		for(nod = getFirst(hmpList); nod != NULL; nod = nod->next){
-			StTorre *st = (StTorre *) nod->data;
-			Ponto p = createPonto(st->x, st->y);
+			Torre st = nod->data;
+			Ponto p = createPonto(torre_get_x(st), torre_get_y(st));
 			Ponto best;
 			float clos = nn(city.arvore_hidrante, p, hmp, &best);
 			printa_closest_given_radio(city.arvore_hidrante, p,best, clos, fSvgQry, fTxt);
-			fprintf(fTxt, "Id Radio => %s | COR => %s \n", st->id, st->fill);
+			fprintf(fTxt, "Id Radio => %s | COR => %s \n", torre_get_id(st), torre_get_fill(st));
 		}
 		for(nod = getFirst(hmpeList); nod != NULL; nod = nod->next){
 			Ponto best;

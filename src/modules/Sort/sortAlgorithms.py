@@ -32,12 +32,12 @@ def merge(A, p, q, r):
 	j = 0
 	k = 0
 	while i <= q || j <= r
-		if L[i] <= R[j]:
-			A[k] = L[i]
-			i+=1
-		else:
-			A[k] = R[j]
-			j+=1
+	if L[i] <= R[j]:
+		A[k] = L[i]
+		i+=1
+	else:
+		A[k] = R[j]
+		j+=1
 
 def mergeSort(A, p, r):
 	if p < r:

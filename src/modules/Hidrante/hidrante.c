@@ -1,4 +1,11 @@
 #include "hidrante.h"
+typedef struct stHidrante{
+  char fill[50], strk[50];
+  char id[50];
+  double x, y;
+
+}StHidrante;
+
 
 
 Hidrante createHidrante(char *fill, char *strk, char *id, double x, double y){
@@ -39,4 +46,33 @@ float hidrantePointInX(Hidrante a){
 float hidrantePointInY(Hidrante a){
 	StHidrante *sh = (StHidrante *) a;
 	return sh->y;
+}
+char *hidrante_get_id(Hidrante h){
+	StHidrante *sh = (StHidrante *) h;
+	return sh->id;
+}
+
+void hidrante_set_fill(Hidrante h, char *color){
+	StHidrante *sh = (StHidrante *) h;
+	strcpy(sh->fill, color);
+}
+void hidrante_set_strk(Hidrante h, char *color){
+	StHidrante *sh = (StHidrante *) h;
+	strcpy(sh->strk, color);
+}
+float hidrante_get_x(Hidrante h){
+	StHidrante *sh = (StHidrante *) h;
+	return sh->x;
+}
+float hidrante_get_y(Hidrante h){
+	StHidrante *sh = (StHidrante *) h;
+	return sh->y;
+}
+char *hidrante_get_fill(Hidrante h){
+	StHidrante *sh = (StHidrante *) h;
+	return sh->fill;
+}
+char *hidrante_get_strk(Hidrante h){
+	StHidrante *sh = (StHidrante *)h;
+	return sh->strk;
 }

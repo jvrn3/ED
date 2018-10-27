@@ -9,9 +9,9 @@ typedef struct stRect{
 	char border[50];
 	char inside[50];
 	double w,
-				 h,
-				 x,
-				 y;
+		   h,
+		   x,
+		   y;
 }StRect;
 
 Rect createRect(char *border, char *inside, double w, double h, double x, double y);

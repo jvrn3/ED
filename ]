@@ -51,29 +51,3 @@ char *semaforo_get_fill(Semaforo s){
 	StSemaforo *ss = (StSemaforo *) s;
 	return ss->fill;
 }
-char *semaforo_get_strk(Semaforo s){
-	StSemaforo *ss = (StSemaforo *) s;
-	return ss->strk;
-}
-char *semaforo_get_id(Semaforo s){
-	StSemaforo *ss = (StSemaforo *) s;
-	return ss->id;
-}
-
-float semaforo_get_x(Semaforo s){
-	StSemaforo *ss = (StSemaforo *) s;
-	return ss->x;
-}
-float semaforo_get_y(Semaforo s){
-	StSemaforo *ss = (StSemaforo *) s;
-	return ss->y;
-}
-void semaforo_set_fill(Semaforo s, char *color){
-	StSemaforo *ss = (StSemaforo *) s;
-	strcpy(ss->fill, color);
-}
-void semaforo_set_strk(Semaforo s, char *color){
-	StSemaforo *ss = (StSemaforo *) s;
-	strcpy(ss->strk, color);
-}
-

@@ -5,17 +5,7 @@
 #include "../Address/address.h"
 typedef void *Comercio;
 
-typedef struct stComercio{
-	char cnpj[100];
-	char codt[50];
-	char nome[100];
-	Address address;
-}StComercio;
 
-typedef struct stComercioTipo{
-	char codt[50];
-	char descricao[100];
-}StComercioTipo;
 
 Comercio createComercio(char *cnpj, char *codt, char *cep, char face, int num, char *nome);
 Comercio createTipoComercio(char *codt, char *descricao);
@@ -23,6 +13,11 @@ char *estabelecimento_get_cep(Comercio c);
 int estabelecimento_get_num(Comercio c);
 char estabelecimento_get_face(Comercio c);
 char *estabelecimento_get_codt(Comercio c);
+char *estabelecimento_get_nome(Comercio c);
+char *estabelecimento_get_cnpj(Comercio c);
+char *estabelecimento_get_address(Comercio c);
+void estabelecimento_set_address(Comercio c, Address addr);
+char * estabelecimento_get_descricao(Comercio c);
 void free_comercio(Comercio c);
 #endif
 

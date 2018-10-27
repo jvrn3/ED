@@ -3,6 +3,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+typedef struct stQuadra{
+  char fill[50], strk[50];
+  char cep[50];
+
+  double x, y, larg, alt;
+}StQuadra;
 
 Quadra createQuadra(char *fill, char *strk, char *cep, 
 		double x, double y, double larg, double alt){
@@ -38,32 +44,24 @@ float quadra_get_w(Quadra q){
 	return sq->larg;
 }
 
+char *quadra_get_cep(Quadra q){
+	StQuadra *sq = (StQuadra *) q;
+	return sq->cep;
+}
+char *quadra_get_fill(Quadra q){
+	StQuadra *sq = (StQuadra *) q;
+	return sq->fill;
+}
+char *quadra_get_strk(Quadra q){
+	StQuadra *sq = (StQuadra *)q;
+	return sq->strk;
+}
+void quadra_set_fill(Quadra q, char *color){
+	StQuadra *sq = (StQuadra *) q;
+	strcpy(sq->fill, color);
+}
+void quadra_set_strk(Quadra q, char *color){
+	StQuadra *sq = (StQuadra *) q;
+	strcpy(sq->strk, color);
 
-/* int compareQuadraX(Quadra a, Quadra b){ */
-/* 	StQuadra *sq = (StQuadra *) a; */
-/* 	StQuadra *sqb = (StQuadra *) b; */
-/*  */
-/* 	if(sq->x < sqb->x) */
-/* 		return 1; */
-/* 	else */
-/* 		return -1; */
-/* } */
-/* int compareQuadraY(Quadra a, Quadra b){ */
-/* 	StQuadra *sq = (StQuadra *) a; */
-/* 	StQuadra *sqb = (StQuadra *) b; */
-/*  */
-/*  */
-/* 	if(sq->y < sqb->y) */
-/* 		return 1; */
-/* 	else */
-/* 		return -1; */
-/* } */
-/*  */
-/* float quadraPointInX(Quadra a){ */
-/* 	StQuadra *sq = (StQuadra *) a; */
-/* 	return sq->x; */
-/* } */
-/* float quadraPointInY(Quadra a){ */
-/* 	StQuadra *sq = (StQuadra *) a; */
-/* 	return sq->y; */
-/* } */
+}
