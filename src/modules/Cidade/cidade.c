@@ -113,44 +113,44 @@ char *get_sexo(Pessoa p){
 	else
 		return "Feminino";
 }
-int _compareCodtEstblc(void *h, void *k){
-	HashData *hd= (HashData *) h;
+int _compareCodtEstblc(Hash h, void *k){
+	/* HashData *hd= (HashData *) h; */
 	char *key = (char *) k;
-	char *codt = estabelecimento_get_codt(hd->data);
+	char *codt = estabelecimento_get_codt(hash_get_data(h));
 	if(strcmp(codt, key) == 0)
 		return 1;
 	
 	else
 		return 0;
 }
-int _compareCepMorador(void *h, void *k){
-	HashData *hd = (HashData *) h;
+int _compareCepMorador(Hash h, void *k){
+	/* HashData *hd = (HashData *) h; */
 	char *key = (char *) k;
-	char *morador_cep  = morador_get_cep(hd->data);
+	char *morador_cep  = morador_get_cep(hash_get_data(h));
 
 	if(strcmp(morador_cep, key) == 0)
 		return 1;
 	else
 		return 0;
 }
-int _compareCepEstblcmto(void *h, void *k){
-	HashData *hd = (HashData *) h;
+int _compareCepEstblcmto(Hash h, void *k){
+	/* HashData *hd = (HashData *) h; */
 	char *key = (char *) k;
-	char *estabelecimento_cep = estabelecimento_get_cep(hd->data);
+	char *estabelecimento_cep = estabelecimento_get_cep(hash_get_data(h));
 	if(strcmp(estabelecimento_cep, key) == 0)
 		return 1;
 	else
 		return 0;
 }
 void _hashSearchEstblcInRect(Cidade c, Rect r, FILE *fTxt){
-	HashTable *ht = (HashTable *) c.comercio;
+	Hash ht = c.comercio;
 	Node *n;
 	fprintf(fTxt, "\n---- Estabelecimentos dentro do retangulo ----\n");
 	for(int i = 0; i < get_hash_max(); i++){
-		if(ht->table[i] != NULL){
-			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
-				HashData *hd = (HashData *) n->data;
-				Comercio sc  = hd->data;
+		if(ht_get_(ht, i)!= NULL){
+			for(n = getFirst(ht_get_(ht, i)); n != NULL; n = getNext(n)){
+				Hash hd = list_get_data(n);
+				Comercio sc  = hash_get_data(hd);
 				Ponto p = city_get_ponto(c, estabelecimento_get_address(sc));
 				if(isInsideR(r, p.x, p.y)){
 					fprintf(fTxt, "Nome => %s\nEndereco => %s/%c/%d\n",
@@ -164,15 +164,15 @@ void _hashSearchEstblcInRect(Cidade c, Rect r, FILE *fTxt){
 	}
 }
 void _hashRemoveEstblcInRect(Cidade c, Rect r, FILE *fTxt){
-	HashTable *ht = (HashTable *) c.comercio;
+	Hash ht = c.comercio;
 	Node *n;
 	Lista list_cnpj = createList();
 	fprintf(fTxt, "\n----Estabelecimentos desapropriados ----\n");
 	for(int i = 0; i < get_hash_max(); i++){
-		if(ht->table[i] != NULL){
-			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
-				HashData *hd = (HashData *) n->data;
-				Comercio sc = hd->data;
+		if(ht_get_(ht, i) != NULL){
+			for(n = getFirst(ht_get_(ht, i)); n != NULL; n = getNext(n)){
+				Hash hd = list_get_data(n);
+				Comercio sc = hash_get_data(hd);
 				Ponto p = city_get_ponto(c, estabelecimento_get_address(sc));
 				if(isInsideR(r, p.x, p.y)){
 					fprintf(fTxt, "Nome => %s\nEndereco => %s/%c/%d\n",
@@ -195,15 +195,15 @@ void _hashRemoveEstblcInRect(Cidade c, Rect r, FILE *fTxt){
 
 }
 void _hashRemoveMoradorInRect(Cidade c, Rect r, FILE *fTxt){
-	HashTable *ht = (HashTable *) c.moradores;
+	Hash ht = c.moradores;
 	Node *n;
 	fprintf(fTxt, "\n----Moradores Desapropriados ----\n");
 	Lista list_cpf = createList();
 	for(int i = 0; i < get_hash_max(); i++){
-		if(ht->table[i] != NULL){
-			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
-				HashData *hd = (HashData *) n->data;
-				Morador sm = hd->data;
+		if(ht_get_(ht, i) != NULL){
+			for(n = getFirst(ht_get_(ht, i)); n != NULL; n = getNext(n)){
+				Hash hd = list_get_data(n);
+				Morador sm = hash_get_data(hd);
 				Ponto p = city_get_ponto(c, morador_get_addr(sm));
 				if(isInsideR(r, p.x, p.y)){
 					fprintf(fTxt, "Morador com o cpf %s removido",
@@ -224,14 +224,14 @@ void _hashRemoveMoradorInRect(Cidade c, Rect r, FILE *fTxt){
 
 }
 void _hashSearchTipoInRect(Cidade c, Rect r, char *key, FILE *fTxt){
-	HashTable *ht = (HashTable *) c.comercio;
+	Hash ht = c.comercio;
 	Node *n;
 	fprintf(fTxt, "\n---- Estabelecimentos do tipo %s dentro do retangulo ----\n", key);
 	for(int i = 0; i < get_hash_max(); i++){
-		if(ht->table[i] != NULL){
-			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
-				HashData *hd = (HashData *) n->data;
-				Comercio sc = hd->data;
+		if(ht_get_(ht, i) != NULL){
+			for(n = getFirst(ht_get_(ht, i)); n != NULL; n = getNext(n)){
+				Hash hd = list_get_data(n);
+				Comercio sc = hash_get_data(hd);
 				//se codt == codt pesquisado, entao
 				if(strcmp(key, estabelecimento_get_address(sc)) == 0){
 					Ponto p = city_get_ponto(c, estabelecimento_get_address(sc));
@@ -250,26 +250,26 @@ void _hashSearchTipoInRect(Cidade c, Rect r, char *key, FILE *fTxt){
 	}
 }
 void _hashSearchQuadraInRect(Cidade c, Rect r, FILE *fTxt){
-	HashTable *ht = (HashTable *) c.moradores;
+	Hash ht = c.moradores;
 	Quadra sq;
 	Node *n;
 	char *quadra;
 	fprintf(fTxt, "\n---- Moradores dentro do retangulo ---- \n");
 
 	for(int i = 0; i < get_hash_max(); i++){
-		if(ht->table[i] != NULL){
-			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
-				HashData *hd = (HashData *) n->data;
-				quadra = morador_get_cep(hd->data);
+		if(ht_get_(ht, i) != NULL){
+			for(n = getFirst(ht_get_(ht, i)); n != NULL; n = getNext(n)){
+				Hash hd = list_get_data(n);
+				quadra = morador_get_cep(hash_get_data(hd));
 				sq = searchQuadra(c.cep_quadra, quadra);
 				if(sq != NULL){
 					Rect r2 = createRect("", "", quadra_get_w(sq), quadra_get_h(sq), quadra_get_x(sq), quadra_get_y(sq));
 					if(isRectInsideRect(r2, r)){
-						Pessoa sp = search(c.pessoas, hd->key);
+						Pessoa sp = search(c.pessoas, hash_get_key(hd));
 						fprintf(fTxt, "Nome %s %s\n", pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
-						fprintf(fTxt, "Endereco %s/%c/%d\n", morador_get_cep(hd->data), 
-								morador_get_face(hd->data), 
-								morador_get_num(hd->data));
+						fprintf(fTxt, "Endereco %s/%c/%d\n", morador_get_cep(hash_get_data(hd)), 
+								morador_get_face(hash_get_data(hd)), 
+								morador_get_num(hash_get_data(hd)));
 					}
 					free(r2);
 

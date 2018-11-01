@@ -597,9 +597,11 @@ main(int argc, char *argv[]){
 					Node *n;
 					fprintf(fTxt, "\n---- Estebelecimentos comerciais no cep %s ----\n", cep);
 					for(n = getFirst(estbl_quadra); n != NULL; n = getNext(n)){
+						HashData *hd = (HashData *) n->data;
 						Hash hd = list_get_data(n);
 						/* StComercio * sc = (StComercio *) hd->data; */
-						Comercio sc = hash_get_data(hd);
+						Comercio sc = hash_get_data(n);
+						Comercio sc = hd->data;
 						fprintf(fTxt, "Cnpj => %s\nNome =>%s\nTipo =>%s\n",estabelecimento_get_cnpj(sc),
 								estabelecimento_get_nome(sc),
 								estabelecimento_get_codt(sc));
@@ -618,9 +620,9 @@ main(int argc, char *argv[]){
 					Lista estblc = hash_filter_to_list(city.comercio, _compareCodtEstblc, tp);
 					Node *n;
 					fprintf(fTxt, "\n---- Estabelecimentos comerciais do tipo %s ----\n", tp);
-					for(n = getFirst(estblc); n != NULL; n = getNext(n)){
-						Hash hd = list_get_data(n);
-						Comercio sc = hash_get_data(hd);
+					for(n = getFirst(estblc); n != NULL; n = n->next){
+						HashData *hd = (HashData *) n->data;
+						Comercio sc = hd->data;
 						fprintf(fTxt, "Nome => %s\nEndereco =>%s/%c/%d\n", estabelecimento_get_nome(sc),
 								estabelecimento_get_cep(sc),
 								estabelecimento_get_face(sc), 
@@ -636,8 +638,8 @@ main(int argc, char *argv[]){
 				Node *n;
 				fprintf(fTxt, "\n----Tipos de comercio da quadra com o CEP %s----\n", cep);
 				for(n = getFirst(estbl_quadra); n != NULL; n = n->next){
-					Hash hd = list_get_data(n);
-					Comercio sc = hash_get_data(hd);
+					HashData *hd = n->data;
+					Comercio sc = hd->data;
 					fprintf(fTxt, "Tipo => %s\n", estabelecimento_get_codt(sc));
 				}
 				destroyList(estbl_quadra);
@@ -720,7 +722,7 @@ main(int argc, char *argv[]){
 			printa_closest(city.arvore_torre, closest_kd(city.arvore_torre, tmp,&p), fSvgQry, fTxt, tmp, printa_closest_torre);
 		}
 		Node *nod;
-		for(nod = getFirst(hmpList); nod != NULL; nod = getNext(nod)){
+		for(nod = getFirst(hmpList); nod != NULL; nod = nod->next){
 			Torre st = nod->data;
 			Ponto p = createPonto(torre_get_x(st), torre_get_y(st));
 			Ponto best;
@@ -728,7 +730,7 @@ main(int argc, char *argv[]){
 			printa_closest_given_radio(city.arvore_hidrante, p,best, clos, fSvgQry, fTxt);
 			fprintf(fTxt, "Id Radio => %s | COR => %s \n", torre_get_id(st), torre_get_fill(st));
 		}
-		for(nod = getFirst(hmpeList); nod != NULL; nod = getNext(nod)){
+		for(nod = getFirst(hmpeList); nod != NULL; nod = nod->next){
 			Ponto best;
 			float hid = nn(city.arvore_hidrante, city_get_ponto(city, nod->data), hmp, &best);
 			printa_closest_given_p(city.arvore_hidrante, city_get_ponto(city, nod->data), best, hid, fSvgQry, fTxt);

@@ -1,4 +1,14 @@
 #include "hash_table.h"
+typedef struct hashTable{
+	int size;
+	// StList *table;
+	Lista *table;
+}HashTable;
+
+typedef struct hashData{
+	void *data;
+	char key[50];
+}HashData;
 
 int HASH_SIZE=256;
 
@@ -13,10 +23,10 @@ int compare(void *data, void *key){
 
 Hash new_hash_table(){
 	HashTable *ht = malloc(sizeof(HashTable));
-	ht->table = malloc(sizeof(StList) * HASH_SIZE);
+	ht->table = malloc(sizeof(Lista) * HASH_SIZE);
 	ht->size = 0;
 	for(int i = 0; i < HASH_SIZE; i++){
-		ht->table[i] = NULL;
+		ht->table[i] = createList();
 	}
 	return ht;
 }
@@ -27,13 +37,11 @@ Hash new_hash_table_n(int n){
 	HASH_SIZE = n;
 	return new_hash_table();
 }
-void put(HashTable *ht, char *key, void *data){
+void put(Hash h, char *key, void *data){
+	HashTable *ht = (HashTable *)  h;
 	int index = hash(key);
 	if(index > HASH_SIZE)
 		return;
-	if(ht->table[index] == NULL){
-		ht->table[index] = createList();
-	}
 	HashData *hd = malloc(sizeof(HashData));
 	hd->data = data;
 	strcpy(hd->key, key);
@@ -45,7 +53,8 @@ void put(HashTable *ht, char *key, void *data){
 	/* 	ht->table = realloc(ht->table, HASH_SIZE * sizeof(HashTable)); */
 	/* } */
 }
-void *search(HashTable *ht, char *key){
+void *search(Hash h, char *key){
+	HashTable *ht = (HashTable *) h;
 	int index = hash(key);
 	if(ht->table[index] != NULL){
 		//compare function compares key and the element of the hash
@@ -55,7 +64,8 @@ void *search(HashTable *ht, char *key){
 	}
 	return NULL;
 }
-Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *),void *_comp_key ){
+Lista hash_filter_to_list(Hash h, int (*_cmpr)(void *, void *),void *_comp_key ){
+	HashTable *ht = (HashTable *) h;
 	Lista new_list = createList();
 	for(int i = 0; i < HASH_SIZE; i++){
 		if(ht->table[i] != NULL){
@@ -69,7 +79,8 @@ Lista hash_filter_to_list(HashTable *ht, int (*_cmpr)(void *, void *),void *_com
 	}
 	return new_list;
 }
-void *remove_hash(HashTable *ht, char *key){
+void *remove_hash(Hash h, char *key){
+	HashTable *ht = (HashTable *) h;
 	int index = hash(key);
 
 	HashData *hd = search_del(ht->table[index], compare, key);
@@ -81,7 +92,8 @@ void *remove_hash(HashTable *ht, char *key){
 	//does this key exist? 
 	return NULL;
 }
-void delete_hash_table(HashTable *ht, void (*func)(void *)){
+void delete_hash_table(Hash h, void (*func)(void *)){
+	HashTable *ht = (HashTable *) h;
 	for(int i = 0; i < get_hash_max(); i++){
 		if(ht->table[i] != NULL){
 			while(length(ht->table[i]) > 0){
@@ -109,5 +121,15 @@ int hash(char *str){
 	}
 	return hash % HASH_SIZE;
 }
-
-
+Hash hash_get_data(Hash h){
+	HashData *hd = (HashData *) h;
+	return hd->data;
+}
+char *hash_get_key(Hash h){
+	HashData *hd = (HashData *) h;
+	return hd->key;
+}
+Hash ht_get_(Hash h,int i){
+	HashTable *ht = (HashTable *) h;
+	return ht->table[i];
+}

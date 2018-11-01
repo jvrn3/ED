@@ -7,20 +7,12 @@ typedef void *Lista;
 /* Uma lista ligada é uma coleção linear de dados. Cada elemento aponta para o próximo, até chegar ao final da lista(tail).
  *
  *Neste trabalho, é usado a Single Linked List, que só possuio o nó apontando para o head*/
-
-
 typedef struct node{
 	void *data;
 	int id;
 	int len;
 	struct node *next;
 }Node;
-
-typedef struct stList{
-	Node *head;
-	int size;
-}StList;
-
 
 Lista createList();
 
@@ -52,5 +44,6 @@ void *removeFirst(Lista l);
 void *removeLast(Lista l);
 void *search_del(Lista l, int (*compare)(void *, void *), void *comp);
 void destroyList(Lista l);
+Lista list_get_data(Lista l);
 #endif
-
+int _structListSize();

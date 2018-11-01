@@ -5,7 +5,6 @@
 int
 main(){
 	Lista l = createList();
-	StRect *r;
 	Rect r2= createRect("blue,", "green",1, 2, 3, 4);
 	Rect r3= createRect("green,", "yellow",1, 2, 3, 4);
 
@@ -19,11 +18,11 @@ main(){
 	 free(r2);
 	 free(d);
 
-	 Node *n;
-	for(n = getFirst(l); n != NULL; n = n->next){
-		r = (StRect *) n->data;
-		printf("%s\n", r->border);
-	}
+	 /* Node *n; */
+	/* for(n = getFirst(l); n != NULL; n = n->next){ */
+	/* 	r = (StRect *) n->data; */
+	/* 	printf("%s\n", r->border); */
+	/* } */
 	/* for(int i = 0; i < length(l); i++){ */
 	/* 	printf("") */
 	/*  */

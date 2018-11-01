@@ -1,17 +1,19 @@
 #include "../modules/Hash/hash_table.h"
 #include "../modules/Morador/morador.h"
 
+
 int
 main(){
-	HashTable *ht = new_hash_table();
+	Hash ht = new_hash_table();
 	put (ht, "123",createMorador("123", "abc", 'S', 123, "apto" ));
-	put (ht, "223",createMorador("223", "bbc", 'N', 223, "apto" ));
-	put (ht, "323",createMorador("323", "cbc", 'L', 323, "apto" ));
-	put (ht, "423",createMorador("423", "dbc", 'O', 423, "apto" ));
-
-	StMorador *sm = (StMorador *) search(ht, "123");
-
-
-	delete_hash_table(ht, free_morador);
+	/* Morador m = createMorador("123", "abc", 'S', 123, "apto" ); */
+	/* printf("%s\n", morador_get_cep(m)); */
+	/* #<{(| put (ht, "223",createMorador("223", "bbc", 'N', 223, "apto" )); |)}># */
+	/* put (ht, "323",createMorador("323", "cbc", 'L', 323, "apto" )); */
+	/* put (ht, "423",createMorador("423", "dbc", 'O', 423, "apto" )); */
+    /*  */
+	/* Morador sm = search(ht, "123"); */
+    /*  */
+	/* delete_hash_table(ht, free_morador); */
 	return 0;
 }

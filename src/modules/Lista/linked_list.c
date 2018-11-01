@@ -1,5 +1,9 @@
 #include "linked_list.h"
 
+typedef struct stList{
+	Node *head;
+	int size;
+}StList;
 
 Lista createList(){
 	Lista l = malloc(sizeof(StList));
@@ -282,4 +286,12 @@ void destroyList(Lista l){
 		removeFirst(list);
 	}
 	free(list);
+}
+Lista list_get_data(Lista l){
+	/* StList *st =(StList *) l; */
+	Node *n = (Node *) l;
+	return n->data;
+}
+int _structListSize(){
+	return sizeof(StList);
 }
