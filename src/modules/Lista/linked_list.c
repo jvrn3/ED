@@ -37,8 +37,8 @@ void * get(Lista l, int pos){
 	return tmp->data;
 }
 Node * getNext(Lista l){
-	StList *list = (StList *) l;
-	Node * n = list->head;
+	/* StList *list = (StList *) l; */
+	Node * n = (Node *) l;
 	n = n->next;
 	if(n == NULL)
 		return NULL;
@@ -288,7 +288,6 @@ void destroyList(Lista l){
 	free(list);
 }
 Lista list_get_data(Lista l){
-	StList *st =(StList *) l;
-	Node *n = st->head;
+	Node *n = (Node *) l;
 	return n->data;
 }

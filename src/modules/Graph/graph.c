@@ -84,9 +84,18 @@ void *getInfo(Grafo grafo, int src, int dest){
 
 int a_adjacente(Grafo grafo, int src, int dest){
 	StGrafo *sg = (StGrafo *) grafo;
-	Node *n = sg->vertices[src]->arestas;
-	/* for(n = getFirst(n); n != NULL; n = getNext(n)) */
-
-
+	Node *n;
+	for(n = getFirst(sg->vertices[src]->arestas); n != NULL; n = getNext(n)){
+		Aresta *aresta = list_get_data(n);
+		if(dest == aresta->dest)
+			return 1;
+	}
+	return 0;
+}
+Lista v_adjacentes(Grafo grafo, int v){
+	StGrafo *sg = (StGrafo *) grafo;
+	if(sg == NULL)
+		return NULL;
+	return sg->vertices[v]->arestas;
 }
 

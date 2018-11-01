@@ -43,7 +43,7 @@ int a_adjacente(Grafo grafo, int src, int dest);
 /*
  *Lista os adjacentes de um dado vértice
  * */
-Lista v_adjacente(Grafo *grafo, int v);
+Lista v_adjacente(Grafo grafo, int v);
 
 
 int cmpr_src_dest(void *a, void *b);
