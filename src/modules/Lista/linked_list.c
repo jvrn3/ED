@@ -288,10 +288,7 @@ void destroyList(Lista l){
 	free(list);
 }
 Lista list_get_data(Lista l){
-	/* StList *st =(StList *) l; */
-	Node *n = (Node *) l;
+	StList *st =(StList *) l;
+	Node *n = st->head;
 	return n->data;
-}
-int _structListSize(){
-	return sizeof(StList);
 }

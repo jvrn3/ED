@@ -12,7 +12,6 @@ typedef struct hashData{
 
 int HASH_SIZE=256;
 
-
 int compare(void *data, void *key){
 	HashData *hd = (HashData *) data;
 	if(strcmp(hd->key, (char *)key) == 0)
