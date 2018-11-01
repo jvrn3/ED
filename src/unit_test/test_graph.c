@@ -3,7 +3,7 @@
 
 int
 main(){
-	Grafo *grafo;
+	Grafo grafo;
 	grafo = createGrafo(10);
 
 	insertEdge(grafo, 1, 2);

@@ -278,7 +278,7 @@ void _hashSearchQuadraInRect(Cidade c, Rect r, FILE *fTxt){
 		}
 	}
 }
-KdTree insert_quadra(Cidade c, Quadra q, float point[2]){
+KdTree insert_quadra(Cidade c, Quadra q, float point[]){
 	return kd_insert(c.arvore_quadra, q, point);
 }
 KdTree insert_hidrante(Cidade c, Hidrante h, float point[]){

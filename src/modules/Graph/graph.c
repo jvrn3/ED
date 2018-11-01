@@ -33,6 +33,7 @@ typedef struct stGrafo{
 
 }StGrafo;
 
+//cria grafo com o numero de vértices
 Grafo createGrafo(int n){
 	//alocação dinâmica do grafo
 	//TODO desalocação
@@ -55,7 +56,7 @@ void insertEdge(Grafo grafo, int src, int dest){
 
 	//in oo style:
 	//vertice[i].add(aresta)
-	insert(sg->vertices[src], aresta, src);
+	insert(sg->vertices[src]->arestas, aresta, src);
 }
 
 int cmpr_src_dest(void *a, void *b){
@@ -67,7 +68,7 @@ int cmpr_src_dest(void *a, void *b){
 }
 void addInfo(Grafo grafo, int src, int dest, void *data){
 	StGrafo *sg = (StGrafo *) grafo;
-	Aresta *aresta = searchList(sg->vertices[src], cmpr_src_dest, &dest);
+	Aresta *aresta = searchList(sg->vertices[src]->arestas, cmpr_src_dest, &dest);
 
 	if(aresta == NULL)
 		return;
@@ -76,13 +77,15 @@ void addInfo(Grafo grafo, int src, int dest, void *data){
 
 void *getInfo(Grafo grafo, int src, int dest){
 	StGrafo *sg = (StGrafo *) grafo;
-	Aresta *aresta = searchList(sg->vertices[src], cmpr_src_dest, &dest);
+	Aresta *aresta = searchList(sg->vertices[src]->arestas, cmpr_src_dest, &dest);
 	if(aresta != NULL)
 		return aresta->data;
 }
 
 int a_adjacente(Grafo grafo, int src, int dest){
 	StGrafo *sg = (StGrafo *) grafo;
+	Node *n = sg->vertices[src]->arestas;
+	/* for(n = getFirst(n); n != NULL; n = getNext(n)) */
 
 
 }
