@@ -15,6 +15,9 @@
 #include "../Pessoa/pessoa.h"
 #include "../Morador/morador.h"
 #include "../Svg/svg.h"
+#include "../Graph/graph.h"
+#include "../Rua/rua.h"
+#include "../Carro/carro.h"
 
 /* Representação de Siguel, cidade com diversos equipamentos, pessoas etc 
  * Este arquivo contém funções que manipulam a cidade
@@ -27,6 +30,7 @@ typedef struct cidade{
   Lista lista_semaforo;
   Lista lista_hidrante;
   Lista lista_torre;
+  Lista lista_carros;
 
   KdTree arvore_quadra;
   KdTree arvore_semaforo;
@@ -44,6 +48,8 @@ typedef struct cidade{
   Lista mortos;
   Lista mud;
   Lista mudec;
+
+  Grafo vias;
 
 
 }Cidade;
@@ -116,4 +122,5 @@ void kill_pessoa(Cidade c, char *cpf, FILE *fTxt);
 void mudar_pessoa(Cidade c, char *cpf, Address novo, FILE *fTxt);
 void mudar_estbl(Cidade c, char *cnpj, Address novo, FILE *fTxt);
 void drawCidade(Cidade c, FILE *nome);
+
 #endif

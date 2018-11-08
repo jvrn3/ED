@@ -1,5 +1,5 @@
 TARGET = siguel
-DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o
+DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o rua.o graph.o carro.o
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
@@ -40,21 +40,35 @@ svg.o : $(SOURCEDIR)/Svg/svg.c
 
 cidade.o : $(SOURCEDIR)/Cidade/cidade.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Cidade/cidade.c
+
 sort.o : $(SOURCEDIR)/Sort/sort.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Sort/sort.c
+
 geometry.o : $(SOURCEDIR)/Geometry/geometry.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Geometry/geometry.c
+
 quadra.o : $(SOURCEDIR)/Quadra/quadra.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Quadra/quadra.c
+
 semaforo.o : $(SOURCEDIR)/Semaforo/semaforo.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Semaforo/semaforo.c
+
 hidrante.o : $(SOURCEDIR)/Hidrante/hidrante.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Hidrante/hidrante.c
+
 torre.o : $(SOURCEDIR)/Torre/torre.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Torre/torre.c
-# palmeiras.o : src/palmeiras.c
-	# $(CC) $(FLAGS) -c src/palmeiras.c
+
 kdtree.o : $(SOURCEDIR)/Tree/kdtree.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Tree/kdtree.c
+
+rua.o : $(SOURCEDIR)/Rua/rua.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Rua/rua.c
+
+graph.o : $(SOURCEDIR)/Graph/graph.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Graph/graph.c
+
+carro.o : $(SOURCEDIR)/Carro/carro.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Carro/carro.c
 clean: 
 	rm -rf *.o vgcore* 

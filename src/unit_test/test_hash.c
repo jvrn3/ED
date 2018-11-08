@@ -9,7 +9,8 @@ main(){
 	/* Morador m = createMorador("123", "abc", 'S', 123, "apto" ); */
 	/* printf("%s\n", morador_get_cep(m)); */
 	/* #<{(| put (ht, "223",createMorador("223", "bbc", 'N', 223, "apto" )); |)}># */
-	/* put (ht, "323",createMorador("323", "cbc", 'L', 323, "apto" )); */
+	put (ht, "323",createMorador("323", "cbc", 'L', 323, "apto" ));
+	search(ht, "323");
 	/* put (ht, "423",createMorador("423", "dbc", 'O', 423, "apto" )); */
     /*  */
 	/* Morador sm = search(ht, "123"); */

@@ -24,6 +24,7 @@ main(int argc, char *argv[]){
 	char line[1000];
 	char cep[MAXSIZE];
 	void *linha, *linha2;
+	Ponto R[10];
 	/*
 	 * variables used to "cc" comand 
 	 *
@@ -47,13 +48,13 @@ main(int argc, char *argv[]){
 	Circle c;
 	Rect rect;
 
-	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry, *ec, *pm;
+	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry, *ec, *pm, *sistema_viario;
 
 	double r, x, y, w, h;
 	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc, *fPm;
 
-	leitura = path = dir = qry = ec = pm = NULL;
-	/* */
+	leitura = path = dir = qry = ec = pm = sistema_viario = NULL;
+	/*parsing arguments*/
 	i = 1;
 	while(i < argc){
 		if(strcmp("-e", argv[i]) == 0){
@@ -88,6 +89,11 @@ main(int argc, char *argv[]){
 			i++;
 			pm = aloca_tamanho(strlen(argv[i]));
 			strcpy(pm, argv[i]);
+		}
+		if(strcmp("-v", argv[i]) == 0){
+			i++;
+			sistema_viario = aloca_tamanho(strlen(argv[i]));
+			strcpy(sistema_viario, argv[i]);
 		}
 		i++;
 	}
@@ -334,6 +340,7 @@ main(int argc, char *argv[]){
 		}
 		fclose(fEc);
 	}
+	
 	if(pm != NULL){
 		pm[strlen(pm) - 3] = 0;
 
@@ -358,6 +365,35 @@ main(int argc, char *argv[]){
 		}
 		fclose(fPm);
 
+	}
+	if(sistema_viario != NULL){
+		sistema_viario[strlen(sistema_viario) -4 ] = 0;
+		FILE *sis_viario_file = fopen(criaString(path, sistema_viario, ".via"), "r");
+
+		if(!sis_viario_file){
+			printf("Error opening sistema viario file\nTry again!\n");
+			exit(-1);
+		}
+		while(fgets(line, 1000, sis_viario_file) != NULL){
+			if(strncmp(line, "v", 1) == 0){
+				char id[100];
+				Ponto p;
+				sscanf(line, "v %s %lf %lf", id, &x, &y);
+				p.x = x;
+				p.y = y;
+
+				insertVertex(city.vias, id, &p);
+			
+			}
+			else if(strncmp(line, "e", 1) == 0){
+				char v1[50], v2[50], ldir[50], lesq[50], nome[50];
+				double cmp, vm;
+				sscanf(line, "e %s %s %s %s %lf %lf %s", v1, v2, ldir, lesq, &cmp, &vm, nome);
+				Rua r = createRua(nome, ldir, lesq, cmp, vm);
+				insertEdge(city.vias, v1, v2, r);
+			}
+		}
+		fclose(sis_viario_file);
 	}
 
 	//parsing and handling .qry files
@@ -694,11 +730,67 @@ main(int argc, char *argv[]){
 			}
 			
 			else if(strncmp(line, "dpr", 3) == 0){
-				sscanf(line, "dpr %lf %lf %lf %lf", &x, &y, &w, &h);
+				sscanf(line, "dpr  %lf %lf %lf %lf", &x, &y, &w, &h);
 				Rect r = createRect("", "", w, h, x, y);
 				desapropriar(city, r, fTxt);
 			}
+			else if(strncmp(line, "@m?", 3) == 0){
+				char cpf[50], str_R[5];
+				int index;
+				sscanf(line, "@m? %s %s ", str_R, cpf);
+				index = str_R[1];
+				Morador m = search(city.moradores, cpf);
+				R[index] = city_get_ponto(city, morador_get_addr(m));
+
+			}
+			else if(strncmp(line, "@e?", 3) == 0){
+				char cep[50], face, str_R[5];
+				int num, index;
+				sscanf(line, "@e? %s %s %c %d", str_R, cep, &face, &num);
+				index = str_R[1];
+				R[index] = city_get_ponto(city, createAddress(cep, face, num, ""));
+			}
+			else if(strncmp(line, "@g?", 3) == 0){
+				char id[50], str_R[5];
+				int index;
+				sscanf(line, "@g? %s %s", str_R, id);
+				index = str_R[1];
+				void *elemento;
+				if((elemento = search_id_hi(id, city.arvore_hidrante)) != NULL){
+					R[index].x = hidrante_get_x(elemento);
+					R[index].y = hidrante_get_y(elemento);
+				}
+				else if((elemento = search_id_to(id, city.arvore_torre)) != NULL){
+					R[index].x = torre_get_x(elemento);
+					R[index].y = torre_get_y(elemento);
+				}
+				else if((elemento = search_id_sem(id, city.arvore_semaforo)) != NULL){
+					R[index].x = semaforo_get_x(elemento);
+					R[index].y = semaforo_get_y(elemento);
+				}
+			}
+			else if(strncmp(line, "@xy", 3) == 0){
+				char str_R[5];
+				int index;
+				sscanf(line, "@xy %s %lf %lf", str_R, &x, &y);
+				index = str_R[1];
+				R[index].x = x;
+				R[index].y = y;
+			}
+			else if(strncmp(line, "@tp?", 4) == 0){
+				char str_R1[5], str_R2[5], tp[50];
+				sscanf(line, "@tp? %s %s %s", str_R1, tp, str_R2);
+
+				//Implementar
+			}
+			else if(strncmp(line, "au", 2) == 0){
+				char placa[50];
+				sscanf(line, "au %s %lf %lf %lf %lf", placa, &x, &y, &w, &h);
+				Carro carro = newCarro(placa, x, y, w, h);
+				insert(city.lista_carros, carro, 0);
+			}
 		}
+
 
 		/*
 		 * create new svg file after manipulating [deleting etc] the old list

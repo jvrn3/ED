@@ -7,7 +7,7 @@ typedef struct hashTable{
 
 typedef struct hashData{
 	void *data;
-	char key[50];
+	char key[100];
 }HashData;
 
 int HASH_SIZE=256;

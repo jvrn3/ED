@@ -2,7 +2,6 @@
 #include <float.h>
 #include <string.h>
 
-
 //Inicializa tudo da cidade
 Cidade createCity(){
 	Cidade city;
@@ -11,6 +10,7 @@ Cidade createCity(){
 	city.lista_hidrante = createList();
 	city.lista_semaforo = createList();
 	city.lista_torre = createList();
+	city.lista_carros = createList();
 
 
 	city.arvore_quadra = NULL;
@@ -29,6 +29,8 @@ Cidade createCity(){
 	city.mortos = createList();
 	city.mud = createList();
 	city.mudec = createList();
+
+	city.vias = createGrafo();
 	return city;
 }
 Ponto hmp(Hidrante h){
@@ -612,6 +614,7 @@ void free_cidade(Cidade c){
 	destroy(c.lista_quadra);
 	destroy(c.lista_semaforo);
 	destroy(c.lista_torre);
+	destroy(c.lista_carros);
 	destroyTree(c.arvore_quadra);
 	destroyTree(c.arvore_hidrante);
 	destroyTree(c.arvore_torre);
@@ -626,6 +629,7 @@ void free_cidade(Cidade c){
 	destroy(c.mudec);
 	destroy(c.mud);
 	destroy(c.mortos);
+	free_grafo(c.vias);
 }
 void traverseTreeQuadra(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 	if(kd == NULL)
@@ -851,23 +855,27 @@ void drawCidade(Cidade c, FILE *fSvgQry){
 	
 	Node *n;
 	for(n = getFirst(c.mor); n != NULL; n = n->next){
-		Morador sm = n->data;
+		Morador sm = list_get_data(n);
 		drawMorador(fSvgQry, city_get_ponto(c, morador_get_addr(sm)), morador_get_cpf(sm));
 	}
 	for(n = getFirst(c.est); n != NULL; n = n->next){
-		Comercio sc = n->data;
+		Comercio sc = list_get_data(n);
 		drawEstabelecimento(fSvgQry, city_get_ponto(c, estabelecimento_get_address(sc)));
 	}
 	for(n = getFirst(c.mud); n != NULL; n = n->next){
-		Ponto *p = n->data;
+		Ponto *p = list_get_data(n);
 		drawLineMudanca(fSvgQry, p[0], p[1]);
 	}
 	for(n = getFirst(c.mudec); n != NULL; n = n->next){
-		Ponto *p = n->data;
+		Ponto *p = list_get_data(n);
 		drawLineMudancaEst(fSvgQry, p[0], p[1]);
 	}
 	for(n = getFirst(c.mortos); n != NULL; n = n->next){
-		Ponto *p = n->data;
+		Ponto *p = list_get_data(n);
 		drawCruz(fSvgQry, p[0]);
+	}
+	for(n = getFirst(c.lista_carros); n != NULL; n = getNext(n)){
+		Rect posic = carro_get_posic(list_get_data(n));
+		drawRect(fSvgQry, posic);
 	}
 }
