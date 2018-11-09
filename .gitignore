@@ -14,3 +14,13 @@ out/
 siguel
 t3/*
 c*
+*.svg
+*.txt
+*.geo
+*.pdf
+*.odt
+*.o
+*.qry
+*vgcore.*
+*.vgcore*
+*.h.gch
