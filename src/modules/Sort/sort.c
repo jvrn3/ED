@@ -105,33 +105,73 @@ void heap_sort_y(Ponto *p, int length){
 /*
  * function should be called first with array -> 0 -> size of array.
  */
-void quick_sort(float *a, int p, int r){
+
+void **list_to_array(Lista l){
+	int len = length(l);
+	void **v = malloc(sizeof(void *) * len);
+	Node *n;
+	int i = 0;
+	for(n = getFirst(l); n != NULL; n = getNext(n)){
+		v[i] = n->data;
+		i++;
+	}
+	return v;
+}
+void array_to_list(void **v, int len, Lista l){
+	//removendo o antigo dado
 	
-	if(p < r){
-		float q = partition(a, p, r);
-		quick_sort(a, p, q);
-		quick_sort(a, q+1, r);
+	while(length(l) > 0){
+		removeFirst(l);
+	}
+	for(int i = 0; i < len; i++){
+		insertAtEnd(l, v[i]);
 	}
 }
-int partition(float *a, int p, int r){
+void sort_list(Lista l, int (*cmp)(void *, void *)){
+	void **v = list_to_array(l);
+	quick_sort(v, 0, length(l), cmp);
+
+	array_to_list(v, length(l), l);
+	free(v);
+}
+void quick_sort(void **a, int p, int r, int (*cmp)(void *, void *)){
+	if(p < r){
+		int q = partition(a, p, r, cmp);
+		quick_sort(a, p, q, cmp);
+		quick_sort(a, q+1, r, cmp);
+	}
+}
+int partition(void **a, int p, int r, int (*cmp)(void *, void *)){
 	/*
 	 * The idea behind this is that it sorts based on x, also known as pivot
 	 */
-
-	float x = a[r-1];
+	void *x = a[r-1];
+	void *aux;
 	int i = p-1;
 	// j from p to r 
 	for(int j = p; j < r-1; j++){
-		if (x >= a[j]){
+		if (cmp(x, a[j])){
 			i++;
-			swap(&a[i], &a[j]);
+			aux = a[i];
+			a[i] = a[j];
+			a[j] = aux;
 		}
 	}
-	swap(&a[i+1], &a[r-1]);
+	aux = a[i+1];
+	a[i+1] = a[r-1];
+	a[r-1] = aux;
 	return i+1;
 }
-void swap(float *a, float*b){
-	float tmp = *a;
-	*a = *b;
-	*b = tmp;
-}
+
+/*  */
+/* Node *merge_sort(Node * head){ */
+/* 	if(head == NULL || getNext(head)) */
+/* 		return head; */
+/* 	Node *middle = list_get_middle(head); */
+/*  */
+/* 	Node *sHalf = getNext(middle); */
+/* 	middle->next = NULL; */
+/* 	return merge(merge_sort(head), merge_sort(sHalf)); */
+/* } */
+
+

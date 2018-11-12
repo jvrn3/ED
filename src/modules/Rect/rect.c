@@ -14,3 +14,7 @@ Rect createRect(char *border, char *inside, double w, double h, double x, double
 	
 }
 
+float rect_get_y(Rect r){
+	StRect *sr =(StRect *) r;
+	return sr->y;
+}

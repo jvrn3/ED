@@ -15,4 +15,5 @@ typedef struct stRect{
 }StRect;
 
 Rect createRect(char *border, char *inside, double w, double h, double x, double y);
+float rect_get_y(Rect r);
 #endif

@@ -20,6 +20,7 @@ Node* createNode(void *data, int id){
 	return n;
 }
 
+
 int length(Lista l){
 	StList *list = (StList *) l;
 	return list->size;
@@ -37,7 +38,6 @@ void * get(Lista l, int pos){
 	return tmp->data;
 }
 Node * getNext(Lista l){
-	/* StList *list = (StList *) l; */
 	Node * n = (Node *) l;
 	n = n->next;
 	if(n == NULL)
@@ -55,8 +55,10 @@ Node *getFirst(Lista l){
 int insertAtEnd(Lista l, void *data){
 
 	StList *lista = (StList *) l;
-	if(lista->head == NULL)
+	if(lista->head == NULL){
 		insert(l, data, 0);
+		return 1;
+	}
 	Node *tmp = lista->head;
 	Node *new_node = createNode(data, 0);
 	if(!new_node)
@@ -70,8 +72,6 @@ int insertAtEnd(Lista l, void *data){
 	/* lista->head = tmp; */
 	lista->size++;
 	return 1;
-	
-return 0;
 }
 int insert(Lista l, void *data, int id){
 	StList *lista = (StList *) l;
@@ -174,9 +174,12 @@ void *removeLast(Lista l){
 	if(l == NULL)
 		return NULL;
 	StList *st = (StList *) l;
+	if(st->head == NULL)
+		return NULL;
 	Node *tmp = st->head;
 	Node *t = tmp;
-	if(st->head == NULL){
+	//there's only one element
+	if(tmp->next == NULL){
 		void *d = tmp->data;
 		free(st->head);
 		st->head = NULL;
@@ -290,4 +293,23 @@ void destroyList(Lista l){
 Lista list_get_data(Lista l){
 	Node *n = (Node *) l;
 	return n->data;
+}
+
+Node *list_get_middle(Lista	l){
+	Node *n = (Node *)l;
+	if(n == NULL)
+		return NULL;
+
+	Node *fast = n->next;
+	Node *slow = n;
+
+	while(fast != NULL ){
+
+		fast = fast->next;
+		if(fast != NULL){
+			slow = slow->next;
+			fast = fast->next;
+		}
+	}
+	return slow;
 }

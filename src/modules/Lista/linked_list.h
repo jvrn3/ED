@@ -47,3 +47,4 @@ void destroyList(Lista l);
 Lista list_get_data(Lista l);
 #endif
 int _structListSize();
+Node *list_get_middle(Lista l);

@@ -4,7 +4,7 @@
 #define GEOMETRY_H
 
 typedef struct ponto{
- double x;
+  double x;
   double y;
 }Ponto;
 /**/
