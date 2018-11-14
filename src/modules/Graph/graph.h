@@ -2,6 +2,7 @@
 #define GRAPH_H
 #include "../Lista/linked_list.h"
 #include "../String/mystr.h"
+#include "../Hash/hash_table.h"
 #include <stdlib.h>
 /* Um grafo é uma estrutura cuja representação é dada por um par de conjuntos V e E que se conectam,
  * sendo V as vértices e E as arestas(edge). 
@@ -56,7 +57,7 @@ int a_adjacente(Grafo grafo, char * src, char *dest);
 /*
  *Lista os adjacentes de um dado vértice
  * */
-Lista v_adjacente(Grafo grafo, int v);
+Lista v_adjacentes(Grafo grafo, char* key);
 
 
 int cmpr_src_dest(void *a, void *b);
@@ -66,4 +67,7 @@ void *aresta_get_data(Aresta aresta);
 void *vertice_get_data(Vertice vertice);
 
 char *vertice_get_id(Vertice vertice);
+
+int compare_aresta(Hash h, void *k);
+
 #endif

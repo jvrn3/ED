@@ -1,5 +1,4 @@
 #include "graph.h"
-#include "../Hash/hash_table.h"
 /*
  *cria um grafo com tamanho v
  *grafo é uma hash table representando os vetores adjacentes
@@ -67,7 +66,6 @@ char *concatena_src_dest(char *src, char *dest){
 	return new_key;
 }
 Aresta createEdge(char *key_src, char *key_dest, void *data){
-	//cria uma aresta e insere na lista dos vertices.
 	Aresta aresta = malloc(sizeof(StAresta));
 	StAresta *ar = (StAresta *) aresta;
 	strcpy(ar->key_src, key_src);
@@ -84,7 +82,6 @@ void insertEdge(Grafo grafo, char *key_src, char *key_dest, void *data){
 	put(sg->arestas, key, aresta);
 	free(key);
 }
-//Procura por uma aresta a partir de src -> dest 
 Aresta getInfo(Grafo grafo, char *key_src, char *key_dest){
 	StGrafo *sg = (StGrafo *) grafo;
 	char *key = concatena_src_dest(key_src, key_dest);
@@ -95,28 +92,34 @@ Aresta getInfo(Grafo grafo, char *key_src, char *key_dest){
 
 	return aresta;
 }
-/* int a_adjacente(Grafo grafo, int src, int dest){ */
-/* 	StGrafo *sg = (StGrafo *) grafo; */
-/* 	Node *n; */
-/* 	for(n = getFirst(sg->vertices[src]->arestas); n != NULL; n = getNext(n)){ */
-/* 		Aresta *aresta = list_get_data(n); */
-/* 		if(dest == aresta->dest) */
-/* 			return 1; */
-/* 	} */
-/* 	return 0; */
-/* } */
-/* Lista v_adjacentes(Grafo grafo, int v){ */
-/* 	StGrafo *sg = (StGrafo *) grafo; */
-/* 	if(sg == NULL) */
-/* 		return NULL; */
-/* 	return sg->vertices[v]->arestas; */
-/* } */
+int a_adjacente(Grafo grafo, char *key_src, char *key_dest){
+	StGrafo *sg = (StGrafo *) grafo;
+	Aresta a = search(sg->arestas, concatena_src_dest(key_src, key_dest));
+	if(a == NULL)
+		return -1;
+	return 1;
+}
+Lista v_adjacentes(Grafo grafo, char *key){
+	StGrafo *sg = (StGrafo *) grafo;
+	Lista l = hash_filter_to_list(sg->arestas, compare_aresta, key);
 
-/* int a_adjacente(Grafo grafo, char *key_src, char *key_dest){ */
-/* 	//Should imlement */
-/*  */
-/* } */
+	Lista retorno = createList();
+	while(length(l) > 0){
+		void *hash_data = removeLast(l);
 
+		StAresta *sa = (StAresta *) hash_get_data(hash_data);
+		Vertice v = search(sg->vertices, sa->key_dest);
+	}
+	return retorno;
+}
+int compare_aresta(Hash h, void *k){
+	char *key = (char *) k;
+	StAresta *sa = hash_get_data(h);
+	if(strcmp(sa->key_src, key) == 0){
+		return 1;
+	}
+	return 0;
+}
 void free_grafo(Grafo g){
 	StGrafo *sg = (StGrafo *) g;
 	delete_hash_table(sg->arestas, free);
