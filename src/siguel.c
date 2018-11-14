@@ -9,7 +9,7 @@
 #include "modules/Hash/hash_table.h"
 /*
  *@author: João Vitor Roma Neto
-		   Rafael Yukio Umemoto
+		Rafael Yukio Umemoto
  * 
  *
  * */ 
@@ -54,6 +54,7 @@ main(int argc, char *argv[]){
 	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc, *fPm;
 
 	leitura = path = dir = qry = ec = pm = sistema_viario = NULL;
+
 	/*parsing arguments*/
 	i = 1;
 	while(i < argc){
@@ -102,8 +103,9 @@ main(int argc, char *argv[]){
 		path = aloca_tamanho(3);
 		strcpy(path, "./");
 	}
+	//Comandos obrigatoros 
 	if(leitura == NULL || dir == NULL){
-		fprintf(stderr, "siguel usage: siguel [-e path -q file.qry -ec file.ec -pm file.pm] -f arq.geo -o dir");
+		fprintf(stderr, "siguel usage: siguel [-e path -q file.qry -ec file.ec -pm file.pm -v arq.via] -f arq.geo -o dir");
 		exit(-1);
 	}
 
@@ -112,6 +114,7 @@ main(int argc, char *argv[]){
 	nomeTxt = criaString(dir, leitura, ".txt");
 	nomeSvg = criaString(dir, leitura, ".svg");
 	nomePath = criaString(path, leitura, ".geo");
+
 	fRead = fopen(nomePath, "r");
 	fDraw = fopen(nomeSvg, "w");
 	if(fDraw == NULL){
@@ -125,7 +128,7 @@ main(int argc, char *argv[]){
 	}
 	//read .geo file
 	while(!feof(fRead)){
-		fgets(line , 1000, fRead);
+		fgets(line, 1000, fRead);
 
 		switch(line[0]){
 			case 'c': 
@@ -141,7 +144,6 @@ main(int argc, char *argv[]){
 					sscanf(line, "c %d %s %s %lf %lf %lf", &id, border, inside, &r, &x, &y);
 					insert(listC, createCircle(border, inside, r, x, y), id);
 				}
-
 				break;
 
 			case 'r':
@@ -317,6 +319,8 @@ main(int argc, char *argv[]){
 	}
 	fclose(fDraw);
 	fclose(fRead);
+
+	//estabelecimento comercial
 	if(ec != NULL){
 		int num;
 		ec[strlen(ec) -3] = 0;
@@ -327,6 +331,7 @@ main(int argc, char *argv[]){
 			exit(-1);
 		}
 		while(fgets(line,1000,fEc) != NULL){
+
 			if(strncmp(line, "e", 1) == 0){
 				char cnpj[50], codt[50], cep[50], face, nome[100]; 
 				sscanf(line, "e %s %s %s %c %d %s", cnpj, codt, cep, &face, &num, nome);
@@ -341,6 +346,7 @@ main(int argc, char *argv[]){
 		fclose(fEc);
 	}
 	
+	//pessoa/morador
 	if(pm != NULL){
 		pm[strlen(pm) - 3] = 0;
 
@@ -543,14 +549,15 @@ main(int argc, char *argv[]){
 				//
 				sscanf(line, "m? %s", cep);
 				if(search_cep(cep, city.arvore_quadra) == NULL){
-					printf("\nCEP da quadra nao encontrado!\n %s", cep);
+					printf("\nCEP da quadra nao encontrado!\n Verifique se existe morador com cep %s\n", cep);
 				}
 				else{
-					fprintf(fTxt, "\n----Moradores no Cep %s ----\n", cep);
+					fprintf(fTxt, "\n---- Moradores no Cep %s ----\n", cep);
 					Lista mor_quadra = hash_filter_to_list(city.moradores, _compareCepMorador, cep);
 					Node *n ; 
-					for(n = getFirst(mor_quadra); n != NULL; n = getNext(mor_quadra)){
-						Hash hd = hash_get_data(list_get_data(n));
+					for(n = getFirst(mor_quadra); n != NULL; n = getNext(n)){
+						printf("a");
+						Hash hd = list_get_data(n);
 						Pessoa sp = search(city.pessoas, hash_get_key(hd));
 
 						fprintf(fTxt, "Nome => %s %s\n", pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
@@ -574,8 +581,11 @@ main(int argc, char *argv[]){
 				sscanf(line, "dm? %s", cpf);
 				Morador  sm = searchMorador(city.moradores, cpf);
 				Pessoa sp = searchPessoa(city.pessoas, cpf);
-				if(sm != NULL && sp != NULL){
-				fprintf(fTxt, "\nDados de => %s %s\n", pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
+				if(sm == NULL || sp == NULL){
+					printf("Pessoa ou morador nao encontrados com o cpf %s\nVerifiqe se existe no arquivo\n", cpf);
+				}
+				else{
+					fprintf(fTxt, "\nDados de => %s %s\n", pessoa_get_nome(sp), pessoa_get_sobrenome(sp));
 					fprintf(fTxt, "Endereco => %s/%c/%d\n",
 							morador_get_cep(sm),
 							morador_get_face(sm), 
@@ -596,8 +606,9 @@ main(int argc, char *argv[]){
 				Comercio sct= NULL;
 				sscanf(line, "de? %s", cnpj);
 				Comercio sc = searchComercio(city.comercio, cnpj);
-				if(sc != NULL)
+				if(sc != NULL){
 					sct = searchComercioTipo(city.tipo_comercio, estabelecimento_get_codt(sc));
+				}
 				if(sc != NULL && sct != NULL){
 					fprintf(fTxt, "\nEstabelecimento comercial identificado por -> %s\n", estabelecimento_get_nome(sc));
 					fprintf(fTxt, "Nome => %s\nDescricao: %s\nEndereco %s/%c/%d\n",
@@ -608,6 +619,7 @@ main(int argc, char *argv[]){
 							estabelecimento_get_num(sc));
 
 					
+					//usado para printar os estabelecimentos 
 					Comercio scc = createComercio(
 							estabelecimento_get_cnpj(sc),
 							estabelecimento_get_cnpj(sc),
@@ -617,6 +629,9 @@ main(int argc, char *argv[]){
 							estabelecimento_get_nome(sc)
 							);
 					insert(city.est, scc, 0);
+				}
+				else{
+					printf("Problema no comando de!\n Verifique se o cnpj %s existe\n", cnpj);
 				}
 
 			}
@@ -634,7 +649,6 @@ main(int argc, char *argv[]){
 					fprintf(fTxt, "\n---- Estebelecimentos comerciais no cep %s ----\n", cep);
 					for(n = getFirst(estbl_quadra); n != NULL; n = getNext(n)){
 						Hash hd = list_get_data(n);
-						/* StComercio * sc = (StComercio *) hd->data; */
 						Comercio sc = hash_get_data(hd);
 						fprintf(fTxt, "Cnpj => %s\nNome =>%s\nTipo =>%s\n",estabelecimento_get_cnpj(sc),
 								estabelecimento_get_nome(sc),
@@ -643,6 +657,7 @@ main(int argc, char *argv[]){
 					destroyList(estbl_quadra);
 			}
 			else if(strncmp(line, "ecr?", 4) == 0){
+				//estabelecimento comercial de um dado tipo numa dada região
 				char tp[50];
 				if(sscanf(line, "ecr? %s %lf %lf %lf %lf", tp, &x, &y, &w, &h) == 5){
 					Rect r = createRect("", "", w, h, x, y);
@@ -666,12 +681,12 @@ main(int argc, char *argv[]){
 				}
 			}
 			else if(strncmp(line, "tecq?", 5) == 0){
-				sscanf(line, "tecq? %s", cep);
 				/* Lista os tipos de estabelecimentos comerciais de uma quadra */
+				sscanf(line, "tecq? %s", cep);
 				Lista estbl_quadra = hash_filter_to_list(city.comercio, _compareCepEstblcmto, cep);
 				Node *n;
 				fprintf(fTxt, "\n----Tipos de comercio da quadra com o CEP %s----\n", cep);
-				for(n = getFirst(estbl_quadra); n != NULL; n = n->next){
+				for(n = getFirst(estbl_quadra); n != NULL; n = getNext(n)){
 					Hash hd = list_get_data(n);
 					Comercio sc = hash_get_data(hd);
 					fprintf(fTxt, "Tipo => %s\n", estabelecimento_get_codt(sc));
@@ -686,6 +701,7 @@ main(int argc, char *argv[]){
 				free(r);
 			}
 			else if(strncmp(line, "hmpe?", 5) == 0){
+				//Hidrante mais proximo do endereço
 				char cep[50], face;
 				int num;
 				sscanf(line, "hmpe? %s %c %d", cep, &face, &num);
@@ -695,12 +711,14 @@ main(int argc, char *argv[]){
 
 			}
 			else if(strncmp(line, "hmp?", 4) == 0){
+				//Hidrante mais porixmo da radio identificada por id
 				char c[50];
 				sscanf(line, "hmp? %s", c);
 				kd_search(city.arvore_torre, hmpList, compareTorreId, c); 
 				
 			}
 			else if(strncmp(line, "fec", 3) == 0){
+				//fehca estabelecimeno comercial
 				char cnpj[50];
 				sscanf(line, "fec %s", cnpj);
 				Comercio sc = remove_hash(city.comercio, cnpj);
@@ -709,11 +727,15 @@ main(int argc, char *argv[]){
 					fprintf(fTxt, "Nome => %s | CPNJ => %s | TIPO => %s\n", estabelecimento_get_nome(sc), 
 							estabelecimento_get_cnpj(sc),
 							estabelecimento_get_codt(sc));
-				}
-				if(sc != NULL)
 					free(sc);
+				}
+				else{
+					printf("Erro comando fec\nNao achou comercio");
+				
+				}
 			}
 			else if(strncmp(line, "mudec", 5) == 0){
+				//estabelecimento mudou
 				char cnpj[50], cep[50], face;
 				int num;
 				sscanf(line, "mudec %s %s %c %d", cnpj, cep, &face, &num);
@@ -721,6 +743,7 @@ main(int argc, char *argv[]){
 				mudar_estbl(city, cnpj, novo, fTxt);
 			}
 			else if(strncmp(line, "mud", 3) == 0){
+				//pessoa mudou
 				char cpf[50], cep[50], face, comp[50];
 				int num;
 				sscanf(line, "mud %s %s %c %d %s", cpf, cep, &face, &num, comp);
@@ -730,31 +753,42 @@ main(int argc, char *argv[]){
 			}
 			
 			else if(strncmp(line, "dpr", 3) == 0){
+				//desapropriar regiao
 				sscanf(line, "dpr  %lf %lf %lf %lf", &x, &y, &w, &h);
 				Rect r = createRect("", "", w, h, x, y);
 				desapropriar(city, r, fTxt);
 			}
 			else if(strncmp(line, "@m?", 3) == 0){
+				//salva o endereco do morador identificado por cpf no registrador R
 				char cpf[50], str_R[5];
 				int index;
 				sscanf(line, "@m? %s %s ", str_R, cpf);
-				index = str_R[1];
-				Morador m = search(city.moradores, cpf);
-				R[index] = city_get_ponto(city, morador_get_addr(m));
+				index = str_R[1] - '0';
+				Morador m = searchMorador(city.moradores, cpf);
+				if(m != NULL){
+					R[index] = city_get_ponto(city, morador_get_addr(m));
+				}
+				else{
+					printf("Erro no comando @m\nMorador nao encontrado com cpf %s\n", cpf);
+				}
 
 			}
 			else if(strncmp(line, "@e?", 3) == 0){
+				//Armazena no R dado uma posicao
+
 				char cep[50], face, str_R[5];
 				int num, index;
 				sscanf(line, "@e? %s %s %c %d", str_R, cep, &face, &num);
-				index = str_R[1];
+				index = str_R[1] - '0';
 				R[index] = city_get_ponto(city, createAddress(cep, face, num, ""));
 			}
 			else if(strncmp(line, "@g?", 3) == 0){
+				//armazena no R a posicao de um equipamento dado o seu id
+
 				char id[50], str_R[5];
 				int index;
 				sscanf(line, "@g? %s %s", str_R, id);
-				index = str_R[1];
+				index = str_R[1] - '0';
 				void *elemento;
 				if((elemento = search_id_hi(id, city.arvore_hidrante)) != NULL){
 					R[index].x = hidrante_get_x(elemento);
@@ -770,27 +804,52 @@ main(int argc, char *argv[]){
 				}
 			}
 			else if(strncmp(line, "@xy", 3) == 0){
+				//armazena no R dado X e Y
 				char str_R[5];
 				int index;
 				sscanf(line, "@xy %s %lf %lf", str_R, &x, &y);
-				index = str_R[1];
+				index = str_R[1] - '0';
 				R[index].x = x;
 				R[index].y = y;
 			}
 			else if(strncmp(line, "@tp?", 4) == 0){
-				char str_R1[5], str_R2[5], tp[50];
-				sscanf(line, "@tp? %s %s %s", str_R1, tp, str_R2);
+				//armazena no R o estabelecimento comercial mais proximo de um dado registrador
 
-				//Implementar
+				char str_R1[5], str_R2[5], tp[50];
+				Ponto best_ponto;
+				int index_r2, index_r1;
+				sscanf(line, "@tp? %s %s %s", str_R1, tp, str_R2);
+				index_r2 = str_R2[1] - '0';
+				index_r1 = str_R1[1] - '0';
+				Lista l = hash_filter_to_list(city.comercio, _compareCodtEstblc, tp);
+				Node *n;
+				float best_dist = FLT_MAX;
+				//O(n)? 
+				for(n = getFirst(l); n != NULL; n = getNext(n)){
+					Comercio c = hash_get_data(list_get_data(n));
+					Ponto p = city_get_ponto(city, estabelecimento_get_address(c));
+					if(best_dist > distancePoints(R[index_r2], p)){
+						best_dist = distancePoints(R[index_r2], p);
+						best_ponto = p;
+						printf("%lf\n", best_ponto.x);
+					}
+				}
+				R[index_r1] = best_ponto;
+				destroyList(l);
 			}
 			else if(strncmp(line, "au", 2) == 0){
+				//insere carro
 				char placa[50];
 				sscanf(line, "au %s %lf %lf %lf %lf", placa, &x, &y, &w, &h);
 				Carro carro = newCarro(placa, x, y, w, h);
 				insert(city.lista_carros, carro, 0);
 			}
+			else if(strncmp(line, "rau", 3) == 0){
+				//remove carro
+				char placa[50];
+				sscanf(line, "rau %s", placa);
+			}
 		}
-
 
 		/*
 		 * create new svg file after manipulating [deleting etc] the old list
@@ -809,20 +868,20 @@ main(int argc, char *argv[]){
 
 		if(crb){
 			Ponto p;
-			printa_closest(city.arvore_torre, closest_kd(city.arvore_torre, tmp,&p), fSvgQry, fTxt, tmp, printa_closest_torre);
+			printa_closest(city.arvore_torre, closest_kd(city.arvore_torre,&p), fSvgQry, fTxt, tmp, printa_closest_torre);
 		}
 		Node *nod;
 		for(nod = getFirst(hmpList); nod != NULL; nod = getNext(nod)){
-			Torre st = nod->data;
+			Torre st = list_get_data(nod);
 			Ponto p = createPonto(torre_get_x(st), torre_get_y(st));
 			Ponto best;
-			float clos = nn(city.arvore_hidrante, p, hmp, &best);
+			float clos = nn(city.arvore_hidrante, p, &best);
 			printa_closest_given_radio(city.arvore_hidrante, p,best, clos, fSvgQry, fTxt);
 			fprintf(fTxt, "Id Radio => %s | COR => %s \n", torre_get_id(st), torre_get_fill(st));
 		}
 		for(nod = getFirst(hmpeList); nod != NULL; nod = getNext(nod)){
 			Ponto best;
-			float hid = nn(city.arvore_hidrante, city_get_ponto(city, nod->data), hmp, &best);
+			float hid = nn(city.arvore_hidrante, city_get_ponto(city, nod->data), &best);
 			printa_closest_given_p(city.arvore_hidrante, city_get_ponto(city, nod->data), best, hid, fSvgQry, fTxt);
 		}
 		free(qry);
@@ -834,12 +893,12 @@ main(int argc, char *argv[]){
 	}
 	fDraw = fopen(nomeSvg, "a");
 	Node *nod;
-	for(nod = getFirst(listC); nod != NULL; nod = nod->next){
-		StCircle *sc = (StCircle *) nod->data;
+	for(nod = getFirst(listC); nod != NULL; nod = getNext(nod)){
+		StCircle *sc = (StCircle *) list_get_data(nod);
 		drawCircle(fDraw, sc);
 	}
-	for(nod = getFirst(listR); nod != NULL; nod = nod->next){
-		StRect *sr = (StRect *) nod->data;
+	for(nod = getFirst(listR); nod != NULL; nod = getNext(nod)){
+		StRect *sr = (StRect *) list_get_data(nod);
 		drawRect(fDraw, sr);
 	}
 	fprintf(fDraw, "</svg>");

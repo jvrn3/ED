@@ -298,7 +298,7 @@ void drawLineMudanca(FILE *svgName, Ponto a, Ponto b){
 			a.y,
 			b.x,
 			b.y,
-			"black");
+			"yellow");
 }
 void drawLineMudancaEst(FILE *svgName, Ponto a, Ponto b){
 	fprintf(svgName, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke-width=\"3\" stroke=\"%s\"/>\n",
@@ -321,4 +321,13 @@ void drawCruz(FILE *svgName, Ponto p){
 			p.x-8,
 			p.y +5);
 
+}
+void drawCarro(FILE *svgName, Carro c){
+	Rect r = carro_get_posic(c);
+	drawRect(svgName, r);
+	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"grey\" font-size=\"5\">%s</text>\n",
+			rect_get_x(r) + rect_get_w(r)/2,
+			rect_get_y(r) + rect_get_h(r)/2,
+			carro_get_placa(c)
+			);
 }

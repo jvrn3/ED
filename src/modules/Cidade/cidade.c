@@ -17,6 +17,7 @@ Cidade createCity(){
 	city.arvore_semaforo = NULL;
 	city.arvore_hidrante = NULL;
 	city.arvore_torre = NULL;
+	city.arvore_comercio = NULL;
 
 	city.comercio = new_hash_table();
 	city.pessoas = new_hash_table();
@@ -41,6 +42,7 @@ Ponto tmp(Torre t){
 	Torre st = t;
 	return createPonto(torre_get_x(st), torre_get_y(st));
 }
+
 Ponto city_get_ponto(Cidade c, Address a){
 	Quadra q = search(c.cep_quadra, address_get_cep(a));
 	if(q == NULL){
@@ -104,6 +106,7 @@ Comercio searchComercio(Hash h, char *key){
 Morador searchMorador(Hash h, char *key){
 	Morador sm = search(h, key);
 	if(sm == NULL){
+		printf("Morador nao encontrado\n");
 		return NULL;
 	}
 	return sm;
@@ -126,7 +129,6 @@ int _compareCodtEstblc(Hash h, void *k){
 		return 0;
 }
 int _compareCepMorador(Hash h, void *k){
-	/* HashData *hd = (HashData *) h; */
 	char *key = (char *) k;
 	char *morador_cep  = morador_get_cep(hash_get_data(h));
 
@@ -136,7 +138,6 @@ int _compareCepMorador(Hash h, void *k){
 		return 0;
 }
 int _compareCepEstblcmto(Hash h, void *k){
-	/* HashData *hd = (HashData *) h; */
 	char *key = (char *) k;
 	char *estabelecimento_cep = estabelecimento_get_cep(hash_get_data(h));
 	if(strcmp(estabelecimento_cep, key) == 0)
@@ -189,8 +190,8 @@ void _hashRemoveEstblcInRect(Cidade c, Rect r, FILE *fTxt){
 			}
 		}
 	}
-	for(n = getFirst(list_cnpj); n != NULL; n = n->next){
-		void *d = remove_hash(ht, n->data);
+	for(n = getFirst(list_cnpj); n != NULL; n = getNext(n)){
+		void *d = remove_hash(ht, list_get_data(n));
 		free(d);
 	}
 	destroyList(list_cnpj);
@@ -218,8 +219,8 @@ void _hashRemoveMoradorInRect(Cidade c, Rect r, FILE *fTxt){
 			}
 		}
 	}
-	for(n = getFirst(list_cpf); n != NULL; n = n->next){
-		void *d = remove_hash(ht, n->data);
+	for(n = getFirst(list_cpf); n != NULL; n = getNext(n)){
+		void *d = remove_hash(ht, list_get_data(n));
 		free(d);
 	}
 	destroyList(list_cpf);
@@ -854,28 +855,27 @@ void drawCidade(Cidade c, FILE *fSvgQry){
 	traverseTreeTorre(c.arvore_torre, drawTorre, fSvgQry);
 	
 	Node *n;
-	for(n = getFirst(c.mor); n != NULL; n = n->next){
+	for(n = getFirst(c.mor); n != NULL; n = getNext(n)){
 		Morador sm = list_get_data(n);
 		drawMorador(fSvgQry, city_get_ponto(c, morador_get_addr(sm)), morador_get_cpf(sm));
 	}
-	for(n = getFirst(c.est); n != NULL; n = n->next){
+	for(n = getFirst(c.est); n != NULL; n = getNext(n)){
 		Comercio sc = list_get_data(n);
 		drawEstabelecimento(fSvgQry, city_get_ponto(c, estabelecimento_get_address(sc)));
 	}
-	for(n = getFirst(c.mud); n != NULL; n = n->next){
-		Ponto *p = list_get_data(n);
-		drawLineMudanca(fSvgQry, p[0], p[1]);
-	}
-	for(n = getFirst(c.mudec); n != NULL; n = n->next){
+	
+	for(n = getFirst(c.mudec); n != NULL; n = getNext(n)){
 		Ponto *p = list_get_data(n);
 		drawLineMudancaEst(fSvgQry, p[0], p[1]);
 	}
-	for(n = getFirst(c.mortos); n != NULL; n = n->next){
+	for(n = getFirst(c.mud); n != NULL; n = getNext(n)){
+		Ponto *p = list_get_data(n);
+		drawLineMudanca(fSvgQry, p[0], p[1]);
+	}
+	for(n = getFirst(c.mortos); n != NULL; n = getNext(n)){
 		Ponto *p = list_get_data(n);
 		drawCruz(fSvgQry, p[0]);
 	}
 	for(n = getFirst(c.lista_carros); n != NULL; n = getNext(n)){
-		Rect posic = carro_get_posic(list_get_data(n));
-		drawRect(fSvgQry, posic);
-	}
+		drawCarro(fSvgQry, list_get_data(n)); }
 }

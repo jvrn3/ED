@@ -8,7 +8,7 @@ Ponto createPonto(float x, float y){
 }
 double distancePoints(Ponto a, Ponto b){
     return pow((a.x - b.x), 2) +
-		pow((a.y - b.y), 2)
+	pow((a.y - b.y), 2)
 	    ;
 
 }
@@ -212,23 +212,6 @@ int isCircleInsideCircle(Circle a, Circle b){
 		return 0;
 }
 
-/* Ponto  *getPontos(Torre t){ */
-/* 	Node *n; */
-/* 	int i; */
-/* 	Ponto *p = (Ponto *)malloc(sizeof(Ponto) * length(t)); */
-/* 	for(i = 0, n = getFirst(t); n != NULL; n = n->next, i++){ */
-/* 		StTorre *st = (StTorre *) n->data; */
-/* 		p[i].x = st->x; */
-/* 		p[i].y = st->y;  */
-/* 	} */
-/* 	return p; */
-/* } */
-/*  */
-/* Ponto *sortPontos(Ponto *pontos, int length){ */
-/* 	heap_sort(pontos, length); */
-/* 	return pontos; */
-/* } */
-
 //get the smallest distance between two points
 
 float distPoints(Ponto p1, Ponto p2){
@@ -286,3 +269,33 @@ float closest(Ponto *ponto, int n){
 	float min = closestPairs(ponto, n);
 	return min;
 }
+
+/* Lista car_overlap(Lista l, int (*cmp)(void *, void *)){ */
+/*     //should sorta according to x */
+/*     sort_list(l, cmp); */
+/*     Node *n, *low; */
+/*     Rect r; */
+/*     StRect *sr; */
+/*     Lista overlap = createList(); */
+/*     for(n = getFirst(l); n != NULL; n = getNext(n)){ */
+/* 	r = carro_get_posic(list_get_data(n)); */
+/* 	sr = (StRect *) r; */
+/* 	low = n; */
+/* 	for(; low != NULL; low = getNext(low)){ */
+/* 	    Rect r_low; */
+/* 	    r_low = carro_get_posic(list_get_data(low)); */
+/* 	    StRect *srr = (StRect *) r_low; */
+/* 	    if(srr->x < sr->x + sr->w){ */
+/* 		#<{(| overlayRR() |)}># */
+/*  */
+/* 	    } */
+/* 	    else */
+/* 		break; */
+/* 	} */
+/* 	 */
+/*  */
+/*  */
+/*     } */
+/*  */
+/*  */
+/* } */

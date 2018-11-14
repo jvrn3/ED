@@ -1,6 +1,5 @@
 #include "graph.h"
 /*
- *cria um grafo com tamanho v
  *grafo é uma hash table representando os vetores adjacentes
  *
 
@@ -16,9 +15,6 @@ typedef struct stAresta{
  * 
  * */
 typedef struct stVertice{
-	/*
-	 * Vertice guarda as arestas e também uma informação nela, assim como o nome
-	 * */
 	char id[100];
 	void *data;
 }StVertice;
@@ -30,9 +26,7 @@ typedef struct stGrafo{
 
 }StGrafo;
 
-//cria grafo com o numero de vértices
 Grafo createGrafo(){
-	//alocação dinâmica do grafo
 	StGrafo *sg = malloc(sizeof(StGrafo));
 	sg->arestas = new_hash_table();
 	sg->vertices = new_hash_table();
@@ -51,13 +45,6 @@ void insertVertex(Grafo grafo, char *id, void *data){
 	Vertice vertice = createVertex(id, data);
 	put(sg->vertices, id, vertice);
 }
-/* int cmpr_src_dest(void *a, void *b){ */
-/* 	Aresta *aresta = (Aresta *) a; */
-/* 	int *n_b = (int *) b; */
-/* 	if(aresta->dest == *n_b) */
-/* 		return 1; */
-/* 	return 0; */
-/* } */
 char *concatena_src_dest(char *src, char *dest){
 	char *new_key = malloc(sizeof(char) * 100);
 	strcpy(new_key, src);
@@ -109,6 +96,7 @@ Lista v_adjacentes(Grafo grafo, char *key){
 
 		StAresta *sa = (StAresta *) hash_get_data(hash_data);
 		Vertice v = search(sg->vertices, sa->key_dest);
+		insert(l, v, 0);
 	}
 	return retorno;
 }

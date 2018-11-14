@@ -16,4 +16,7 @@ typedef struct stRect{
 
 Rect createRect(char *border, char *inside, double w, double h, double x, double y);
 float rect_get_y(Rect r);
+float rect_get_x(Rect r);
+float rect_get_w(Rect r);
+float rect_get_h(Rect r);
 #endif

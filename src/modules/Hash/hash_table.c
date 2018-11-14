@@ -1,26 +1,23 @@
 #include "hash_table.h"
+
 typedef struct hashTable{
+
 	int size;
-	// StList *table;
 	Lista *table;
+
 }HashTable;
 
 typedef struct hashData{
+
 	void *data;
 	char key[100];
+
 }HashData;
 
 int HASH_SIZE=256;
 
-int compare(void *data, void *key){
-	HashData *hd = (HashData *) data;
-	if(strcmp(hd->key, (char *)key) == 0)
-		return 1;
-	else
-		return 0;
-}
-
 Hash new_hash_table(){
+
 	HashTable *ht = malloc(sizeof(HashTable));
 	ht->table = malloc(sizeof(Lista) * HASH_SIZE);
 	ht->size = 0;
@@ -30,13 +27,22 @@ Hash new_hash_table(){
 	return ht;
 }
 Hash new_hash_table_n(int n){
-	/*
-	 * change the value of HASH_SIZE
-	 * */
+	
 	HASH_SIZE = n;
 	return new_hash_table();
 }
+int compare(void *data, void *key){
+
+	HashData *hd = (HashData *) data;
+	if(strcmp(hd->key, (char *)key) == 0)
+		return 1;
+	else
+		return 0;
+}
+
+
 void put(Hash h, char *key, void *data){
+
 	HashTable *ht = (HashTable *)  h;
 	int index = hash(key);
 	if(index > HASH_SIZE)
@@ -46,17 +52,12 @@ void put(Hash h, char *key, void *data){
 	strcpy(hd->key, key);
 	insert(ht->table[index], hd, 0);
 	ht->size++;
-
-	/* if(ht->size >= 0.7 * HASH_SIZE){ */
-	/* 	HASH_SIZE = HASH_SIZE *2; */
-	/* 	ht->table = realloc(ht->table, HASH_SIZE * sizeof(HashTable)); */
-	/* } */
 }
 void *search(Hash h, char *key){
+
 	HashTable *ht = (HashTable *) h;
 	int index = hash(key);
 	if(ht->table[index] != NULL){
-		//compare function compares key and the element of the hash
 		HashData *hd= (HashData *) searchList(ht->table[index], compare, key);
 		if(hd != NULL)
 			return hd->data;
@@ -64,14 +65,15 @@ void *search(Hash h, char *key){
 	return NULL;
 }
 Lista hash_filter_to_list(Hash h, int (*_cmpr)(void *, void *),void *_comp_key ){
+
 	HashTable *ht = (HashTable *) h;
 	Lista new_list = createList();
 	for(int i = 0; i < HASH_SIZE; i++){
 		if(ht->table[i] != NULL){
 			Node *n;
-			for(n = getFirst(ht->table[i]); n != NULL; n = n->next){
-				if(_cmpr(n->data, _comp_key)){
-					insert(new_list, n->data, 0);
+			for(n = getFirst(ht->table[i]); n != NULL; n = getNext(n)){
+				if(_cmpr(list_get_data(n), _comp_key)){
+					insert(new_list, list_get_data(n), 0);
 				}
 			}
 		}
@@ -79,6 +81,7 @@ Lista hash_filter_to_list(Hash h, int (*_cmpr)(void *, void *),void *_comp_key )
 	return new_list;
 }
 void *remove_hash(Hash h, char *key){
+
 	HashTable *ht = (HashTable *) h;
 	int index = hash(key);
 
@@ -92,6 +95,7 @@ void *remove_hash(Hash h, char *key){
 	return NULL;
 }
 void delete_hash_table(Hash h, void (*func)(void *)){
+
 	HashTable *ht = (HashTable *) h;
 	for(int i = 0; i < get_hash_max(); i++){
 		if(ht->table[i] != NULL){
@@ -113,6 +117,7 @@ int get_hash_max(){
 }
 //djb2 hash function
 int hash(char *str){
+
 	unsigned long hash = 5381;
 	int c;
 	while ((c = *str++)){

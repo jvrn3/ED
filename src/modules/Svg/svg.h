@@ -11,6 +11,7 @@
 #include "../Torre/torre.h"
 #include "../Morador/morador.h"
 #include "../Address/address.h"
+#include "../Carro/carro.h"
 /* procedures to draw in svg format */ 
 
 void startSvg(FILE *fSvg);
@@ -37,6 +38,7 @@ void drawLineMudanca(FILE *svgName, Ponto a, Ponto b);
 void drawLineMudancaEst(FILE *svgName, Ponto a, Ponto b);
 void drawLinePontilhado(FILE *svgName, Ponto p, Ponto q);
 void drawCruz(FILE *fsvgName, Ponto p);
+void drawCarro(FILE *svgName, Carro c);
 #endif
 
 

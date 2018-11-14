@@ -23,30 +23,30 @@ void deletaHidrante(Hidrante h){
 	free(sh);
 }
 
-int compareHidranteX(Hidrante a, Hidrante b){
-	StHidrante *sa = (StHidrante *) a;
-	StHidrante *sb = (StHidrante *) b;
-	if(sa->x < sb->x)
-		return 1;
-	else
-		return -1;
-}
-int compareHidranteY(Hidrante a, Hidrante b){
-	StHidrante *sa = (StHidrante *) a;
-	StHidrante *sb = (StHidrante *) b;
-	if(sa->y < sb->y)
-		return 1;
-	else
-		return -1;
-}
-float hidrantePointInX(Hidrante a){
-	StHidrante *sh = (StHidrante *) a;
-	return sh->x;
-}
-float hidrantePointInY(Hidrante a){
-	StHidrante *sh = (StHidrante *) a;
-	return sh->y;
-}
+/* int compareHidranteX(Hidrante a, Hidrante b){ */
+/* 	StHidrante *sa = (StHidrante *) a; */
+/* 	StHidrante *sb = (StHidrante *) b; */
+/* 	if(sa->x < sb->x) */
+/* 		return 1; */
+/* 	else */
+/* 		return -1; */
+/* } */
+/* int compareHidranteY(Hidrante a, Hidrante b){ */
+/* 	StHidrante *sa = (StHidrante *) a; */
+/* 	StHidrante *sb = (StHidrante *) b; */
+/* 	if(sa->y < sb->y) */
+/* 		return 1; */
+/* 	else */
+/* 		return -1; */
+/* } */
+/* float hidrantePointInX(Hidrante a){ */
+/* 	StHidrante *sh = (StHidrante *) a; */
+/* 	return sh->x; */
+/* } */
+/* float hidrantePointInY(Hidrante a){ */
+/* 	StHidrante *sh = (StHidrante *) a; */
+/* 	return sh->y; */
+/* } */
 char *hidrante_get_id(Hidrante h){
 	StHidrante *sh = (StHidrante *) h;
 	return sh->id;

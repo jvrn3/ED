@@ -20,6 +20,7 @@ typedef struct ponto{
 #include "../Semaforo/semaforo.h"
 #include "../Torre/torre.h"
 #include "math.h"
+#include "../Carro/carro.h"
 #include <float.h>
 Ponto createPonto(float x, float y);
 double distancePoints(Ponto a, Ponto b);

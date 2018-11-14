@@ -24,6 +24,13 @@ main(){
 	printf("Nome da rua -> %s", rua_get_nome(get));
 
 
+
+	Lista l= v_adjacentes(grafo, "josue");
+	/* Node *n; */
+	/* for(n = getFirst(l); n != NULL; n = getNext(n)){ */
+	/* 	printf("%s\n", vertice_get_id(list_get_data(n))); */
+	/* 	 */
+	/* } */
 	free_grafo(grafo);
 	return 0;
 

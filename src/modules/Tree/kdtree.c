@@ -161,27 +161,31 @@ void printInOrder(KdTree t, void (*displayFn)(void *)){
 	printInOrder(n->right, displayFn);
 }
 void delete_kd_nodes(KdTree k){
-  KdNode *kd = (KdNode *) k;
   if(k == NULL)
     return;
-  free(kd->data);
+  KdNode *kd = (KdNode *) k;
+  
+  delete_kd_nodes(kd->left);
+  delete_kd_nodes(kd->right);
   free(kd);
 }
 void destroyTree(KdTree k){
-  KdNode *kd = (KdNode *) k;
   if(k == NULL)
     return ;
+  KdNode *kd = (KdNode *) k;
+  
   destroyTree(kd->left);
   destroyTree(kd->right);
   free(kd->data);
   free(kd);
 }
+
 //nearest neighbor of a given point
-void nn_aux(Ponto a, KdTree k, float *best, float a_float[], int i, Ponto (*getPontos)(void *), Ponto *best_ponto){
+void nn_aux(Ponto a, KdTree k, float *best, float a_float[], int i, Ponto *best_ponto){
   if(k == NULL)
     return;
   KdNode *kd = (KdNode *) k;
-  Ponto p_root = getPontos(kd->data);
+  Ponto p_root = createPonto(kd->point[0], kd->point[1]);
 
   double d = distancePoints(p_root, a);
   double dx = kd->point[i] - a_float[i];
@@ -196,69 +200,40 @@ void nn_aux(Ponto a, KdTree k, float *best, float a_float[], int i, Ponto (*getP
   i = i+1;
   if(i >= 2)
     i = 0;
-  nn_aux(a, dx > 0? kd->left : kd->right, best, a_float, i, getPontos, best_ponto);
+  nn_aux(a, dx > 0? kd->left : kd->right, best, a_float, i,  best_ponto);
   if(dx2 >= *best)
     return;
-  nn_aux(a, dx > 0? kd->right : kd->right, best, a_float, i,getPontos, best_ponto);
-  /* if(k != NULL){ */
-  /*  */
-  /*   Ponto b = getPontos(kd->data); */
-  /*   float dist = distancePoints(a, b); */
-  /*   if(dist < *best && dist != 0){ */
-  /* #<{(|     *best = dist; |)}># */
-  /*   } */
-    //determina qual nó está mais perto da raiz
-
-    /* if(kd->left != NULL && kd->right != NULL){ */
-    /*   Ponto c = getPontos(kd->left->data); */
-    /*   Ponto d = getPontos(kd->right->data); */
-    /*   if(distancePoints(a, c) < distancePoints(a, d)){ */
-	/* if(distancePoints(a, c) < dist) */
-	/*   *best = distancePoints(a,c); */
-	/* nn_aux(a, kd->left, best, getPontos); */
-    /*   } */
-    /*   else{ */
-	/* if(distancePoints(a,d) < dist) */
-	/*   *best = distancePoints(a,d); */
-	/* nn_aux(a, kd->right, best, getPontos); */
-    /*   } */
-    /* } */
-    /* if(kd->left == NULL && kd->right != NULL) */
-    /*   nn_aux(a, kd->right, best, getPontos); */
-    /* else if(kd->left != NULL && kd->right == NULL) */
-    /*   nn_aux(a, kd->left, best, getPontos); */
-  /* } */
-  /* return *best; */
+  nn_aux(a, dx > 0? kd->right : kd->right, best, a_float, i, best_ponto);
 }
-float nn(KdTree k, Ponto a, Ponto (*getPontos)(void *), Ponto *best_ponto){
+float nn(KdTree k, Ponto a, Ponto *best_ponto){
   /* KdNode *kd = (KdNode *)k; */
   float best_dist = FLT_MAX;
   float x[] = {a.x, a.y};
-  nn_aux(a, k,&best_dist, x, 0, getPontos, best_ponto); 
+  nn_aux(a, k,&best_dist, x, 0, best_ponto); 
   return best_dist;
 }
-float closest_aux(KdTree k, float *minor, Ponto (*getPoints)(void *), Ponto *best_ponto){
+float closest_aux(KdTree k, float *minor, Ponto *best_ponto){
   if(k != NULL){
     KdNode *kd = (KdNode *) k;
-    Ponto a = getPoints(kd->data);
-    float d = nn(k, a, getPoints, best_ponto);
+    Ponto a = createPonto(kd->point[0], kd->point[1]);
+    float d = nn(k, a, best_ponto);
     if(d < *minor){
       *minor = d;
       *best_ponto = a;
     }
     if(kd->left != NULL){
-      closest_aux(kd->left, minor, getPoints, best_ponto);
+      closest_aux(kd->left, minor, best_ponto);
     }
 
     if(kd->right != NULL){
-      closest_aux(kd->right, minor, getPoints, best_ponto);
+      closest_aux(kd->right, minor, best_ponto);
     }
   }
   return *minor;
 }
 //closest points in a kd tree
-float closest_kd(KdTree k, Ponto (*getPontos)(void *), Ponto *best_ponto){
+float closest_kd(KdTree k, Ponto *best_ponto){
 	float m = FLT_MAX;
-	return closest_aux(k, &m, getPontos, best_ponto);
+	return closest_aux(k, &m, best_ponto);
 
 }
