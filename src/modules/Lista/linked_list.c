@@ -253,17 +253,7 @@ void *removeFirst(Lista l){
 	return d;
 }
 
-void destroy(Lista l){
-	if(l == NULL)
-		return;
-	StList *list = (StList *) l;
-	while(list->size > 0){
-		void *data = removeFirst(list);
-		if(data != NULL)
-			free(data);
-	}
-	free(list);
-}
+
 void *search_del(Lista l, int (*compare)(void *, void *), void *comp ){
 	Node *n;
 	for(n = getFirst(l); n != NULL; n = n->next){
@@ -281,7 +271,20 @@ Lista searchList(Lista l, int (*compare)(void *, void *), void *comp){
 	}
 	return NULL;
 }
+void destroy(Lista l){
+
+	if(l == NULL)
+		return;
+	StList *list = (StList *) l;
+	while(list->size > 0){
+		void *data = removeFirst(list);
+		if(data != NULL)
+			free(data);
+	}
+	free(list);
+}
 void destroyList(Lista l){
+
 	if(l == NULL)
 		return;
 	StList *list = (StList *) l;
