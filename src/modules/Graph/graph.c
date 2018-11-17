@@ -21,6 +21,7 @@ typedef struct stVertice{
 
 
 typedef struct stGrafo{
+	int V, E;
 	Hash vertices;
 	Hash arestas;
 
@@ -30,6 +31,8 @@ Grafo createGrafo(){
 	StGrafo *sg = malloc(sizeof(StGrafo));
 	sg->arestas = new_hash_table();
 	sg->vertices = new_hash_table();
+	sg->V = 0;
+	sg->E = 0;
 	return sg;
 }
 
@@ -44,6 +47,7 @@ void insertVertex(Grafo grafo, char *id, void *data){
 	StGrafo *sg = (StGrafo *) grafo;
 	Vertice vertice = createVertex(id, data);
 	put(sg->vertices, id, vertice);
+	sg->V++;
 }
 char *concatena_src_dest(char *src, char *dest){
 	char *new_key = malloc(sizeof(char) * 100);
@@ -67,6 +71,7 @@ void insertEdge(Grafo grafo, char *key_src, char *key_dest, void *data){
 
 	char *key = concatena_src_dest(key_src, key_dest);
 	put(sg->arestas, key, aresta);
+	sg->E++;
 	free(key);
 }
 Aresta getInfo(Grafo grafo, char *key_src, char *key_dest){
@@ -125,4 +130,15 @@ char *vertice_get_id(Vertice vertice){
 	StVertice *sa = (StVertice *) vertice;
 	return sa->id;
 }
+int graph_edges(Grafo g){
+
+	StGrafo *sg = (StGrafo *) g;
+	return sg->E;
+}
+int graph_vercies(Grafo g){
+
+	StGrafo *sg = (StGrafo *) g;
+	return sg->V;
+}
+
 

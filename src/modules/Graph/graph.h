@@ -54,5 +54,7 @@ int compare_aresta(Hash h, void *k);
 void *aresta_get_data(Aresta aresta);
 void *vertice_get_data(Vertice vertice);
 char *vertice_get_id(Vertice vertice);
+int grafo_edges(Grafo g);
+int grafo_vertices(Grafo g);
 
 #endif
