@@ -31,7 +31,7 @@ Cidade createCity(){
 	city.mud = createList();
 	city.mudec = createList();
 
-	city.vias = createGrafo();
+	city.via = createVia();
 	return city;
 }
 Ponto hmp(Hidrante h){
@@ -630,7 +630,7 @@ void free_cidade(Cidade c){
 	destroy(c.mudec);
 	destroy(c.mud);
 	destroy(c.mortos);
-	free_grafo(c.vias);
+	free_grafo(c.via);
 }
 void traverseTreeQuadra(KdTree kd, void (*func)(FILE *, void *), FILE *f){
 	if(kd == NULL)
@@ -879,3 +879,4 @@ void drawCidade(Cidade c, FILE *fSvgQry){
 	for(n = getFirst(c.lista_carros); n != NULL; n = getNext(n)){
 		drawCarro(fSvgQry, list_get_data(n)); }
 }
+

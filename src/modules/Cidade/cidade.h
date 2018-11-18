@@ -17,6 +17,7 @@
 #include "../Svg/svg.h"
 #include "../Graph/graph.h"
 #include "../Rua/rua.h"
+#include "../Via/via.h"
 
 /* Representação de Siguel, cidade com diversos equipamentos, pessoas etc 
  * Este arquivo contém funções que manipulam a cidade
@@ -49,7 +50,7 @@ typedef struct cidade{
   Lista mud;
   Lista mudec;
 
-  Grafo vias;
+  Via via;
 
 
 }Cidade;
@@ -130,4 +131,6 @@ void mudar_estbl(Cidade c, char *cnpj, Address novo, FILE *fTxt);
 void drawCidade(Cidade c, FILE *nome);
 
 void free_cidade(Cidade c);
+
+Vertice nearest_via(Lista l, Ponto p);
 #endif

@@ -1,4 +1,5 @@
 #include "graph.h"
+#include <float.h>
 /*
  *grafo é uma hash table representando os vetores adjacentes
  *
@@ -9,6 +10,7 @@ typedef struct stAresta{
 	 * */
 	char key_src[50], key_dest[50];
 	void *data;
+	double weight;
 
 }StAresta;
 /*
@@ -17,8 +19,9 @@ typedef struct stAresta{
 typedef struct stVertice{
 	char id[100];
 	void *data;
+	double minDist;
+	struct stVertice *previous;
 }StVertice;
-
 
 typedef struct stGrafo{
 	int V, E;
@@ -41,6 +44,8 @@ Vertice createVertex(char *id, void *data){
 	StVertice *sv = (StVertice *) vertice;
 	strcpy(sv->id, id);
 	sv->data = data;
+	sv->minDist = FLT_MAX;
+	sv->previous = NULL;
 	return vertice;
 }
 void insertVertex(Grafo grafo, char *id, void *data){
@@ -56,25 +61,26 @@ char *concatena_src_dest(char *src, char *dest){
 	strcat(new_key, dest);
 	return new_key;
 }
-Aresta createEdge(char *key_src, char *key_dest, void *data){
+Aresta createEdge(char *key_src, char *key_dest, void *data, double (*getWeight)(void *)){
 	Aresta aresta = malloc(sizeof(StAresta));
 	StAresta *ar = (StAresta *) aresta;
 	strcpy(ar->key_src, key_src);
 	strcpy(ar->key_dest, key_dest);
 	ar->data = data;
-
+	ar->weight = getWeight(data);
 	return aresta;
 }
-void insertEdge(Grafo grafo, char *key_src, char *key_dest, void *data){
+void insertEdge(Grafo grafo, char *key_src, char *key_dest, void *data, double (*getWeight)(void *)){
 	StGrafo *sg = (StGrafo *) grafo;
-	Aresta aresta = createEdge(key_src, key_dest, data);
+	Aresta aresta = createEdge(key_src, key_dest, data, getWeight);
+
 
 	char *key = concatena_src_dest(key_src, key_dest);
 	put(sg->arestas, key, aresta);
 	sg->E++;
 	free(key);
 }
-Aresta getInfo(Grafo grafo, char *key_src, char *key_dest){
+Aresta edge_getInfo(Grafo grafo, char *key_src, char *key_dest){
 	StGrafo *sg = (StGrafo *) grafo;
 	char *key = concatena_src_dest(key_src, key_dest);
 
@@ -83,6 +89,12 @@ Aresta getInfo(Grafo grafo, char *key_src, char *key_dest){
 	free(key);
 
 	return aresta;
+}
+Vertice vertex_getInfo(Grafo grafo, char *key){
+	StGrafo *sg = (StGrafo *) grafo;
+
+	Vertice vertice = search(sg->vertices, key);
+	return vertice;
 }
 int a_adjacente(Grafo grafo, char *key_src, char *key_dest){
 	StGrafo *sg = (StGrafo *) grafo;
@@ -104,6 +116,70 @@ Lista v_adjacentes(Grafo grafo, char *key){
 		insert(l, v, 0);
 	}
 	return retorno;
+}
+int cmpr_vertice(Vertice a, Vertice b){
+
+	StVertice *sv = (StVertice *) a;
+	StVertice *svb = (StVertice *) b;
+	if(sv->minDist < svb->minDist)
+		return 1;
+	return 0;
+}
+void dijkstra(Grafo grafo, Vertice source, Vertice dest){
+
+	StGrafo *sg = (StGrafo *) grafo;
+	int V = sg->V;
+	PQ pq = createPQ(V);
+	
+	StVertice *sSource = (StVertice *) source;
+	sSource->minDist = 0;
+	pq_insert(pq, source, cmpr_vertice);
+
+	//relax
+	while(!pq_isEmpty(pq)){
+
+		StVertice *v = pq_delMin(pq, cmpr_vertice);
+		//se chegar no destino
+		if(v == dest)
+			break;
+
+		//a famosa relaxada
+		Lista adjacentes = get_V_adj(grafo, v);
+		Node *n;
+		for(n = getFirst(adjacentes); n != NULL; n = getNext(n)){
+			StAresta *aresta = hash_get_data(list_get_data(n));
+			StVertice *vert = search(sg->vertices, aresta->key_dest);
+			double weight = aresta->weight;
+			double distanceThroughVert = v->minDist + weight;
+			if(distanceThroughVert < vert->minDist){
+				vert->minDist = distanceThroughVert;
+				vert->previous = v;
+				pq_insert(pq, vert, cmpr_vertice);
+			}
+		}
+	}
+}
+int cmpr_v_adj(void *a, void *b){
+	char *vertice_key = (char *) b;
+	StAresta * aresta = hash_get_data(a);
+	if(strcmp(aresta->key_src, vertice_key) == 0)
+		return 1;
+	return 0;
+}
+//get edges adjacent to a vertice V
+Lista get_V_adj(Grafo g, Vertice v){
+	StGrafo *sg = (StGrafo *) g;
+	StVertice *sv = (StVertice *) v;
+	Lista adjacentes = hash_filter_to_list(sg->arestas, cmpr_v_adj, sv->id);
+	return adjacentes;
+}
+int compare_true(void *a, void *b){
+	return 1;
+}
+Lista get_all_vertices(Grafo g){
+	StGrafo *sg = (StGrafo *) g;
+	Lista l = hash_filter_to_list(sg->vertices, compare_true, NULL);
+	return l;
 }
 int compare_aresta(Hash h, void *k){
 	char *key = (char *) k;
@@ -140,5 +216,8 @@ int graph_vercies(Grafo g){
 	StGrafo *sg = (StGrafo *) g;
 	return sg->V;
 }
-
+double get_minDist(Vertice v){
+	StVertice *sv = (StVertice *)v;
+	return sv->minDist;
+}
 

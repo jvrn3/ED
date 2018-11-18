@@ -4,13 +4,15 @@
 
 typedef struct stPQ{
 	int N;
-	void **pq;
+	void **keys;
+	int *pq;
 }StPQ;
 
 int pq_less(PQ p, int i, int j, int (*cmp)(void *, void *)){
 	StPQ *spq = (StPQ *) p;
-	void **pq = spq->pq;
-	if(cmp(pq[i], pq[j]) > 0){
+	int *pq = spq->pq;
+	void **keys = spq->keys;
+	if(cmp(keys[pq[i]], keys[pq[j]]) > 0){
 		return 1;
 	}
 	return 0;
@@ -18,22 +20,32 @@ int pq_less(PQ p, int i, int j, int (*cmp)(void *, void *)){
 
 void pq_exch(PQ p, int i, int j){
 	StPQ *spq = (StPQ *) p;
-
-	void **pq = spq->pq;
-	void *data = pq[i];
-	pq[i] = pq[j];
-	pq[j] = data;
+	int *pq = spq->pq;
+	void **keys = spq->keys;
+	void *data = keys[pq[i]];
+	keys[pq[i]] = keys[pq[j]];
+	keys[pq[j]] = data;
 }
 PQ createPQ(int max){
 	PQ pq = malloc(sizeof(StPQ));
 	StPQ *spq = (StPQ *) pq;
-	spq->N = 0;
 
-	spq->pq = malloc(sizeof(void *) * (max + 1));
+	spq->N = 0;
+	spq->pq = malloc(sizeof(int) * (max + 1));
+
+	spq->qp = malloc(sizeof(int) * (max + 1));
+
+	for(int i = 0; i <= max; i++)
+		spq->qp[i] = -1;
+
+	spq->keys = malloc(sizeof(void *) * (max + 1));
 
 }
 
 void pq_swim(PQ p, int k, int (*cmp)(void *, void *)){
+	StPQ *spq = (StPQ *) p;
+	void **keys = spq->keys;
+	int *pq = spq->pq;
 
 	while(k > 1 && pq_less(p, k/2, k, cmp)){
 		pq_exch(p, k/2, k);
@@ -54,25 +66,23 @@ void pq_sink(PQ p, int k, int (*cmp)(void *, void *)){
 	}
 }
 void pq_insert(PQ p, void *key, int(*cmp)(void *, void *)){
-
 	StPQ  *spq = (StPQ *) p;
 	spq->N++;
 	spq->pq[spq->N] = key;
-	pq_swim(p,spq->N, cmp);
+	pq_swim(p cmp);
 }
-void * pq_delMin(PQ p, int (*cmp)(void *, void *)){
+int pq_delMin(PQ p, int (*cmp)(void *, void *)){
 	StPQ *spq = (StPQ *) p;
-
-	void *data  = spq->pq[1];
+	int indexOf  = spq->pq[1];
 	pq_exch(p, 1, spq->N--);
 	pq_sink(p, 1,cmp);
-	spq->pq[spq->N + 1] = NULL;
-	return data;
+	spq->keys[spq->pq[spq->N+1]] = NULL;
+	spq->qp[spq->pq[spq->N+1]] = -1;
+	return indexOf;
 }
-
 void *pq_min(PQ p){
 	StPQ *spq = (StPQ *) p;
-	return spq->pq[1];
+	return spq->keys[spq->pq[1]];
 }
 int pq_isEmpty(PQ p){
 	StPQ *spq = (StPQ *) p;
@@ -80,11 +90,15 @@ int pq_isEmpty(PQ p){
 		return 1;
 	return 0;
 }
-/* void change(PQ p, int k, void *item, int (*cmp)(void *, void *)){ */
-/* 	StPQ *spq = (StPQ *) p; */
-/* 	spq->keys[k] = item; */
-/* 	pq_swim(p, spq->qp[k], cmp); */
-/* 	pq_sink(p, spq->qp[k], cmp); */
-/* } */
+void change(PQ p, int k, void *item, int (*cmp)(void *, void *)){
+	StPQ *spq = (StPQ *) p;
+	spq->keys[k] = item;
+	pq_swim(p, spq->qp[k], cmp);
+	pq_sink(p, spq->qp[k], cmp);
+}
 
+int pq_remove(PQ p, void *data){
+	
+
+}
 //free

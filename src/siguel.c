@@ -7,8 +7,9 @@
 #include "modules/Sort/sort.h"
 #include "modules/Tree/kdtree.h"
 #include "modules/Hash/hash_table.h"
+#include "modules/Via/via.h"
 /*
- *@author: João Vitor Roma Neto
+ *@authors: João Vitor Roma Neto
 		Rafael Yukio Umemoto
  * 
  *
@@ -383,20 +384,15 @@ main(int argc, char *argv[]){
 		while(fgets(line, 1000, sis_viario_file) != NULL){
 			if(strncmp(line, "v", 1) == 0){
 				char id[100];
-				Ponto p;
 				sscanf(line, "v %s %lf %lf", id, &x, &y);
-				p.x = x;
-				p.y = y;
 
-				insertVertex(city.vias, id, &p);
-			
+				via_insertEsquina(city.via, id, x, y);
 			}
 			else if(strncmp(line, "e", 1) == 0){
 				char v1[50], v2[50], ldir[50], lesq[50], nome[50];
 				double cmp, vm;
 				sscanf(line, "e %s %s %s %s %lf %lf %s", v1, v2, ldir, lesq, &cmp, &vm, nome);
-				Rua r = createRua(nome, ldir, lesq, cmp, vm);
-				insertEdge(city.vias, v1, v2, r);
+				via_insertRua(city.via, v1, v2, ldir, lesq, cmp, vm, nome);
 			}
 		}
 		fclose(sis_viario_file);
@@ -836,6 +832,10 @@ main(int argc, char *argv[]){
 				}
 				R[index_r1] = best_ponto;
 				destroyList(l);
+			}
+			else if(strncmp(line, "p?", 2) == 0){
+				char *split = strtok(line, " ");
+
 			}
 			else if(strncmp(line, "au", 2) == 0){
 				//insere carro
