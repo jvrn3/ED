@@ -47,13 +47,13 @@ void drawQuadra(FILE *svgName, Quadra r){
 
 void drawHidrante(FILE *svgName, Hidrante h){
 	Hidrante sh = h;
-fprintf(svgName, "<circle r=\"10.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">H</text>\n", 
+fprintf(svgName, "<circle r=\"5.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"7\">H</text>\n", 
 		hidrante_get_x(sh),
 		hidrante_get_y(sh),
 		hidrante_get_strk(sh),
 		hidrante_get_fill(sh),
-		hidrante_get_x(sh) - 5,
-		hidrante_get_y(sh) + 5
+		hidrante_get_x(sh) - 3,
+		hidrante_get_y(sh) + 2
 			);
 }
 void drawSemaforo(FILE *svgName, Semaforo s){
@@ -66,14 +66,14 @@ void drawSemaforo(FILE *svgName, Semaforo s){
 }
 void drawTorre(FILE *svgName, Torre t){
 	Torre st = t;
-	fprintf(svgName, "<circle r=\"10.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n", 
+	fprintf(svgName, "<circle r=\"7.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill=\"%s\" />\n", 
 			torre_get_x(st),
 			torre_get_y(st),
 			torre_get_strk(st),
 			torre_get_fill(st));
-	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"16\">T</text>\n",
-			torre_get_x(st) - 5,
-			torre_get_y(st) + 5);
+	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"11\">T</text>\n",
+			torre_get_x(st) - 4,
+			torre_get_y(st) + 4);
 
 }
 void drawRect(FILE *svgName, Rect r){
@@ -330,4 +330,57 @@ void drawCarro(FILE *svgName, Carro c){
 			rect_get_y(r) + rect_get_h(r)/2,
 			carro_get_placa(c)
 			);
+}
+void drawArrow(FILE *file, char *cor){
+    fprintf(file, "%s\n", "<defs>");
+    fprintf(file, "%s\n", "<marker id=\"arrowhead\" markerWidth=\"10\" markerHeight=\"7\" refX=\"8\" refY=\"3.5\" orient=\"auto\">");
+    fprintf(file, "<polygon points=\"0 0, 10 3.5, 0 7\" fill=\"%s\"/>\n", cor);
+    fprintf(file, "%s\n", "</marker>");
+    fprintf(file, "%s\n", "</defs>");
+}
+
+void drawArrow2(FILE *file, float x1, float y1, float x2, float y2, char *cor){
+    fprintf(file, "%s\n", "<line");
+    fprintf(file, " %s", "x1=");
+    fprintf(file, "\"%.5f\"\n", x1);
+    fprintf(file, " %s", "y1=");
+    fprintf(file, "\"%f\"\n", y1);
+    fprintf(file, " %s", "x2=");
+    fprintf(file, "\"%.5f\"\n", x2);
+    fprintf(file, " %s", "y2=");
+    fprintf(file, "\"%f\"\n", y2);
+    fprintf(file, " %s", "style=");
+    fprintf(file, "\"%s", "stroke: ");
+    fprintf(file, " %s;", cor);
+    fprintf(file, " %s\"\n", "stroke-width: 1");
+    fprintf(file, " marker-end=\"%s\"\n", "url(#arrowhead)");
+    fprintf(file, "%s\n", "/>");
+}
+void drawOverlapCar(FILE *fSvg, Rect r1, Rect r2){
+    StRect *sr = (StRect *) r1;
+    StRect *sr2 =(StRect *) r2;
+    double x, y, w, h;
+
+    x = MIN(sr->x, sr2->x);
+    y = MIN(sr->y, sr2->y);
+    if(sr->x > sr2->x){
+	w = MAX(sr->w + sr->x, sr2->x + sr->w);
+	w = w - sr2->x;
+    }
+    else{
+	w = MAX(sr->w + sr->x, sr2->x + sr->w);
+	w = w - sr2->x;
+    }
+    if(sr->y > sr2->y){
+	h = MAX(sr->h + sr-> y, sr2->y + sr2->h);
+	h = h - sr2->y;
+    }
+    else{
+	h = MAX(sr->h + sr-> y, sr2->y + sr2->h);
+	h = h - sr->y;
+    }
+
+
+	fprintf(fSvg,"<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\"  fill-opacity=\"0\" stroke=\"red\" stroke-width=\"2\"/>\n", x,y,w,h );
+
 }

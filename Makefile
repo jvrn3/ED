@@ -1,5 +1,5 @@
 TARGET = siguel
-DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o rua.o graph.o carro.o
+DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o rua.o graph.o carro.o via.o priority_queue.o
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
@@ -70,5 +70,11 @@ graph.o : $(SOURCEDIR)/Graph/graph.c
 
 carro.o : $(SOURCEDIR)/Carro/carro.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Carro/carro.c
+
+via.o : $(SOURCEDIR)/Via/via.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Via/via.c
+
+priority_queue.o : $(SOURCEDIR)/Fila/priority_queue.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Fila/priority_queue.c
 clean: 
 	rm -rf *.o vgcore* 

@@ -30,7 +30,11 @@ PQ createPQ(int max){
 	spq->N = 0;
 
 	spq->pq = malloc(sizeof(void *) * (max + 1));
+	for(int i = 0; i < spq->N; i++){
+		spq->pq[i] = NULL;
+	}
 
+	return pq;
 }
 
 void pq_swim(PQ p, int k, int (*cmp)(void *, void *)){
@@ -65,8 +69,8 @@ void * pq_delMin(PQ p, int (*cmp)(void *, void *)){
 
 	void *data  = spq->pq[1];
 	pq_exch(p, 1, spq->N--);
-	pq_sink(p, 1,cmp);
 	spq->pq[spq->N + 1] = NULL;
+	pq_sink(p, 1,cmp);
 	return data;
 }
 
@@ -79,6 +83,20 @@ int pq_isEmpty(PQ p){
 	if(spq->N == 0)
 		return 1;
 	return 0;
+}
+void pq_remove(PQ p, void *data, int(*cmp)(void *, void *), int(*cmpr_data)(void *, void *)){
+
+	StPQ *spq = (StPQ *) p;
+	int i;
+	for(i = 0; i < spq->N; i++){
+		if(spq->pq[i] != NULL){
+			if(spq->pq[i] == data)
+				break;
+		}
+	}
+	pq_exch(p, i, spq->N--);
+	spq->pq[spq->N+1] = NULL;
+	pq_sink(p, i, cmp);
 }
 /* void change(PQ p, int k, void *item, int (*cmp)(void *, void *)){ */
 /* 	StPQ *spq = (StPQ *) p; */

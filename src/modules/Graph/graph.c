@@ -10,7 +10,6 @@ typedef struct stAresta{
 	 * */
 	char key_src[50], key_dest[50];
 	void *data;
-	double weight;
 
 }StAresta;
 /*
@@ -61,19 +60,34 @@ char *concatena_src_dest(char *src, char *dest){
 	strcat(new_key, dest);
 	return new_key;
 }
-Aresta createEdge(char *key_src, char *key_dest, void *data, double (*getWeight)(void *)){
+Aresta createEdge(char *key_src, char *key_dest, void *data){
 	Aresta aresta = malloc(sizeof(StAresta));
 	StAresta *ar = (StAresta *) aresta;
 	strcpy(ar->key_src, key_src);
 	strcpy(ar->key_dest, key_dest);
 	ar->data = data;
-	ar->weight = getWeight(data);
 	return aresta;
 }
-void insertEdge(Grafo grafo, char *key_src, char *key_dest, void *data, double (*getWeight)(void *)){
-	StGrafo *sg = (StGrafo *) grafo;
-	Aresta aresta = createEdge(key_src, key_dest, data, getWeight);
+void free_edge(Aresta a){
+	if(a == NULL)
+		return;
+	StAresta *se = (StAresta *) a;
+	void *data = se->data;
+	free(a);
+	free(data);
+}
+void free_vertice(Vertice v){
+	if(v == NULL)
+		return;
+	StVertice *sv = (StVertice *) v;
+	void *data = sv->data;
+	free(v);
+	free(data);
 
+}
+void insertEdge(Grafo grafo, char *key_src, char *key_dest, void *data){
+	StGrafo *sg = (StGrafo *) grafo;
+	Aresta aresta = createEdge(key_src, key_dest, data);
 
 	char *key = concatena_src_dest(key_src, key_dest);
 	put(sg->arestas, key, aresta);
@@ -121,11 +135,11 @@ int cmpr_vertice(Vertice a, Vertice b){
 
 	StVertice *sv = (StVertice *) a;
 	StVertice *svb = (StVertice *) b;
-	if(sv->minDist < svb->minDist)
+	if(sv->minDist > svb->minDist)
 		return 1;
 	return 0;
 }
-void dijkstra(Grafo grafo, Vertice source, Vertice dest){
+void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(void *)){
 
 	StGrafo *sg = (StGrafo *) grafo;
 	int V = sg->V;
@@ -133,32 +147,32 @@ void dijkstra(Grafo grafo, Vertice source, Vertice dest){
 	
 	StVertice *sSource = (StVertice *) source;
 	sSource->minDist = 0;
-	pq_insert(pq, source, cmpr_vertice);
-
 	//relax
+	pq_insert(pq, source, cmpr_vertice);
 	while(!pq_isEmpty(pq)){
-
 		StVertice *v = pq_delMin(pq, cmpr_vertice);
-		//se chegar no destino
-		if(v == dest)
-			break;
-
 		//a famosa relaxada
 		Lista adjacentes = get_V_adj(grafo, v);
 		Node *n;
 		for(n = getFirst(adjacentes); n != NULL; n = getNext(n)){
+
 			StAresta *aresta = hash_get_data(list_get_data(n));
 			StVertice *vert = search(sg->vertices, aresta->key_dest);
-			double weight = aresta->weight;
-			double distanceThroughVert = v->minDist + weight;
-			if(distanceThroughVert < vert->minDist){
-				vert->minDist = distanceThroughVert;
-				vert->previous = v;
-				pq_insert(pq, vert, cmpr_vertice);
+
+			double weight = getWeight(aresta->data);
+			if(weight != FLT_MAX){
+				double distanceThroughVert = v->minDist + weight;
+				if(distanceThroughVert < vert->minDist){
+					vert->minDist = distanceThroughVert;
+					vert->previous = v;
+					pq_insert(pq, vert, cmpr_vertice);
+				}
 			}
+			
 		}
 	}
 }
+
 int cmpr_v_adj(void *a, void *b){
 	char *vertice_key = (char *) b;
 	StAresta * aresta = hash_get_data(a);
@@ -191,8 +205,8 @@ int compare_aresta(Hash h, void *k){
 }
 void free_grafo(Grafo g){
 	StGrafo *sg = (StGrafo *) g;
-	delete_hash_table(sg->arestas, free);
-	delete_hash_table(sg->vertices, free);
+	delete_hash_table(sg->arestas, free_edge);
+	delete_hash_table(sg->vertices, free_vertice);
 }
 void *aresta_get_data(Aresta aresta){
 	StAresta *sa = (StAresta *) aresta;
@@ -219,5 +233,18 @@ int graph_vercies(Grafo g){
 double get_minDist(Vertice v){
 	StVertice *sv = (StVertice *)v;
 	return sv->minDist;
+}
+
+Vertice vertice_get_previous(Vertice v){
+	StVertice *sv = (StVertice *) v;
+	return sv->previous;
+}
+char *aresta_get_source(Aresta a){
+	StAresta *sa = (StAresta *) a;
+	return sa->key_src;
+}
+char *aresta_get_dest(Aresta a){
+	StAresta *sa = (StAresta *) a;
+	return sa->key_dest;
 }
 

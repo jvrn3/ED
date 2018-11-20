@@ -22,7 +22,7 @@ typedef void * Vertice;
 Grafo createGrafo();
 
 //cria arestas :: src -> dir -> data
-Aresta createEdge(char *key_src, char *key_dest, void *data, double (*getWeight)(void *));
+Aresta createEdge(char *key_src, char *key_dest, void *data);
 
 //cria vertce com id e dados
 Vertice createVertex(char *id, void *data);
@@ -34,7 +34,7 @@ void insertVertex(Grafo grafo, char *id, void *data);
 char *concatena_src_dest(char *src, char *dest);
 
 //insere aresta do grafo
-void insertEdge(Grafo grafo, char *key_src, char * key_dest, void *data, double (*getWeight)(void *));
+void insertEdge(Grafo grafo, char *key_src, char * key_dest, void *data);
 
 //pega informação da aresta src->dest
 Aresta edge_getInfo(Grafo grafo, char *key_src, char *key_dest);
@@ -59,7 +59,7 @@ Lista get_V_adj(Grafo g, Vertice v);
 int compare_true(void *a, void *b);
 
 int cmpr_vertice(Vertice a, Vertice b);
-void dijkstra(Grafo grafo, Vertice source, Vertice dest);
+void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(void *));
 /* Getters */
 void *aresta_get_data(Aresta aresta);
 void *vertice_get_data(Vertice vertice);
@@ -74,4 +74,13 @@ double get_minDist(Vertice v);
 
 int cmpr_v_adj(void *, void *);
 Lista get_V_adj(Grafo g, Vertice V);
+
+Vertice vertice_get_previous(Vertice v);
+
+char *aresta_get_source(Aresta a);
+char *aresta_get_dest(Aresta a);
+int cmpr_id(void *a, void *b);
+
+void free_vertice(Vertice v);
+void free_aresta(Aresta a);
 #endif

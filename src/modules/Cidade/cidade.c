@@ -880,3 +880,12 @@ void drawCidade(Cidade c, FILE *fSvgQry){
 		drawCarro(fSvgQry, list_get_data(n)); }
 }
 
+void printShortest(FILE *fTxt, Grafo grafo, Vertice v){
+	Vertice aux = v;
+	while(aux != NULL){
+		char *src = vertice_get_id(aux);
+		char *dest = vertice_get_id(vertice_get_previous(aux));
+		fprintf(fTxt, "Siga pela rua %s\n", rua_get_nome(aresta_get_data(edge_getInfo(grafo, src, dest))));
+		aux = vertice_get_previous(aux);
+	}
+}

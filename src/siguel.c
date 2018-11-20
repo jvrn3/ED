@@ -415,6 +415,7 @@ main(int argc, char *argv[]){
 		qry_name = criaString(dir, qry_nameString, ".svg");
 				/* while(!feof(fQry)){ */
 		fTxt = fopen(nomeTxt, "a");
+		fprintf(fTxt, "\n ----- Queries do arquivo %s.qry -----\n", qry);
 		while(fgets(line,1000,fQry) != NULL){
 
 			if(strncmp(line, "dq", 2) == 0){
@@ -834,10 +835,77 @@ main(int argc, char *argv[]){
 				destroyList(l);
 			}
 			else if(strncmp(line, "p?", 2) == 0){
-				char *split = strtok(line, " ");
+				//formato é : 
+				//p? T D R5 R9
+				//01234567891011
+				if(line[3] == 't' || line[3] == 'T'){
+					int R1, R2;
+					R1 = line[8] - '0';
+					R2 = line[11] - '0';
+					if(line[5] == 'D' || line[5] == 'd'){
+						Lista l = createList();
+						shortest_path(city.via, R[R1], R[R2], weightDistancia, l);
+						viaTxtShortestPaths(city.via, l, fTxt);
+						printf("%d\n", length(l));
 
+						destroyList(l);
+						
+
+					}
+					else{
+						Lista l = createList();
+						shortest_path(city.via, R[R1], R[R2], weightTempo, l);
+						viaTxtShortestPaths(city.via, l, fTxt);
+						printf("%d\n", length(l));
+						destroyList(l);
+					}
+				}
+				else{
+					char suffix[50], dt, cor[50];
+					int r1, r2;
+					sscanf(line, "p? p %s %c R%d R%d %s", suffix, &dt, &r1, &r2, cor);
+					char *nome = criaString(leitura, "-", suffix);
+					FILE *f_dijkstra = fopen(criaString(dir, nome, ".svg"), "w");
+					if(!f_dijkstra){
+						printf("Erro ao criar arquivo comando p");
+						exit(-1);
+					}
+
+					startSvg(f_dijkstra);
+					traverseTreeQuadra(city.arvore_quadra, drawQuadra, f_dijkstra);
+					traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, f_dijkstra);
+					traverseTreeHidrante(city.arvore_hidrante, drawHidrante, f_dijkstra);
+					traverseTreeTorre(city.arvore_torre, drawTorre, f_dijkstra);
+
+					if(dt == 'D' || dt == 'd'){
+
+					Lista l = createList();
+					shortest_path(city.via, R[r1], R[r2], weightDistancia, l);
+					viaShortestPaths(city.via, l, f_dijkstra, cor);
+					printf("%d\n", length(l));
+
+					destroyList(l);
+					}
+					else{
+						Lista l = createList();
+						shortest_path(city.via, R[r1], R[r2], weightTempo, l);
+						viaShortestPaths(city.via, l, f_dijkstra, cor);
+						printf("%d\n", length(l));
+
+						destroyList(l);
+					}
+
+					fprintf(f_dijkstra,"</svg>");
+					fclose(f_dijkstra);
+
+					/* for(Vertice n = v; n != NULL; n = vertice_get_previous(n)){ */
+					/* 	Ponto *p = vertice_get_data(n); */
+					/* 	printf("%lf %lf ", p->x, p->y); */
+					/* } */
+				}
 			}
 			else if(strncmp(line, "au", 2) == 0){
+
 				//insere carro
 				char placa[50];
 				sscanf(line, "au %s %lf %lf %lf %lf", placa, &x, &y, &w, &h);
@@ -848,6 +916,31 @@ main(int argc, char *argv[]){
 				//remove carro
 				char placa[50];
 				sscanf(line, "rau %s", placa);
+				void *data = search_del(city.lista_carros, cmp_placa, placa);
+				double x = rect_get_x(carro_get_placa(data));
+				double y = rect_get_y(carro_get_placa(data));
+				fprintf(fTxt, "Carro com placa %s removido. Estava na posicao %lf %lf\n", carro_get_placa(data), x, y);
+				free(data);
+
+			}
+			else if(strncmp(line, "dc", 2) == 0){
+				char sufixo[50];
+				sscanf(line, "dc %s", sufixo);
+				char *nome = criaString(leitura, "-", sufixo);
+				FILE *f_colisao = fopen(criaString(dir, nome, ".svg"), "w");
+
+				startSvg(f_colisao);
+				traverseTreeQuadra(city.arvore_quadra, drawQuadra, f_colisao);
+				traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, f_colisao);
+				traverseTreeHidrante(city.arvore_hidrante, drawHidrante, f_colisao);
+				traverseTreeTorre(city.arvore_torre, drawTorre, f_colisao);
+				for(Node *n = getFirst(city.lista_carros);  n != NULL; n = getNext(n)){
+					drawCarro(f_colisao, list_get_data(n)); 
+				}
+				car_overlap(city.lista_carros, car_cmp, f_colisao);
+				fprintf(f_colisao, "</svg>");
+				fclose( f_colisao );
+				
 			}
 		}
 

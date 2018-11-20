@@ -39,6 +39,9 @@ void drawLineMudancaEst(FILE *svgName, Ponto a, Ponto b);
 void drawLinePontilhado(FILE *svgName, Ponto p, Ponto q);
 void drawCruz(FILE *fsvgName, Ponto p);
 void drawCarro(FILE *svgName, Carro c);
+void drawArrow(FILE *file, char *cor);
+void drawArrow2(FILE *file, float x1, float y1, float x2, float y2, char *cor);
+void drawOverlapCar(FILE *fSvg, Rect r1, Rect r2);
 #endif
 
 

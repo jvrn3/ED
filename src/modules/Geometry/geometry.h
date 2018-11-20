@@ -14,7 +14,6 @@ typedef struct ponto{
 #include "../Torre/torre.h"
 #include "../Lista/linked_list.h"
 #include "../Sort/sort.h"
-#include "../Cidade/cidade.h"
 #include "../Quadra/quadra.h"
 #include "../Hidrante/hidrante.h"
 #include "../Semaforo/semaforo.h"

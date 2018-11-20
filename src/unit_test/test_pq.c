@@ -1,6 +1,5 @@
 #include "../modules/Fila/priority_queue.h"
 #include <stdio.h>
-
 int cmp(void *va, void *vb){
 	int *a = (int *)va;
 	int *b = (int *) vb;
@@ -18,14 +17,12 @@ main(){
 	void *va = &a;
 	void *vb = &b;
 	void *vh = &h;
-	pq_insert(pq, 1, va, cmp);
-	pq_insert(pq, 2, vh, cmp);
-	pq_insert(pq, 4, vb, cmp);
-	/* while(!pq_isEmpty(pq)){ */
-	/* 	void *r = pq_min(pq); */
-	/* 	printf("%d\n", *(int *)r); */
-	/* 	pq_delMin(pq, cmp); */
-	/* } */
+	pq_insert(pq, va, cmp);
+	pq_insert(pq, vh, cmp);
+	pq_insert(pq, vb, cmp);
+	pq_remove(pq, va, cmp, cmp);
+	printf("%d", *(int *)pq_min(pq));
+	
 }
 
 

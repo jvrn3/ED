@@ -269,33 +269,3 @@ float closest(Ponto *ponto, int n){
 	float min = closestPairs(ponto, n);
 	return min;
 }
-
-/* Lista car_overlap(Lista l, int (*cmp)(void *, void *)){ */
-/*     //should sorta according to x */
-/*     sort_list(l, cmp); */
-/*     Node *n, *low; */
-/*     Rect r; */
-/*     StRect *sr; */
-/*     Lista overlap = createList(); */
-/*     for(n = getFirst(l); n != NULL; n = getNext(n)){ */
-/* 	r = carro_get_posic(list_get_data(n)); */
-/* 	sr = (StRect *) r; */
-/* 	low = n; */
-/* 	for(; low != NULL; low = getNext(low)){ */
-/* 	    Rect r_low; */
-/* 	    r_low = carro_get_posic(list_get_data(low)); */
-/* 	    StRect *srr = (StRect *) r_low; */
-/* 	    if(srr->x < sr->x + sr->w){ */
-/* 		#<{(| overlayRR() |)}># */
-/*  */
-/* 	    } */
-/* 	    else */
-/* 		break; */
-/* 	} */
-/* 	 */
-/*  */
-/*  */
-/*     } */
-/*  */
-/*  */
-/* } */

@@ -48,22 +48,42 @@ main(){
 	insertVertex(grafo, "Jesus", p7);
 	insertVertex(grafo, "Reginaldo", p8);
 	insertVertex(grafo, "Satanas", p9);
-	insertEdge(grafo, "josue", "Hobsbawn", r1, getWeight);
-	insertEdge(grafo, "josue", "Cleidiane", r2, getWeight);
-	insertEdge(grafo, "Joarez", "Cleidiane", r3, getWeight);
-	insertEdge(grafo, "Hacker", "Malaquias", r4, getWeight);
-	insertEdge(grafo, "Malaquias", "Jesus", r5, getWeight);
-	insertEdge(grafo, "Jesus", "Hacker", r6, getWeight);
-	insertEdge(grafo, "Reginaldo", "Satanas", r7, getWeight);
-	insertEdge(grafo, "Cleidiane", "Hacker", r8, getWeight);
-	insertEdge(grafo, "josue", "Jesus", r1, getWeight);
+	insertEdge(grafo, "josue", "Hobsbawn", r1);
+	insertEdge(grafo, "josue", "Cleidiane", r2 );
+	insertEdge(grafo, "Joarez", "Cleidiane", r3 );
+	insertEdge(grafo, "Hacker", "Malaquias", r4);
+	insertEdge(grafo, "Malaquias", "Jesus", r5);
+	insertEdge(grafo, "Jesus", "Hacker", r6);
+	insertEdge(grafo, "Reginaldo", "Satanas", r7);
+	insertEdge(grafo, "Cleidiane", "Hacker", r8);
+	insertEdge(grafo, "josue", "Jesus", r1);
 	Aresta a = edge_getInfo(grafo, "josue", "Cleidiane");
 	Rua get = (Ponto *)aresta_get_data(a);
 	printf("Nome da rua -> %s", rua_get_nome(get));
-	dijkstra(grafo, vertex_getInfo(grafo, "josue"));
+	dijkstra(grafo, vertex_getInfo(grafo, "josue"),vertex_getInfo(grafo, "Hacker"), getWeight);
 
 
 	printf("\nMin dist %lf\n", get_minDist(vertex_getInfo(grafo, "Hacker")));
+	Lista vertices = createList();
+	for(Vertice vertex = vertex_getInfo(grafo, "Hacker"); vertex != NULL; vertex = vertice_get_previous(vertex)){
+		/* char *src = vertice_get_id(vertex); */
+		/* printf("%s\n", src); */
+		if(vertice_get_previous(vertex) != NULL){
+			char *dest = vertice_get_id(vertice_get_previous(vertex));
+			/* printf("%d ", a_adjacente(via, src, dest)); */
+		}
+		insert(vertices, vertex, 0);
+	}
+	for(Node *n = getFirst(vertices); n != NULL; n = getNext(n)){
+		char *src = vertice_get_id(list_get_data(n));
+		printf("%s\n", src);
+		if(getNext(n) != NULL){
+			char *dest = vertice_get_id(list_get_data(getNext(n)));
+
+			/* printf("%d ", a_adjacente(via, src, dest)); */
+
+		}
+	}
 	free_grafo(grafo);
 	return 0;
 

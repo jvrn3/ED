@@ -12,5 +12,7 @@ void pq_insert(PQ p,void *key, int(*cmp)(void *, void *));
 void *pq_delMin(PQ p, int (*cmp)(void *, void *));
 void *pq_min(PQ p);
 int pq_isEmpty(PQ p);
+
+void pq_remove(PQ p, void *data, int (*cmp)(void *, void *), int (*cmp_data)(void *, void *));
 // void change(PQ p, int k, void *item, int (*cmp)(void *, void *));
 #endif

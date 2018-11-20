@@ -77,4 +77,8 @@ void destroyList(Lista l);
 Lista list_get_data(Lista l);
 //get middle of a node
 Node *list_get_middle(Lista l);
+
+Node *reverse_list(Lista l);
+
+Node *getLast(Lista l);
 #endif

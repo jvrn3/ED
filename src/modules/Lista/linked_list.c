@@ -52,6 +52,18 @@ Node *getFirst(Lista l){
 	return n;
 
 }
+Node *getLast(Lista l){
+	StList *list = (StList *)l;
+	Node *node = list->head;
+	if(list->head == NULL)
+		return NULL;
+
+	while(getNext(node) != NULL){
+		node = getNext(node);
+	}
+	return node;
+
+}
 int insertAtEnd(Lista l, void *data){
 
 	StList *lista = (StList *) l;
@@ -315,4 +327,16 @@ Node *list_get_middle(Lista	l){
 		}
 	}
 	return slow;
+}
+Node *reverse_list(Lista l){
+	Node *root = (Node *) l;
+	Node *new_root = NULL;
+	while(root){
+		Node *next = root->next;
+		root->next = new_root;
+		new_root = root;
+		root = next;
+	
+	}
+	return new_root;
 }
