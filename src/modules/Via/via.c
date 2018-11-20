@@ -75,10 +75,6 @@ void viaShortestPaths(Via v, Lista l, FILE *fSvg, char *cor){
 
 				drawArrow2(fSvg, p1->x, p1->y, p2->x, p2->y, cor );
 				drawArrow(fSvg, cor);
-				/* fprintf(fSvg, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke-width=\"5\" stroke=\"%s\"/>\n\n", p1->x, */
-				/* 		p1->y, */
-				/* 		p2->x, */
-				/* 		p2->y, cor); */
 			}
 		}
 	}
