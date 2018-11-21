@@ -98,11 +98,8 @@ void pq_remove(PQ p, void *data, int(*cmp)(void *, void *), int(*cmpr_data)(void
 	spq->pq[spq->N+1] = NULL;
 	pq_sink(p, i, cmp);
 }
-/* void change(PQ p, int k, void *item, int (*cmp)(void *, void *)){ */
-/* 	StPQ *spq = (StPQ *) p; */
-/* 	spq->keys[k] = item; */
-/* 	pq_swim(p, spq->qp[k], cmp); */
-/* 	pq_sink(p, spq->qp[k], cmp); */
-/* } */
-
+void free_pq(PQ p){
+	StPQ *spq = (StPQ *) p;
+	free(spq->pq);
+}
 //free

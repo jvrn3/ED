@@ -1,13 +1,6 @@
 #include "modules/String/mystr.h"
-#include "modules/Circle/circle.h"
-#include "modules/Rect/rect.h"
-#include "modules/Svg/svg.h"
-#include "modules/Geometry/geometry.h"
 #include "modules/Cidade/cidade.h"
 #include "modules/Sort/sort.h"
-#include "modules/Tree/kdtree.h"
-#include "modules/Hash/hash_table.h"
-#include "modules/Via/via.h"
 /*
  *@authors: João Vitor Roma Neto
 		Rafael Yukio Umemoto
@@ -898,11 +891,48 @@ main(int argc, char *argv[]){
 					fprintf(f_dijkstra,"</svg>");
 					fclose(f_dijkstra);
 
-					/* for(Vertice n = v; n != NULL; n = vertice_get_previous(n)){ */
-					/* 	Ponto *p = vertice_get_data(n); */
-					/* 	printf("%lf %lf ", p->x, p->y); */
-					/* } */
 				}
+			}
+			else if(strncmp(line, "sp?", 3) == 0){
+				//sp? t D n r1 r2 ... rn
+				//012345678
+				if(line[4] == 't' || line[4] == 'T'){
+					if(line[6] == 'D' || line[5] == 'd'){
+						//Distância
+
+					}
+					else{
+						//Tempo
+					}
+				}
+				else{
+					char suffix[50], dt, first_color[50], second_color[50];
+					int n;
+					sscanf(line, "sp? p %s %c %d", suffix, &dt, &n);
+					int indices[n];
+					int i = 0, j = 0;
+					char *tok = strtok(line, " ");
+					while(tok != NULL){
+						if(i > 4 && i < n + 5){
+							indices[j] = tok[1] - '0';
+							printf("%d\n", indices[j]);
+							j++;
+						}
+						if(i == n + 5){
+							strcpy(first_color, tok);
+						
+						}
+						if(i == n + 6){
+							strcpy(second_color, tok);
+						}
+						
+						tok  = strtok(NULL, " ");
+						i++;
+					}
+					//pictoria
+					/* n_shortest_paths(city.via, R, indices, n, first_color, second_color, ) */
+				}
+			
 			}
 			else if(strncmp(line, "au", 2) == 0){
 

@@ -6,8 +6,6 @@
 #include "../Semaforo/semaforo.h"
 #include "../Torre/torre.h"
 #include "../Lista/linked_list.h"
-#include "../Rect/rect.h"
-#include "../Circle/circle.h"
 #include "../Geometry/geometry.h"
 #include "../Tree/kdtree.h"
 #include "../Comercio/comercio.h"
@@ -18,6 +16,7 @@
 #include "../Graph/graph.h"
 #include "../Rua/rua.h"
 #include "../Via/via.h"
+#include "../Carro/carro.h"
 
 /* Representação de Siguel, cidade com diversos equipamentos, pessoas etc 
  * Este arquivo contém funções que manipulam a cidade

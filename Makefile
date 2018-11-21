@@ -1,8 +1,15 @@
 TARGET = siguel
-DEPS = siguel.o mystr.o circle.o rect.o linked_list.o svg.o geometry.o  cidade.o quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o rua.o graph.o carro.o via.o priority_queue.o
+DEPS = siguel.o \
+	   mystr.o \
+	   circle.o \
+	   rect.o \
+	   linked_list.o \
+	   svg.o geometry.o \
+	   cidade.o \
+	   quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o rua.o graph.o carro.o via.o priority_queue.o
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
-
+$(info ********* TRABALHO 5 de Estrutura de Dados *********** )
 SOURCEDIR = src/modules
 siguel : $(DEPS)
 	$(CC)  $(FLAGS) $(DEPS) -o siguel 

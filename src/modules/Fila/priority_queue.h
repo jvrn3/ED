@@ -14,5 +14,6 @@ void *pq_min(PQ p);
 int pq_isEmpty(PQ p);
 
 void pq_remove(PQ p, void *data, int (*cmp)(void *, void *), int (*cmp_data)(void *, void *));
+void free_pq(PQ p);
 // void change(PQ p, int k, void *item, int (*cmp)(void *, void *));
 #endif

@@ -112,7 +112,9 @@ Vertice vertex_getInfo(Grafo grafo, char *key){
 }
 int a_adjacente(Grafo grafo, char *key_src, char *key_dest){
 	StGrafo *sg = (StGrafo *) grafo;
-	Aresta a = search(sg->arestas, concatena_src_dest(key_src, key_dest));
+	char *key = concatena_src_dest(key_src, key_dest);
+	Aresta a = search(sg->arestas, key);
+	free(key);
 	if(a == NULL)
 		return -1;
 	return 1;
@@ -170,7 +172,9 @@ void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(voi
 			}
 			
 		}
+		destroyList(adjacentes);
 	}
+	free_pq(pq);
 }
 
 int cmpr_v_adj(void *a, void *b){

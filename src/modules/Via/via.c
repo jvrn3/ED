@@ -58,7 +58,21 @@ Lista shortest_path(Via via, Ponto p_src, Ponto p_dest, double (*getWeight)(void
 	for(Vertice vertex = dest; vertex != NULL; vertex = vertice_get_previous(vertex)){
 		insert(vertices, vertex, 0);
 	}
+	destroyList(all);
 	return vertices;
+}
+void n_shortest_paths(Via via, Ponto *R, int *indices, int n, char *cor1, char *co2, double (*getWeight)(void *), Lista vertices, FILE *fSvg){
+	for(int i = 0; i < n-1; i++){
+		shortest_path(via, R[indices[i]], R[indices[i+1]], getWeight, vertices);
+		if(i % 2 == 0){
+			viaShortestPaths(via, vertices, fSvg, cor1);
+		}
+		else{
+			viaShortestPaths(via, vertices, fSvg, cor1);
+
+		}
+	}
+
 }
 void viaShortestPaths(Via v, Lista l, FILE *fSvg, char *cor){
 	Node *node = getFirst(l);
@@ -133,7 +147,6 @@ void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg){
 
 
 			while(node_low != NULL && sr->x + sr->w > sr_low->x ){
-				/* printf("overlap %s\n", carro_get_placa(list_get_data(node_low))); */
 				if(overlayRR(r, r_low)){
 					insertAtEnd(overlap, r_low);
 				}

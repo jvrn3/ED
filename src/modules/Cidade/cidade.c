@@ -615,7 +615,12 @@ void free_cidade(Cidade c){
 	destroy(c.lista_quadra);
 	destroy(c.lista_semaforo);
 	destroy(c.lista_torre);
-	destroy(c.lista_carros);
+	while(length(c.lista_carros) > 0){
+		Carro carro = removeFirst(c.lista_carros);
+		Rect r = carro_get_posic(carro);
+		free(r);
+		free(carro);
+	}
 	destroyTree(c.arvore_quadra);
 	destroyTree(c.arvore_hidrante);
 	destroyTree(c.arvore_torre);

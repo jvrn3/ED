@@ -22,4 +22,6 @@ void viaTxtShortestPaths(Via v, Lista l, FILE *fTxt);
 void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg);
 
 char *viaGetDirecao(Vertice a, Vertice b);
+
+void n_shortest_paths(Via via, Ponto *R, int *indices, int n, char *cor1, char *co2, double (*getWeight)(void *), Lista vertices, FILE *fSvg);
 #endif
