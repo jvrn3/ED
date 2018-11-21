@@ -863,6 +863,8 @@ main(int argc, char *argv[]){
 					char suffix[50], dt, cor[50];
 					int r1, r2;
 					sscanf(line, "p? p %s %c R%d R%d %s", suffix, &dt, &r1, &r2, cor);
+					Circle c = createCircle("white", "green", 5, R[r1].x, R[r1].y);
+					Circle c2 = createCircle("white", "black", 5, R[r2].x, R[r2].y);
 					char *nome = criaString(leitura, "-", suffix);
 					char *newString = criaString(dir, nome, ".svg");
 					FILE *f_dijkstra = fopen(newString, "w");
@@ -878,6 +880,11 @@ main(int argc, char *argv[]){
 					traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, f_dijkstra);
 					traverseTreeHidrante(city.arvore_hidrante, drawHidrante, f_dijkstra);
 					traverseTreeTorre(city.arvore_torre, drawTorre, f_dijkstra);
+
+					drawVias(city.via, f_dijkstra);
+					Vertice all = get_all_vertices(city.via);
+					nearest_via(all, R[r1], f_dijkstra);
+					nearest_via(all, R[r2], f_dijkstra);
 
 					if(dt == 'D' || dt == 'd'){
 
@@ -897,6 +904,11 @@ main(int argc, char *argv[]){
 						destroyList(l);
 					}
 
+					drawCircle(f_dijkstra, c);
+					drawCircle(f_dijkstra, c2);
+					/* drawVias(city.via, f_dijkstra); */
+					free(c);
+					free(c2);
 					fprintf(f_dijkstra,"</svg>");
 					fclose(f_dijkstra);
 
@@ -956,9 +968,9 @@ main(int argc, char *argv[]){
 				char placa[50];
 				sscanf(line, "rau %s", placa);
 				void *data = search_del(city.lista_carros, cmp_placa, placa);
-				//double x = rect_get_x(carro_get_placa(data));
-				//double y = rect_get_y(carro_get_placa(data));
-				//fprintf(fTxt, "Carro com placa %s removido. Estava na posicao %lf %lf\n", carro_get_placa(data), x, y);
+				double x = rect_get_x(carro_get_posic(data));
+				double y = rect_get_y(carro_get_posic(data));
+				fprintf(fTxt, "Carro com placa %s removido. Estava na posicao %lf %lf\n", carro_get_placa(data), x, y);
 				free(carro_get_posic(data));
 				free(data);
 

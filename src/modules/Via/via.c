@@ -3,7 +3,7 @@ double weightDistancia(void *a){
 	return rua_get_cmp(a);
 }
 double weightTempo(void *a){
-	if(rua_get_cmp(a) == 0)
+	if(rua_get_cmp(a) == 0 )
 		return 0;
 	if(rua_get_cmp(a) < 0 || rua_get_vm(a) <= 0)
 		return FLT_MAX;
@@ -15,7 +15,7 @@ Via createVia(){
 	Via via = createGrafo();
 	return via;
 }
-Vertice nearest_via(Lista l, Ponto p){
+Vertice nearest_via(Lista l, Ponto p, FILE *fSvg){
 	Node *n; 
 	Vertice v = NULL;
 	double menor = FLT_MAX;
@@ -28,7 +28,12 @@ Vertice nearest_via(Lista l, Ponto p){
 			menor = d;
 			v = hash_get_data(list_get_data(n));
 		}
+
 	}
+	Ponto *ponto = vertice_get_data(v);
+	Circle c = createCircle("black", "orange", 5, ponto->x, ponto->y);
+	if(fSvg != NULL)
+		drawCircle(fSvg, c);
 	return v;
 }
 void via_insertEsquina(Via via, char *nome, double x, double y){
@@ -46,8 +51,8 @@ void via_insertRua(Via via, char *src, char *dest, char *ldir, char *lesq, doubl
 Lista shortest_path(Via via, Ponto p_src, Ponto p_dest, double (*getWeight)(void *), Lista vertices){
 	Vertice all = get_all_vertices(via);
 
-	Vertice src = nearest_via(all, p_src);
-	Vertice dest = nearest_via(all, p_dest);
+	Vertice src = nearest_via(all, p_src, NULL);
+	Vertice dest = nearest_via(all, p_dest, NULL);
 	if(src == NULL || dest == NULL || all == NULL){
 		printf("Erro shortest path");
 		return NULL;
@@ -165,4 +170,26 @@ void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg){
 
 		}
 	}
+}
+
+void drawVias(Grafo g, FILE *fSvg){
+	
+	Lista arestas = get_all_arestas(g);
+	for(Node *n = getFirst(arestas); n != NULL; n = getNext(n)){
+		if(getNext(n) != NULL){
+			Aresta a = hash_get_data(list_get_data(n));
+			Vertice va = vertex_getInfo(g, aresta_get_source(a));
+			Vertice vb = vertex_getInfo(g, aresta_get_dest(a));
+
+			Ponto *ponto_a = vertice_get_data(va);
+			Ponto *ponto_b = vertice_get_data(vb);
+
+			/* fprintf(fSvg, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"%s\"/>\n", */
+					/* ponto_a->x, ponto_a->y, ponto_b->x, ponto_b->y, "blue"); */
+			drawArrow2(fSvg, ponto_a->x, ponto_a->y, ponto_b->x, ponto_b->y, "blue");
+			drawArrow(fSvg, "blue");
+
+		}
+	}
+	destroyList(arestas);
 }

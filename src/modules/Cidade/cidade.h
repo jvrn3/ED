@@ -131,7 +131,6 @@ void drawCidade(Cidade c, FILE *nome);
 
 void free_cidade(Cidade c);
 
-Vertice nearest_via(Lista l, Ponto p);
 
 void printShortest(FILE *fTxt, Grafo g, Vertice v);
 #endif

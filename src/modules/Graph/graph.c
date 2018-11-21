@@ -146,12 +146,14 @@ void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(voi
 	StGrafo *sg = (StGrafo *) grafo;
 	int V = sg->V;
 	PQ pq = createPQ(V);
+	int found = 0;
+	int i = 0;
 
 	StVertice *sSource = (StVertice *) source;
 	sSource->minDist = 0;
 	//relax
 	pq_insert(pq, source, cmpr_vertice);
-	while(!pq_isEmpty(pq)){
+	while(!pq_isEmpty(pq) && found == 0){
 		StVertice *v = pq_delMin(pq, cmpr_vertice);
 		//a famosa relaxada
 		Lista adjacentes = get_V_adj(grafo, v);
@@ -160,13 +162,17 @@ void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(voi
 
 			StAresta *aresta = hash_get_data(list_get_data(n));
 			StVertice *vert = search(sg->vertices, aresta->key_dest);
-
 			double weight = getWeight(aresta->data);
 			if(weight != FLT_MAX){
 				double distanceThroughVert = v->minDist + weight;
 				if(distanceThroughVert < vert->minDist){
 					vert->minDist = distanceThroughVert;
 					vert->previous = v;
+
+					if(strcmp(vertice_get_id(vert), vertice_get_id(dest))== 0){
+						found = 1;
+						break;
+					}
 					pq_insert(pq, vert, cmpr_vertice);
 				}
 			}
@@ -198,6 +204,11 @@ Lista get_all_vertices(Grafo g){
 	StGrafo *sg = (StGrafo *) g;
 	Lista l = hash_filter_to_list(sg->vertices, compare_true, NULL);
 	return l;
+}
+Lista get_all_arestas(Grafo g){
+	StGrafo *sg = (StGrafo *) g;
+	Lista l = hash_filter_to_list(sg->arestas, compare_true, NULL);
+
 }
 int compare_aresta(Hash h, void *k){
 	char *key = (char *) k;

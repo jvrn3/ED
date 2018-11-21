@@ -68,6 +68,7 @@ int grafo_edges(Grafo g);
 int grafo_vertices(Grafo g);
 int compare_true(void *a, void *b);
 Lista get_all_vertices(Grafo g);
+Lista get_all_arestas(Grafo g);
 
 double get_minDist(Vertice v);
 
