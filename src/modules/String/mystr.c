@@ -20,6 +20,7 @@ char *arruma_path(char *str){
 		aux = malloc(sizeof(char) * strlen(str) +2  );
 		strcpy(aux, str);
 		strcat(aux, "/");
+		free(str);
 		return aux;
 	}
 	return str;
@@ -45,4 +46,3 @@ char *concatena(char *str, char *str2){
 	strcat(str, str2);
 	return str;
 }
-

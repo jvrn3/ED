@@ -13,7 +13,7 @@ typedef struct stAresta{
 
 }StAresta;
 /*
- * 
+ *
  * */
 typedef struct stVertice{
 	char id[100];
@@ -146,7 +146,7 @@ void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(voi
 	StGrafo *sg = (StGrafo *) grafo;
 	int V = sg->V;
 	PQ pq = createPQ(V);
-	
+
 	StVertice *sSource = (StVertice *) source;
 	sSource->minDist = 0;
 	//relax
@@ -170,7 +170,7 @@ void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(voi
 					pq_insert(pq, vert, cmpr_vertice);
 				}
 			}
-			
+
 		}
 		destroyList(adjacentes);
 	}
@@ -211,6 +211,7 @@ void free_grafo(Grafo g){
 	StGrafo *sg = (StGrafo *) g;
 	delete_hash_table(sg->arestas, free_edge);
 	delete_hash_table(sg->vertices, free_vertice);
+	free(sg);
 }
 void *aresta_get_data(Aresta aresta){
 	StAresta *sa = (StAresta *) aresta;
@@ -251,4 +252,3 @@ char *aresta_get_dest(Aresta a){
 	StAresta *sa = (StAresta *) a;
 	return sa->key_dest;
 }
-

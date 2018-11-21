@@ -101,5 +101,6 @@ void pq_remove(PQ p, void *data, int(*cmp)(void *, void *), int(*cmpr_data)(void
 void free_pq(PQ p){
 	StPQ *spq = (StPQ *) p;
 	free(spq->pq);
+	free(spq);
 }
 //free
