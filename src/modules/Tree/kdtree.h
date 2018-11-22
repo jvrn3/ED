@@ -2,6 +2,9 @@
 #define KDTREE_H
 #include <stdio.h>
 #include <stdlib.h>
+#include "../Geometry/geometry.h"
+#include "../Lista/linked_list.h"
+
 typedef void *KdTree;
 typedef struct kdnode{
     int used;
@@ -10,8 +13,6 @@ typedef struct kdnode{
     struct kdnode *left;
     struct kdnode *right;
 }KdNode;
-#include "../Geometry/geometry.h"
-#include "../Lista/linked_list.h"
 /* 2d Tree */
 /* uma árvore kd é uma árvore binária que armazena pontos*/
 

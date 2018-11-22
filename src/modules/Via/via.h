@@ -7,20 +7,37 @@
 #include "../Svg/svg.h"
 
 typedef void *Via;
-double weightDistancia(void *);
-double weightTempo(void *);
+
+/* Sistema viário da Siguel 
+ *
+ * */
+//retorna o comprimento da rua r
+double weightDistancia(Rua r);
+
+//retorna a distancia/tempo da rua r
+double weightTempo(Rua r);
+//cria um novo sistema viário
+
 Via createVia();
+
+//Recebe uma lista de vértices e acha o vértice mais proximo do ponto p
 Vertice nearest_via(Lista l, Ponto p, FILE *fSvg);
+
 void via_insertEsquina(Via via, char *nome, double x, double y);
 void via_insertRua(Via via, char *src, char *dest, char *ldir, char *lesq, double comp, double vm, char *nome);
 
 //calcula o menor caminho e salva os vértices em uma lista
 Lista shortest_path(Via via, Ponto p_src, Ponto p_dest, double (*getWeight)(void *), Lista l);
+
+//printa o menor caminho no arquivo svg
 void viaShortestPaths(Via v,Lista l, FILE *fSvg, char *cor);
+//escreve o a menor direcao no arquivo txt
 void viaTxtShortestPaths(Via v, Lista l, FILE *fTxt);
 
+//dado uma lista de carro, calcular se se sobrepõem.
 void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg);
 
+//retorna a direção(esquerda, direita etc)
 char *viaGetDirecao(Vertice a, Vertice b);
 
 void n_shortest_paths(Via via, Ponto *R, int *indices, int n, char *cor1, char *co2, double (*getWeight)(void *), Lista vertices, FILE *fSvg);

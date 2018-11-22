@@ -1,10 +1,14 @@
 TARGET = siguel
+CC = gcc
+FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
+
 DEPS = siguel.o \
 	   mystr.o \
 	   circle.o \
 	   rect.o \
 	   linked_list.o \
-	   svg.o geometry.o \
+	   svg.o \
+	   geometry.o \
 	   cidade.o \
 	   quadra.o \
 	   semaforo.o \
@@ -21,13 +25,12 @@ DEPS = siguel.o \
 	   graph.o \
 	   carro.o \
 	   via.o \
-	   priority_queue.o
-
-CC = gcc
-FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
-$(info ********* TRABALHO 5 de Estrutura de Dados *********** )
+	   priority_queue.o 
 SOURCEDIR = src/modules
+TEST = src/unit_test
+
 siguel : $(DEPS)
+	$(info ********* TRABALHO 5 de Estrutura de Dados *********** )
 	$(CC)  $(FLAGS) $(DEPS) -o siguel 
 
 siguel.o : src/siguel.c
@@ -99,6 +102,42 @@ via.o : $(SOURCEDIR)/Via/via.c
 
 priority_queue.o : $(SOURCEDIR)/Fila/priority_queue.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Fila/priority_queue.c
+
+
+test_graph.o : $(TEST)/test_graph.c
+	$(CC) $(FLAGS) -c $(TEST)/test_graph.c
+
+test_graph : test_graph.o graph.o rua.o hash_table.o linked_list.o priority_queue.o
+	$(CC) test_graph.o graph.o rua.o hash_table.o linked_list.o priority_queue.o -o test_graph
+
+test_tree.o : $(TEST)/test_tree.c
+	$(CC) $(FlAGS) -c $(TEST)/test_tree.c
+
+test_tree : test_tree.o kdtree.o rect.o geometry.o linked_list.o sort.o quadra.o semaforo.o hidrante.o torre.o 
+	$(CC) $(FLAGS) test_tree.o kdtree.o geometry.o linked_list.o rect.o sort.o quadra.o semaforo.o hidrante.o torre.o -o test_tree
+
+test_hash.o : $(TEST)/test_hash.c
+	$(CC) $(FLAGS) -c $(TEST)/test_hash.c
+test_hash : test_hash.o hash_table.o linked_list.o morador.o address.o
+	$(CC) $(FLAGS) test_hash.o hash_table.o linked_list.o morador.o address.o -o test_hash
+
+test_sort.o : $(TEST)/test_sort.c
+	$(CC) $(FLAGS) -c $(TEST)/test_sort.c
+
+test_sort : test_sort.o sort.o linked_list.o carro.o rect.o 
+	$(CC) $(FLAGS) test_sort.o sort.o linked_list.o carro.o rect.o -o test_sort
+
+test_pq.o : $(TEST)/test_pq.c
+	$(CC) $(FLAGS) -c $(TEST)/test_pq.c
+test_pq : test_pq.o priority_queue.o 
+	$(CC) $(FLAGS) test_pq.o priority_queue.o  -o test_pq
+
+test_lista.o : $(TEST)/test_lista.c
+	$(CC) $(FLAGS) -c $(TEST)/test_lista.c
+
+test_lista : rect.o linked_list.o test_lista.o
+	$(CC) $(FLAGS) rect.o linked_list.o test_lista.o -o test_lista
+
 clean: 
 	$(info Apagando .o)
 	rm -rf *.o vgcore* 

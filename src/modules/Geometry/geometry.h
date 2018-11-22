@@ -8,7 +8,6 @@ typedef struct ponto{
   double y;
 }Ponto;
 /**/
-
 #include "../Circle/circle.h"
 #include "../Rect/rect.h"
 #include "../Torre/torre.h"
