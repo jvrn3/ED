@@ -45,3 +45,7 @@ float rua_get_vm(Rua r){
 	StRua *sr = (StRua *) r;
 	return sr->vm;
 }
+void rua_set_vm(Rua r, float vm){
+	StRua *sr = (StRua *) r;
+	sr->vm  = vm;
+}

@@ -25,4 +25,5 @@ char *viaGetDirecao(Vertice a, Vertice b);
 
 void n_shortest_paths(Via via, Ponto *R, int *indices, int n, char *cor1, char *co2, double (*getWeight)(void *), Lista vertices, FILE *fSvg);
 void drawVias(Grafo g, FILE *fSvg);
+void colisaoGetRua(Via via, Rect r, Lista l);
 #endif

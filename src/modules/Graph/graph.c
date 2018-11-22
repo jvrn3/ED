@@ -147,11 +147,9 @@ void dijkstra(Grafo grafo, Vertice source, Vertice dest, double (*getWeight)(voi
 	int V = sg->V;
 	PQ pq = createPQ(V);
 	int found = 0;
-	int i = 0;
 
 	StVertice *sSource = (StVertice *) source;
 	sSource->minDist = 0;
-	//relax
 	pq_insert(pq, source, cmpr_vertice);
 	while(!pq_isEmpty(pq) && found == 0){
 		StVertice *v = pq_delMin(pq, cmpr_vertice);
@@ -208,7 +206,7 @@ Lista get_all_vertices(Grafo g){
 Lista get_all_arestas(Grafo g){
 	StGrafo *sg = (StGrafo *) g;
 	Lista l = hash_filter_to_list(sg->arestas, compare_true, NULL);
-
+	return l;
 }
 int compare_aresta(Hash h, void *k){
 	char *key = (char *) k;

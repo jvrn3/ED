@@ -58,11 +58,13 @@ fprintf(svgName, "<circle r=\"5.00\" cx=\"%.2f\" cy=\"%.2f\"  stroke=\"%s\" fill
 }
 void drawSemaforo(FILE *svgName, Semaforo s){
 	Semaforo sh =  s;
-	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"5\" height=\"15\" fill=\"%s\" stroke=\"%s\"/>\n", 
+	fprintf(svgName, "<rect x=\"%.2f\" y=\"%.2f\" width=\"5\" height=\"15\" fill=\"%s\" stroke=\"%s\"/>\n<text x=\"%.2f\" y=\"%.2f\" fill=\"white\" font-size=\"8\">S</text>\n", 
 			semaforo_get_x(sh),
 			semaforo_get_y(sh),
 			semaforo_get_fill(sh),
-			semaforo_get_strk(sh));
+			semaforo_get_strk(sh),
+			semaforo_get_x(sh) - 0.5,
+			semaforo_get_y(sh) + 10);
 }
 void drawTorre(FILE *svgName, Torre t){
 	Torre st = t;
@@ -325,11 +327,22 @@ void drawCruz(FILE *svgName, Ponto p){
 void drawCarro(FILE *svgName, Carro c){
 	Rect r = carro_get_posic(c);
 	drawRect(svgName, r);
-	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"grey\" font-size=\"5\">%s</text>\n",
-			rect_get_x(r) + rect_get_w(r)/2,
-			rect_get_y(r) + rect_get_h(r)/2,
-			carro_get_placa(c)
-			);
+	if(rect_vertical(r)){
+	    fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"grey\" font-size=\"3\">%s</text>\n",
+		    rect_get_x(r) + rect_get_w(r)/2,
+		    rect_get_y(r) + rect_get_h(r)/2,
+		    carro_get_placa(c)
+		   );
+	}
+	else{
+	    fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"grey\" font-size=\"3\">%s</text>\n",
+		    rect_get_x(r),
+		    rect_get_y(r),
+		    carro_get_placa(c)
+		   );
+
+	
+	}
 }
 void drawArrow(FILE *file, char *cor){
     fprintf(file, "%s\n", "<defs>");

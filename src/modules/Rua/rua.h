@@ -10,4 +10,5 @@ char *rua_get_ldir(Rua r);
 char *rua_get_lesq(Rua r);
 float rua_get_cmp(Rua r);
 float rua_get_vm(Rua r);
+void rua_set_vm(Rua r, float vm);
 #endif

@@ -269,3 +269,18 @@ float closest(Ponto *ponto, int n){
 	float min = closestPairs(ponto, n);
 	return min;
 }
+int rect_vertical(Rect r){
+    Ponto a = createPonto(rect_get_x(r), rect_get_y(r) + rect_get_w(r));
+    Ponto b = createPonto(rect_get_x(r), rect_get_y(r));
+
+    double larg = distancePoints(a, b);
+
+    Ponto c = createPonto(rect_get_x(r), rect_get_y(r));
+    Ponto d = createPonto(rect_get_x(r), rect_get_y(r) + rect_get_h(r));
+
+    double alt = distancePoints(c, d);
+
+    if(alt > larg)
+	return 1;
+    return 0;
+}
