@@ -210,27 +210,11 @@ void drawOverlapRR(FILE *svgName, Rect r, Rect r2){
 
 	x = MIN(sr->x, sr2->x);
 	y = MIN(sr->y, sr2->y);
-	if(sr->x > sr2->x){
-		w = MAX(sr->w + sr->x, sr2->x + sr->w);
-		w = w - sr2->x;
-	}
-	else{
-		w = MAX(sr->w + sr->x, sr2->x + sr->w);
-		w = w - sr2->x;
-	}
-	if(sr->y > sr2->y){
-		h = MAX(sr->h + sr-> y, sr2->y + sr2->h);
-		h = h - sr2->y;
-	}
-	else{
-		h = MAX(sr->h + sr-> y, sr2->y + sr2->h);
-		h = h - sr->y;
-	}
-
-	
+	w = MAX(sr->x + sr->w, sr2->x + sr2->w);
+	h = MAX(sr->y + sr->h, sr2->y + sr2->h);
 
 	fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"red\" font-size=\"20\" >Sobrepoe</text>", x,y-2);
-	fprintf(svgName,"<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" stroke-dasharray=\"5,5\" fill-opacity=\"0\" stroke=\"pink\" stroke-width=\"5\"/>\n", x,y,w,h );
+	fprintf(svgName,"<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" stroke-dasharray=\"5,5\" fill-opacity=\"0\" stroke=\"pink\" stroke-width=\"5\"/>\n", x,y,w - x,h -y);
 }
 
 void drawOverlapCR(FILE *svgName, Circle c, Rect r){
@@ -328,16 +312,18 @@ void drawCarro(FILE *svgName, Carro c){
 	Rect r = carro_get_posic(c);
 	drawRect(svgName, r);
 	if(rect_vertical(r)){
-	    fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"grey\" font-size=\"3\">%s</text>\n",
+	    fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"yellow\" font-size=\"2\" transform=\"rotate(90 %lf %lf)\">%s</text>\n",
+		    rect_get_x(r)+ rect_get_w(r)/2,
+		    rect_get_y(r),
 		    rect_get_x(r) + rect_get_w(r)/2,
-		    rect_get_y(r) + rect_get_h(r)/2,
+		    rect_get_y(r),
 		    carro_get_placa(c)
 		   );
 	}
 	else{
-	    fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"grey\" font-size=\"3\">%s</text>\n",
+	    fprintf(svgName, "<text x=\"%.2f\" y=\"%.2f\" fill=\"yellow\" font-size=\"2\">%s</text>\n",
 		    rect_get_x(r),
-		    rect_get_y(r),
+		    rect_get_y(r) + rect_get_h(r)/2,
 		    carro_get_placa(c)
 		   );
 
@@ -376,24 +362,9 @@ void drawOverlapCar(FILE *fSvg, Rect r1, Rect r2){
 
     x = MIN(sr->x, sr2->x);
     y = MIN(sr->y, sr2->y);
-    if(sr->x > sr2->x){
-	w = MAX(sr->w + sr->x, sr2->x + sr->w);
-	w = w - sr2->x;
-    }
-    else{
-	w = MAX(sr->w + sr->x, sr2->x + sr->w);
-	w = w - sr2->x;
-    }
-    if(sr->y > sr2->y){
-	h = MAX(sr->h + sr-> y, sr2->y + sr2->h);
-	h = h - sr2->y;
-    }
-    else{
-	h = MAX(sr->h + sr-> y, sr2->y + sr2->h);
-	h = h - sr->y;
-    }
+    w = MAX(sr->x + sr->w, sr2->x + sr2->w);
+    h = MAX(sr->y + sr->h, sr2->y + sr2->h);
 
-
-	fprintf(fSvg,"<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\"  fill-opacity=\"0\" stroke=\"red\" stroke-width=\"2\"/>\n", x,y,w,h );
+	fprintf(fSvg,"<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\"  fill-opacity=\"0\" stroke=\"red\" stroke-width=\"2\"/>\n", x,y,w -x ,h  -y );
 
 }
