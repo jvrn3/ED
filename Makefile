@@ -6,7 +6,23 @@ DEPS = siguel.o \
 	   linked_list.o \
 	   svg.o geometry.o \
 	   cidade.o \
-	   quadra.o semaforo.o hidrante.o torre.o sort.o kdtree.o hash_table.o comercio.o pessoa.o address.o morador.o rua.o graph.o carro.o via.o priority_queue.o
+	   quadra.o \
+	   semaforo.o \
+	   hidrante.o \
+	   torre.o \
+	   sort.o \
+	   kdtree.o \
+	   hash_table.o \
+	   comercio.o \
+	   pessoa.o \
+	   address.o \
+	   morador.o \
+	   rua.o \
+	   graph.o \
+	   carro.o \
+	   via.o \
+	   priority_queue.o
+
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 $(info ********* TRABALHO 5 de Estrutura de Dados *********** )
@@ -84,4 +100,5 @@ via.o : $(SOURCEDIR)/Via/via.c
 priority_queue.o : $(SOURCEDIR)/Fila/priority_queue.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Fila/priority_queue.c
 clean: 
+	$(info Apagando .o)
 	rm -rf *.o vgcore* 
