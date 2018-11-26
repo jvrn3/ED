@@ -2,30 +2,30 @@ TARGET = siguel
 CC = gcc
 FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
 
-DEPS = siguel.o \
-	   mystr.o \
-	   circle.o \
-	   rect.o \
-	   linked_list.o \
-	   svg.o \
-	   geometry.o \
-	   cidade.o \
-	   quadra.o \
-	   semaforo.o \
-	   hidrante.o \
-	   torre.o \
-	   sort.o \
-	   kdtree.o \
-	   hash_table.o \
-	   comercio.o \
-	   pessoa.o \
-	   address.o \
-	   morador.o \
-	   rua.o \
-	   graph.o \
-	   carro.o \
-	   via.o \
-	   priority_queue.o 
+DEPS = address.o \
+	carro.o \
+	cidade.o \
+	circle.o \
+	comercio.o \
+	siguel.o \
+	geometry.o \
+	graph.o \
+	hash_table.o \
+	hidrante.o \
+	kdtree.o \
+	linked_list.o \
+	morador.o \
+	mystr.o \
+	pessoa.o \
+	quadra.o \
+	rect.o \
+	rua.o \
+	semaforo.o \
+	sort.o \
+	svg.o \
+	torre.o \
+	via.o \
+	priority_queue.o 
 SOURCEDIR = src/modules
 TEST = src/unit_test
 
@@ -138,6 +138,13 @@ test_lista.o : $(TEST)/test_lista.c
 test_lista : rect.o linked_list.o test_lista.o
 	$(CC) $(FLAGS) rect.o linked_list.o test_lista.o -o test_lista
 
+test_mystr.o : $(TEST)/test_mystr.c
+	$(CC) $(FLAGS) -c $(TEST)/test_mystr.c
+
+test_str : test_mystr.o mystr.o
+	$(CC) $(FLAGS) test_mystr.o mystr.o -o test_str
+
 clean: 
 	$(info Apagando .o)
+	rm test_*
 	rm -rf *.o vgcore* 

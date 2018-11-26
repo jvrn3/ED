@@ -1084,9 +1084,12 @@ main(int argc, char *argv[]){
 				for(Node *n = getFirst(city.lista_carros);  n != NULL; n = getNext(n)){
 					drawCarro(f_colisao, list_get_data(n));
 				}
-				car_overlap(city.lista_carros, car_cmp, f_colisao);
+
+				fTxt = fopen(nomeTxt, "a");
+				car_overlap(city.lista_carros, car_cmp, f_colisao, fTxt);
 				fprintf(f_colisao, "</svg>");
 				fclose( f_colisao );
+				fclose(fTxt);
 
 			}
 		}

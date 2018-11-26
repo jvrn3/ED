@@ -35,7 +35,7 @@ void viaShortestPaths(Via v,Lista l, FILE *fSvg, char *cor);
 void viaTxtShortestPaths(Via v, Lista l, FILE *fTxt);
 
 //dado uma lista de carro, calcular se se sobrepõem.
-void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg);
+void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg, FILE *fTxt);
 
 //retorna a direção(esquerda, direita etc)
 char *viaGetDirecao(Vertice a, Vertice b);

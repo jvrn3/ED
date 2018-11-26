@@ -7,10 +7,7 @@ src/siguel
 *.py
 vgcore.*
 test/
-out/
 siguel
-t3/*
-c*
 *.o
 *.qry
 *.h.gch

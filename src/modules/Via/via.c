@@ -152,7 +152,7 @@ void viaTxtShortestPaths(Via v, Lista l, FILE *fTxt){
 	}
 }
 
-void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg){
+void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg, FILE *fTxt){
 	//should sorta according to x
 	printf("Numero de carros %d\n", length(l));
 	sort_list(l, cmp);
@@ -166,8 +166,10 @@ void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg){
 		if(getNext(n) != NULL){
 			//proximo carro;
 			Lista overlap = createList();
+			Lista carros = createList();
 
 			insert(overlap, r, 0);
+			insert(carros, list_get_data(n), 0);
 			node_low = getNext(n);
 			r_low = carro_get_posic(list_get_data(node_low));
 			sr_low = (StRect *) r_low;
@@ -176,6 +178,7 @@ void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg){
 			while(node_low != NULL && sr->x + sr->w > sr_low->x ){
 				if(overlayRR(r, r_low)){
 					insertAtEnd(overlap, r_low);
+					insertAtEnd(carros, list_get_data(node_low));
 				}
 				node_low = getNext(node_low);
 				if(node_low == NULL)
@@ -187,8 +190,14 @@ void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg){
 				Rect first = list_get_data(getFirst(overlap));
 				Rect last = list_get_data(getLast(overlap));
 				drawOverlapCar(fSvg, first, last);
+				fprintf(fTxt, "Acidente envolvendo : [");
+				for(Node *n = getFirst(carros) ; n != NULL ; n = getNext(n)){
+					fprintf(fTxt," %s", carro_get_placa(list_get_data(n)));
+				}
+				fprintf(fTxt, " ]\n");
 			}
 			destroyList(overlap);
+			destroyList(carros);
 
 		}
 	}
