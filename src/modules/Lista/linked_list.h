@@ -1,9 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
-#include <stdio.h>
-#include <stdlib.h>
-
 typedef void *Lista;
+#include <stdio.h>
 /* Uma lista ligada é uma coleção linear de dados. Cada elemento aponta para o próximo, até chegar ao final da lista(tail).
  *
  *Neste trabalho, é usado a Single Linked List, que só possuio o nó apontando para o head

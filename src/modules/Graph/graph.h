@@ -4,7 +4,6 @@
 #include "../String/mystr.h"
 #include "../Hash/hash_table.h"
 #include "../Fila/priority_queue.h"
-#include <stdlib.h>
 /* Um grafo é uma estrutura cuja representação é dada por um par de conjuntos V e E que se conectam,
  * sendo V as vértices e E as arestas(edge). 
  *
@@ -84,4 +83,6 @@ int cmpr_id(void *a, void *b);
 
 void free_vertice(Vertice v);
 void free_aresta(Aresta a);
+
+void cleanMinDist(Grafo g);
 #endif

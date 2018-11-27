@@ -51,4 +51,5 @@ int isHidranteInsideCircle(Hidrante h, Circle c);
 int isTorreInsideRect(Torre t, Rect r);
 int isTorreInsideCircle(Torre t, Circle c);
 int rect_vertical(Rect r);
+Rect getOverlapRect(Rect r1, Rect r2);
 #endif

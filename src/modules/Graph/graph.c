@@ -1,5 +1,6 @@
 #include "graph.h"
 #include <float.h>
+#include <stdlib.h>
 /*
  *grafo é uma hash table representando os vetores adjacentes
  *
@@ -260,4 +261,16 @@ char *aresta_get_source(Aresta a){
 char *aresta_get_dest(Aresta a){
 	StAresta *sa = (StAresta *) a;
 	return sa->key_dest;
+}
+void cleanMinDist(Grafo g){
+	printf("clear");
+	Lista all = get_all_vertices(g);
+	for(Node *n = getFirst(all); n != NULL; n = getNext(n)){
+		Vertice v = hash_get_data(list_get_data(n));
+		StVertice *sv = (StVertice *) v;
+		sv->minDist = FLT_MAX;
+		sv->previous = NULL;
+
+	}
+	destroyList(all);
 }

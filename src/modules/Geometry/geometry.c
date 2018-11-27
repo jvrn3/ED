@@ -177,6 +177,20 @@ int isSemaforoInsideCircle(Semaforo s, Circle c){
 	return 1;
     return 0;
 }
+Rect getOverlapRect(Rect r1, Rect r2){
+    StRect *sr = (StRect *) r1;
+    StRect *sr2 =(StRect *) r2;
+    double x, y, w, h;
+
+    x = MIN(sr->x, sr2->x);
+    y = MIN(sr->y, sr2->y);
+    w = MAX(sr->x + sr->w, sr2->x + sr2->w);
+    h = MAX(sr->y + sr->h, sr2->y + sr2->h);
+
+    Rect new = createRect("", "", w-x, h-y, x,y);
+    return new;
+
+}
 //check if rect in is inside out
 int isRectInsideRect(Rect in, Rect out){
 

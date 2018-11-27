@@ -146,5 +146,4 @@ test_str : test_mystr.o mystr.o
 
 clean: 
 	$(info Apagando .o)
-	rm test_*
-	rm -rf *.o vgcore* 
+	rm -rf *.o vgcore* test_*

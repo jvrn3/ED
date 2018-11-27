@@ -15,6 +15,7 @@ Via createVia(){
 	Via via = createGrafo();
 	return via;
 }
+//lista de vértices
 Vertice nearest_via(Lista l, Ponto p, FILE *fSvg){
 	Node *n; 
 	Vertice v = NULL;
@@ -30,12 +31,12 @@ Vertice nearest_via(Lista l, Ponto p, FILE *fSvg){
 		}
 
 	}
-	Ponto *ponto = vertice_get_data(v);
-	if(fSvg != NULL){
-		Circle c = createCircle("black", "orange", 5, ponto->x, ponto->y);
-		drawCircle(fSvg, c);
-		free(c);
-	}
+	/* Ponto *ponto = vertice_get_data(v); */
+	/* if(fSvg != NULL){ */
+	/* 	Circle c = createCircle("black", "orange", 5, ponto->x, ponto->y); */
+	/* 	drawCircle(fSvg, c); */
+	/* 	free(c); */
+	/* } */
 	return v;
 }
 void via_insertEsquina(Via via, char *nome, double x, double y){
@@ -70,20 +71,28 @@ Lista shortest_path(Via via, Ponto p_src, Ponto p_dest, double (*getWeight)(void
 	for(Vertice vertex = dest; vertex != NULL; vertex = vertice_get_previous(vertex)){
 		insert(vertices, vertex, 0);
 	}
+
+
 	destroyList(all);
 	return vertices;
 }
-void n_shortest_paths(Via via, Ponto *R, int *indices, int n, char *cor1, char *co2, double (*getWeight)(void *), Lista vertices, FILE *fSvg){
+void n_shortest_paths(Via via, Ponto *R, int *indices, int n, char *cor1, char *cor2, double (*getWeight)(void *), FILE *fSvg){
 	for(int i = 0; i < n-1; i++){
-		/* shortest_path(via, R[indices[i]], R[indices[i+1]], getWeight, vertices); */
-		if(i % 2 == 0){
-		/* 	viaShortestPaths(via, vertices, fSvg, cor1); */
+		Lista v = createList();
+		printf("Indice %d\n ", i);
+		if(i % 2 ==0){
+			shortest_path(via, R[indices[i]], R[indices[i+1]], getWeight, v);
+			viaShortestPaths(via, v, fSvg, cor1);
 		}
 		else{
-		/* 	viaShortestPaths(via, vertices, fSvg, cor1); */
-        /*  */
+			shortest_path(via, R[indices[i]], R[indices[i+1]], getWeight, v);
+			viaShortestPaths(via, v, fSvg, cor2);
 
+			/* viaShortestPaths(via, vertices, fSvg, cor1); */
+        /*  */
 		}
+		cleanMinDist(via);
+		destroyList(v);
 	}
 
 }
@@ -152,13 +161,14 @@ void viaTxtShortestPaths(Via v, Lista l, FILE *fTxt){
 	}
 }
 
-void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg, FILE *fTxt){
-	//should sorta according to x
+void car_overlap(Via via, Lista l, int (*cmp)(void *, void *), FILE *fSvg, FILE *fTxt){
+	//should sort according to x
 	printf("Numero de carros %d\n", length(l));
 	sort_list(l, cmp);
 	Node *n, *node_low;
 	Rect r, r_low;
 	StRect *sr, *sr_low;
+	Lista all = get_all_vertices(via);
 	for(n = getFirst(l); n != NULL; n = getNext(n)){
 		r = carro_get_posic(list_get_data(n));
 		sr = (StRect *) r;
@@ -190,6 +200,9 @@ void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg, FILE *fTxt){
 				Rect first = list_get_data(getFirst(overlap));
 				Rect last = list_get_data(getLast(overlap));
 				drawOverlapCar(fSvg, first, last);
+				Rect colisao  = getOverlapRect(first, last);
+				colisaoGetRua(via, colisao, all); 
+				free(colisao);
 				fprintf(fTxt, "Acidente envolvendo : [");
 				for(Node *n = getFirst(carros) ; n != NULL ; n = getNext(n)){
 					fprintf(fTxt," %s", carro_get_placa(list_get_data(n)));
@@ -201,6 +214,7 @@ void car_overlap(Lista l, int (*cmp)(void *, void *), FILE *fSvg, FILE *fTxt){
 
 		}
 	}
+	destroyList(all);
 }
 
 void drawVias(Grafo g, FILE *fSvg){
@@ -226,6 +240,7 @@ void drawVias(Grafo g, FILE *fSvg){
 }
 //fazer uma lista de retangulos de sobreposição, chamar essa função
 void colisaoGetRua(Via via, Rect r, Lista l){
+	printf("Setando...\n");
 	if(rect_vertical(r)){
 		Ponto sup = createPonto( rect_get_x(r) + rect_get_w(r)/2, rect_get_y(r) );
 		Ponto inf = createPonto(rect_get_x(r) + rect_get_w(r)/2, rect_get_y(r) + rect_get_h(r));
@@ -233,9 +248,24 @@ void colisaoGetRua(Via via, Rect r, Lista l){
 		Vertice a = nearest_via(l, sup, NULL);
 		Vertice b = nearest_via(l, inf, NULL);
 		if(a != NULL && b != NULL){
-			Aresta aresta = edge_getInfo(via, vertice_get_id(a), vertice_get_id(b));
-			Rua r = aresta_get_data(aresta);
-			rua_set_vm(r, 0);
+			Aresta aresta;
+			aresta = edge_getInfo(via, vertice_get_id(a), vertice_get_id(b));
+			if(aresta != NULL){
+				Rua r = aresta_get_data(aresta);
+				rua_set_vm(r, 0);
+				printf("DIFFFF");
+			
+			}
+			else{
+				aresta = edge_getInfo(via, vertice_get_id(b), vertice_get_id(a));
+				if(aresta != NULL){
+					Rua r = aresta_get_data(aresta);
+					rua_set_vm(r, 0);
+					printf("@@DIFFFF");
+
+				
+				}
+			}
 
 		}
 	}
@@ -247,9 +277,23 @@ void colisaoGetRua(Via via, Rect r, Lista l){
 		Vertice b = nearest_via(l, esq, NULL);
 
 		if(a != NULL && b != NULL){
-			Aresta aresta = edge_getInfo(via, vertice_get_id(a), vertice_get_id(b));
-			Rua r = aresta_get_data(aresta);
-			rua_set_vm(r, 0);
+			Aresta aresta;
+			aresta = edge_getInfo(via, vertice_get_id(a), vertice_get_id(b));
+			if(aresta != NULL){
+				Rua r = aresta_get_data(aresta);
+				rua_set_vm(r, 0);
+			
+			}
+			else{
+				aresta = edge_getInfo(via, vertice_get_id(b), vertice_get_id(a));
+				if(aresta != NULL){
+					Rua r = aresta_get_data(aresta);
+					rua_set_vm(r, 0);
+					printf("@@DIFFFF");
+
+				
+				}
+			}
 		}
 	}
 }

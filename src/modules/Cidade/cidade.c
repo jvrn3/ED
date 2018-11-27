@@ -884,6 +884,9 @@ void drawCidade(Cidade c, FILE *fSvgQry){
 	}
 	for(n = getFirst(c.lista_carros); n != NULL; n = getNext(n)){
 		drawCarro(fSvgQry, list_get_data(n)); }
+
+	drawVias(c.via, fSvgQry);
+
 }
 
 void printShortest(FILE *fTxt, Grafo grafo, Vertice v){

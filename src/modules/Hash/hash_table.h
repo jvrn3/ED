@@ -1,11 +1,11 @@
 #ifndef HASH_H
 #define HASH_H
 #include "../Lista/linked_list.h"
-#include <stdlib.h>
-#include <string.h>
-#include "../Lista/linked_list.h"
 typedef void *Hash;
-//djb2 hash function for strings
+/* A hash table implementada aqui utiliza um vetor de listas e uma chave que transforma uma dada string em 
+ * um dado int, e salva os dados nessa posição. O objetivo é que para cada chave, há um número int representando sua posição.
+ * No entanto, existe colisão, e por esse motivo que devemos criar uma lista para as posições
+ * */
 
 
 int hash(char *str);

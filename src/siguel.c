@@ -9,44 +9,11 @@
  * */
 int
 main(int argc, char *argv[]){
-	int id, id2, i;
-
-	float point[2];
-	char border[MAXSIZE];
-	char inside[MAXSIZE];
-	char suffix[MAXSIZE];
-	char line[1000];
-	char cep[MAXSIZE];
-	void *linha, *linha2;
-	Ponto R[10];
-	/*
-	 * variables used to "cc" comand
-	 *
-	 * */
-	char fill_q[MAXSIZE], strk_q[MAXSIZE];
-	char fill_h[MAXSIZE], strk_h[MAXSIZE];
-	char fill_t[MAXSIZE], strk_t[MAXSIZE];
-	char fill_s[MAXSIZE], strk_s[MAXSIZE];
-	char tmp_strk[MAXSIZE], tmp_fill[MAXSIZE];
-	/*
-	 *
-	 * */
-	char id_equipamentos[50];
-	int crb = 0;
-	Lista listC = createList();
-	Lista listR = createList();
-	Lista hmpList = createList();
-	Lista hmpeList = createList();
-	Cidade city = createCity();
-
-	Circle c;
-	Rect rect;
-
-	char *path, *dir, *leitura, *nomeTxt, *nomeSvg, *nomePath, *qry, *ec, *pm, *sistema_viario;
-
-	double r, x, y, w, h;
-	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc, *fPm;
-
+	
+	int i;
+	
+	char *leitura, *path, *dir, *qry, *ec, *pm, *sistema_viario;
+	
 	leitura = path = dir = qry = ec = pm = sistema_viario = NULL;
 
 	/*parsing arguments*/
@@ -90,8 +57,50 @@ main(int argc, char *argv[]){
 			sistema_viario = aloca_tamanho(strlen(argv[i]));
 			strcpy(sistema_viario, argv[i]);
 		}
+		if(strcmp("--help", argv[i]) == 0){
+			printf("usage: ./siguel -f arq.geo -o dir [-e path] [-q file.qry]\n\t\t\t\t  [-ec file.ec] [-pm file.pm] [-v arq.via]");
+			exit(0);
+		
+		}
 		i++;
 	}
+
+	Circle c;
+	Rect rect;
+	char *nomeTxt, *nomeSvg, *nomePath;
+
+	int id, id2;
+	double r, x, y, w, h;
+	FILE *fWrite, *fRead, *fTxt, *fDraw, *fQry, *fSvgQry, *fEc, *fPm;
+
+	float point[2];
+	char border[MAXSIZE];
+	char inside[MAXSIZE];
+	char suffix[MAXSIZE];
+	char line[1000];
+	char cep[MAXSIZE];
+	void *linha, *linha2;
+	Ponto R[10];
+	/*
+	 * variables used to "cc" comand
+	 *
+	 * */
+	char fill_q[MAXSIZE], strk_q[MAXSIZE];
+	char fill_h[MAXSIZE], strk_h[MAXSIZE];
+	char fill_t[MAXSIZE], strk_t[MAXSIZE];
+	char fill_s[MAXSIZE], strk_s[MAXSIZE];
+	char tmp_strk[MAXSIZE], tmp_fill[MAXSIZE];
+	/*
+	 *
+	 * */
+	char id_equipamentos[50];
+	int crb = 0;
+	Lista listC = createList();
+	Lista listR = createList();
+	Lista hmpList = createList();
+	Lista hmpeList = createList();
+	Cidade city = createCity();
+
 	//se path não existir, então é ./
 	if(path==NULL){
 		path = aloca_tamanho(3);
@@ -120,6 +129,13 @@ main(int argc, char *argv[]){
 		fprintf(stderr, "Can't find file to read\nCheck if it exists\n");
 		exit(-1);
 	}
+
+
+
+
+
+
+
 	//read .geo file
 	while(!feof(fRead)){
 		fgets(line, 1000, fRead);
@@ -1004,6 +1020,12 @@ main(int argc, char *argv[]){
 					free(nome);
 					free(newString);
 
+					startSvg(f_dijkstra);
+					traverseTreeQuadra(city.arvore_quadra, drawQuadra, f_dijkstra);
+					traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, f_dijkstra);
+					traverseTreeHidrante(city.arvore_hidrante, drawHidrante, f_dijkstra);
+					traverseTreeTorre(city.arvore_torre, drawTorre, f_dijkstra);
+
 					int indices[n];
 					int i = 0, j = 0;
 					char *tok = strtok(line, " ");
@@ -1026,19 +1048,16 @@ main(int argc, char *argv[]){
 						i++;
 					}
 					if(dt == 'T' || dt == 't'){
-						Lista vertices = createList();
 						n_shortest_paths(
-								city.via, R, indices, n, first_color, second_color, weightTempo, vertices, f_dijkstra);
-							destroyList(vertices);
+								city.via, R, indices, n, first_color, second_color, weightTempo, f_dijkstra);
 
 					}
 					else{
 						//D
-						Lista vertices = createList();
 						n_shortest_paths(
-								city.via, R, indices, n, first_color, second_color, weightDistancia, vertices, f_dijkstra);
-							destroyList(vertices);
+								city.via, R, indices, n, first_color, second_color, weightDistancia, f_dijkstra);
 					}
+					fprintf(f_dijkstra, "</svg>");
 					fclose(f_dijkstra);
 				}
 
@@ -1086,7 +1105,7 @@ main(int argc, char *argv[]){
 				}
 
 				fTxt = fopen(nomeTxt, "a");
-				car_overlap(city.lista_carros, car_cmp, f_colisao, fTxt);
+				car_overlap(city.via, city.lista_carros, car_cmp, f_colisao, fTxt);
 				fprintf(f_colisao, "</svg>");
 				fclose( f_colisao );
 				fclose(fTxt);
@@ -1171,3 +1190,4 @@ main(int argc, char *argv[]){
 
 	return 0;
 }
+

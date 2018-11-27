@@ -1,5 +1,6 @@
 #include "linked_list.h"
 
+#include <stdlib.h>
 typedef struct stList{
 	Node *head;
 	int size;
