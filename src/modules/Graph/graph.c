@@ -17,7 +17,7 @@ typedef struct stAresta{
  *
  * */
 typedef struct stVertice{
-	char id[100];
+	char id[50];
 	void *data;
 	double minDist;
 	struct stVertice *previous;
@@ -263,7 +263,6 @@ char *aresta_get_dest(Aresta a){
 	return sa->key_dest;
 }
 void cleanMinDist(Grafo g){
-	printf("clear");
 	Lista all = get_all_vertices(g);
 	for(Node *n = getFirst(all); n != NULL; n = getNext(n)){
 		Vertice v = hash_get_data(list_get_data(n));

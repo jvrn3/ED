@@ -79,16 +79,13 @@ Lista shortest_path(Via via, Ponto p_src, Ponto p_dest, double (*getWeight)(void
 void n_shortest_paths(Via via, Ponto *R, int *indices, int n, char *cor1, char *cor2, double (*getWeight)(void *), FILE *fSvg){
 	for(int i = 0; i < n-1; i++){
 		Lista v = createList();
-		printf("Indice %d\n ", i);
+		shortest_path(via, R[indices[i]], R[indices[i+1]], getWeight, v);
 		if(i % 2 ==0){
-			shortest_path(via, R[indices[i]], R[indices[i+1]], getWeight, v);
 			viaShortestPaths(via, v, fSvg, cor1);
 		}
 		else{
-			shortest_path(via, R[indices[i]], R[indices[i+1]], getWeight, v);
 			viaShortestPaths(via, v, fSvg, cor2);
 
-			/* viaShortestPaths(via, vertices, fSvg, cor1); */
         /*  */
 		}
 		cleanMinDist(via);

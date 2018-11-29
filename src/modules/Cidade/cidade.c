@@ -855,11 +855,9 @@ void mudar_estbl(Cidade c, char *cnpj, Address novo, FILE *fTxt){
 	insert(c.mudec, old_new, 0);
 }
 void drawCidade(Cidade c, FILE *fSvgQry){
-	traverseTreeQuadra(c.arvore_quadra, drawQuadra, fSvgQry);
-	traverseTreeSemaforo(c.arvore_semaforo, drawSemaforo, fSvgQry);
-	traverseTreeHidrante(c.arvore_hidrante, drawHidrante, fSvgQry);
-	traverseTreeTorre(c.arvore_torre, drawTorre, fSvgQry);
 
+	drawEquipamentos(c, fSvgQry);
+	
 	Node *n;
 	for(n = getFirst(c.mor); n != NULL; n = getNext(n)){
 		Morador sm = list_get_data(n);
@@ -887,6 +885,12 @@ void drawCidade(Cidade c, FILE *fSvgQry){
 
 	drawVias(c.via, fSvgQry);
 
+}
+void drawEquipamentos(Cidade c, FILE *fSvgQry){
+	traverseTreeQuadra(c.arvore_quadra, drawQuadra, fSvgQry);
+	traverseTreeSemaforo(c.arvore_semaforo, drawSemaforo, fSvgQry);
+	traverseTreeHidrante(c.arvore_hidrante, drawHidrante, fSvgQry);
+	traverseTreeTorre(c.arvore_torre, drawTorre, fSvgQry);
 }
 
 void printShortest(FILE *fTxt, Grafo grafo, Vertice v){

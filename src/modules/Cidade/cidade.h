@@ -133,4 +133,5 @@ void free_cidade(Cidade c);
 
 
 void printShortest(FILE *fTxt, Grafo g, Vertice v);
+void drawEquipamentos(Cidade c, FILE *fSvgQry);
 #endif

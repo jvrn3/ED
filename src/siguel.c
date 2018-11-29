@@ -1,6 +1,5 @@
 #include "modules/String/mystr.h"
 #include "modules/Cidade/cidade.h"
-#include "modules/Sort/sort.h"
 /*
  *@authors: João Vitor Roma Neto
 		    Rafael Yukio Umemoto
@@ -940,8 +939,7 @@ main(int argc, char *argv[]){
 					char suffix[50], dt, cor[50];
 					int r1, r2;
 					sscanf(line, "p? p %s %c R%d R%d %s", suffix, &dt, &r1, &r2, cor);
-					Circle c = createCircle("white", "green", 5, R[r1].x, R[r1].y);
-					Circle c2 = createCircle("white", "black", 5, R[r2].x, R[r2].y);
+
 					char *nome = criaString(leitura, "-", suffix);
 					char *newString = criaString(dir, nome, ".svg");
 					FILE *f_dijkstra = fopen(newString, "w");
@@ -953,10 +951,7 @@ main(int argc, char *argv[]){
 					}
 
 					startSvg(f_dijkstra);
-					traverseTreeQuadra(city.arvore_quadra, drawQuadra, f_dijkstra);
-					traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, f_dijkstra);
-					traverseTreeHidrante(city.arvore_hidrante, drawHidrante, f_dijkstra);
-					traverseTreeTorre(city.arvore_torre, drawTorre, f_dijkstra);
+					drawEquipamentos(city, f_dijkstra);
 
 					
 					/* drawVias(city.via, f_dijkstra); */
@@ -970,7 +965,6 @@ main(int argc, char *argv[]){
 					Lista l = createList();
 					shortest_path(city.via, R[r1], R[r2], weightDistancia, l);
 					viaShortestPaths(city.via, l, f_dijkstra, cor);
-					printf("%d\n", length(l));
 
 					destroyList(l);
 					}
@@ -978,16 +972,11 @@ main(int argc, char *argv[]){
 						Lista l = createList();
 						shortest_path(city.via, R[r1], R[r2], weightTempo, l);
 						viaShortestPaths(city.via, l, f_dijkstra, cor);
-						printf("%d\n", length(l));
 
 						destroyList(l);
 					}
 
-					drawCircle(f_dijkstra, c);
-					drawCircle(f_dijkstra, c2);
 					/* drawVias(city.via, f_dijkstra); */
-					free(c);
-					free(c2);
 					fprintf(f_dijkstra,"</svg>");
 					fclose(f_dijkstra);
 
@@ -1021,10 +1010,7 @@ main(int argc, char *argv[]){
 					free(newString);
 
 					startSvg(f_dijkstra);
-					traverseTreeQuadra(city.arvore_quadra, drawQuadra, f_dijkstra);
-					traverseTreeSemaforo(city.arvore_semaforo, drawSemaforo, f_dijkstra);
-					traverseTreeHidrante(city.arvore_hidrante, drawHidrante, f_dijkstra);
-					traverseTreeTorre(city.arvore_torre, drawTorre, f_dijkstra);
+					drawEquipamentos(city, f_dijkstra);
 
 					int indices[n];
 					int i = 0, j = 0;
