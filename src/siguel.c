@@ -426,12 +426,13 @@ main(int argc, char *argv[]){
 
 		char *qry_nameString = criaString(leitura, "-", qry_name);
 		qry_name = criaString(dir, qry_nameString, ".svg");
-		fTxt = fopen(nomeTxt, "w");
+		char *qry_txt = criaString(dir, qry_nameString, ".txt");
+		fTxt = fopen(qry_txt, "w");
 		fprintf(fTxt, "\n ----- Queries do arquivo %s.qry -----\n", qry);
 		fclose(fTxt);
 		while(fgets(line,1000,fQry) != NULL){
 			if(strncmp(line, "dq", 2) == 0){
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "dq %lf %lf %lf %lf", &x, &y, &w, &h);
 
 				rect = createRect("", "", w, h, x, y);
@@ -441,7 +442,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "q?", 2) == 0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "q? %lf %lf %lf %lf", &x, &y, &w, &h);
 				rect = createRect("", "", w, h, x, y);
 
@@ -455,7 +456,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "Q?", 2) == 0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "Q? %lf  %lf %lf", &r, &x, &y);
 				c = createCircle("", "", r, x, y);
 
@@ -471,7 +472,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "Dq", 2) == 0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "Dq %lf %lf %lf", &r, &x, &y);
 				c = createCircle("", "", r, x, y);
 				deleteQuadraInCircle(c, city.arvore_quadra, fTxt);
@@ -481,7 +482,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "dle", 3)==0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "dle %*[srh] %lf %lf %lf %lf ",&x, &y, &w, &h);
 
 				rect = createRect("", "", w, h, x, y);
@@ -502,7 +503,7 @@ main(int argc, char *argv[]){
 				fclose(fTxt);
 			}
 			else if(strncmp(line, "Dle", 3) == 0){
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "Dle %*[rsh] %lf %lf %lf", &x, &y, &r );
 				c = createCircle("", "", r, x, y);
 
@@ -548,7 +549,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "crd?", 4) == 0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "crd? %s", cep);
 				Quadra sq;
 				Torre st;
@@ -573,7 +574,7 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "m?", 2) == 0){
 				//moradores da quadra cujo cep é cep
 				//
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "m? %s", cep);
 				if(search_cep(cep, city.arvore_quadra) == NULL){
 					printf("\nCEP da quadra nao encontrado!\n Verifique se existe morador com cep %s\n", cep);
@@ -600,7 +601,7 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "mr?", 3) == 0){
 				//moradores em uma região r
 				//
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "mr? %lf %lf %lf %lf", &x, &y, &w, &h);
 				Rect r = createRect("", "", w,h,x,y);
 				_hashSearchQuadraInRect(city, r, fTxt);
@@ -610,7 +611,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "dm?", 3) == 0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				//imprime dados do morador indicado pelo cpf
 				char cpf[50];
 				sscanf(line, "dm? %s", cpf);
@@ -639,7 +640,7 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "de?", 3) == 0){
 				//imprime todos os dados do estabelecimento comercial identificado por cnpj
 				//
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				char cnpj[50];
 				Comercio sct= NULL;
 				sscanf(line, "de? %s", cnpj);
@@ -678,7 +679,7 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "rip", 3) == 0){
 				//pessoa morreu
 				//
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				char cpf[50];
 				sscanf(line, "rip %s", cpf);
 				kill_pessoa(city, cpf, fTxt);
@@ -687,7 +688,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "ecq?", 4) == 0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				//estabelecimento comercial numa dada regiao
 				sscanf(line, "ecq? %s", cep);
 				Lista estbl_quadra = hash_filter_to_list(city.comercio, _compareCepEstblcmto, cep);
@@ -706,7 +707,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "ecr?", 4) == 0){
 				//estabelecimento comercial de um dado tipo numa dada região
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				char tp[50];
 				if(sscanf(line, "ecr? %s %lf %lf %lf %lf", tp, &x, &y, &w, &h) == 5){
 					Rect r = createRect("", "", w, h, x, y);
@@ -733,7 +734,7 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "tecq?", 5) == 0){
 				/* Lista os tipos de estabelecimentos comerciais de uma quadra */
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "tecq? %s", cep);
 				Lista estbl_quadra = hash_filter_to_list(city.comercio, _compareCepEstblcmto, cep);
 				Node *n;
@@ -749,7 +750,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "tecr?", 5) == 0){
 				/* Tipos de estabelecimentos numa dada regiao */
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "tecr? %lf %lf %lf %lf", &x, &y, &w, &h);
 				Rect r =  createRect("", "", w, h, x, y);
 				_hashSearchEstblcInRect(city, r, fTxt);
@@ -775,7 +776,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "fec", 3) == 0){
 				//fehca estabelecimeno comercial
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				char cnpj[50];
 				sscanf(line, "fec %s", cnpj);
 				Comercio sc = remove_hash(city.comercio, cnpj);
@@ -795,7 +796,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "mudec", 5) == 0){
 				//estabelecimento mudou
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				char cnpj[50], cep[50], face;
 				int num;
 				sscanf(line, "mudec %s %s %c %d", cnpj, cep, &face, &num);
@@ -805,7 +806,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "mud", 3) == 0){
 				//pessoa mudou
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				char cpf[50], cep[50], face, comp[50];
 				int num;
 				sscanf(line, "mud %s %s %c %d %s", cpf, cep, &face, &num, comp);
@@ -818,7 +819,7 @@ main(int argc, char *argv[]){
 			else if(strncmp(line, "dpr", 3) == 0){
 				//desapropriar regiao
 				//
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				sscanf(line, "dpr  %lf %lf %lf %lf", &x, &y, &w, &h);
 				Rect r = createRect("", "", w, h, x, y);
 				desapropriar(city, r, fTxt);
@@ -911,7 +912,7 @@ main(int argc, char *argv[]){
 				//01234567891011
 				if(line[3] == 't' || line[3] == 'T'){
 
-					fTxt = fopen(nomeTxt, "a");
+					fTxt = fopen(qry_txt, "a");
 					int R1, R2;
 					R1 = line[8] - '0';
 					R2 = line[11] - '0';
@@ -988,7 +989,7 @@ main(int argc, char *argv[]){
 				
 				if(line[4] == 't' || line[4] == 'T'){
 
-					fTxt = fopen(nomeTxt, "a");
+					fTxt = fopen(qry_txt, "a");
 					if(line[6] == 'D' || line[5] == 'd'){
 						//Distância
 
@@ -1058,7 +1059,7 @@ main(int argc, char *argv[]){
 			}
 			else if(strncmp(line, "rau", 3) == 0){
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				//remove carro
 				char placa[50];
 				sscanf(line, "rau %s", placa);
@@ -1090,7 +1091,7 @@ main(int argc, char *argv[]){
 					drawCarro(f_colisao, list_get_data(n));
 				}
 
-				fTxt = fopen(nomeTxt, "a");
+				fTxt = fopen(qry_txt, "a");
 				car_overlap(city.via, city.lista_carros, car_cmp, f_colisao, fTxt);
 				fprintf(f_colisao, "</svg>");
 				fclose( f_colisao );
@@ -1115,14 +1116,14 @@ main(int argc, char *argv[]){
 
 		if(crb){
 
-			fTxt = fopen(nomeTxt, "a");
+			fTxt = fopen(qry_txt, "a");
 			Ponto p;
 			printa_closest(city.arvore_torre, closest_kd(city.arvore_torre,&p), fSvgQry, fTxt, tmp, printa_closest_torre);
 			fclose(fTxt);
 		}
 		Node *nod;
 
-		fTxt = fopen(nomeTxt, "a");
+		fTxt = fopen(qry_txt, "a");
 		for(nod = getFirst(hmpList); nod != NULL; nod = getNext(nod)){
 			Torre st = list_get_data(nod);
 			Ponto p = createPonto(torre_get_x(st), torre_get_y(st));
@@ -1143,6 +1144,7 @@ main(int argc, char *argv[]){
 		fprintf(fSvgQry, "\n</svg>\n");
 		fclose(fSvgQry);
 		fclose(fQry);
+		free(qry_txt);
 	}
 	fDraw = fopen(nomeSvg, "a");
 	Node *nod;
