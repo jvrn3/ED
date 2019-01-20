@@ -67,7 +67,6 @@ Lista shortest_path(Via via, Ponto p_src, Ponto p_dest, double (*getWeight)(void
 		destroyList(all);
 		return NULL;
 	}
-		printf("Shortest %lf\n", get_minDist(dest));
 	for(Vertice vertex = dest; vertex != NULL; vertex = vertice_get_previous(vertex)){
 		insert(vertices, vertex, 0);
 	}
@@ -160,7 +159,6 @@ void viaTxtShortestPaths(Via v, Lista l, FILE *fTxt){
 
 void car_overlap(Via via, Lista l, int (*cmp)(void *, void *), FILE *fSvg, FILE *fTxt){
 	//should sort according to x
-	printf("Numero de carros %d\n", length(l));
 	sort_list(l, cmp);
 	Node *n, *node_low;
 	Rect r, r_low;
@@ -237,7 +235,6 @@ void drawVias(Grafo g, FILE *fSvg){
 }
 //fazer uma lista de retangulos de sobreposição, chamar essa função
 void colisaoGetRua(Via via, Rect r, Lista l){
-	printf("Setando...\n");
 	if(rect_vertical(r)){
 		Ponto sup = createPonto( rect_get_x(r) + rect_get_w(r)/2, rect_get_y(r) );
 		Ponto inf = createPonto(rect_get_x(r) + rect_get_w(r)/2, rect_get_y(r) + rect_get_h(r));
@@ -250,7 +247,6 @@ void colisaoGetRua(Via via, Rect r, Lista l){
 			if(aresta != NULL){
 				Rua r = aresta_get_data(aresta);
 				rua_set_vm(r, 0);
-				printf("DIFFFF");
 			
 			}
 			else{
@@ -258,7 +254,6 @@ void colisaoGetRua(Via via, Rect r, Lista l){
 				if(aresta != NULL){
 					Rua r = aresta_get_data(aresta);
 					rua_set_vm(r, 0);
-					printf("@@DIFFFF");
 
 				
 				}
@@ -286,7 +281,6 @@ void colisaoGetRua(Via via, Rect r, Lista l){
 				if(aresta != NULL){
 					Rua r = aresta_get_data(aresta);
 					rua_set_vm(r, 0);
-					printf("@@DIFFFF");
 
 				
 				}

@@ -1,6 +1,7 @@
 TARGET = siguel
 CC = gcc
-FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all
+FLAGS = -g -Wall -pedantic-errors -std=c99 -lm  -O2 -fstack-protector-all -rdynamic
+GTKLIB=`pkg-config --cflags --libs gtk+-3.0`
 
 DEPS = address.o \
 	carro.o \
@@ -25,16 +26,17 @@ DEPS = address.o \
 	svg.o \
 	torre.o \
 	via.o \
-	priority_queue.o 
-SOURCEDIR = src/modules
-TEST = src/unit_test
+	priority_queue.o \
+	btree.o
+SOURCEDIR = modules
+TEST = unit_test
 
 siguel : $(DEPS)
 	$(info ********* TRABALHO 5 de Estrutura de Dados *********** )
-	$(CC)  $(FLAGS) $(DEPS) -o siguel 
+	$(CC)  $(FLAGS) $(DEPS) -o siguel $(GTKLIB) -lm 
 
-siguel.o : src/siguel.c
-	$(CC) $(FLAGS) -c src/siguel.c
+siguel.o : siguel.c
+	$(CC) $(FLAGS) -c siguel.c $(GTKLIB)
 hash_table.o : $(SOURCEDIR)/Hash/hash_table.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Hash/hash_table.c
 
@@ -104,6 +106,9 @@ priority_queue.o : $(SOURCEDIR)/Fila/priority_queue.c
 	$(CC) $(FLAGS) -c $(SOURCEDIR)/Fila/priority_queue.c
 
 
+btree.o : $(SOURCEDIR)/Tree/btree.c
+	$(CC) $(FLAGS) -c $(SOURCEDIR)/Tree/btree.c
+
 test_graph.o : $(TEST)/test_graph.c
 	$(CC) $(FLAGS) -c $(TEST)/test_graph.c
 
@@ -142,7 +147,21 @@ test_mystr.o : $(TEST)/test_mystr.c
 	$(CC) $(FLAGS) -c $(TEST)/test_mystr.c
 
 test_str : test_mystr.o mystr.o
-	$(CC) $(FLAGS) test_mystr.o mystr.o -o test_str
+	$(CC) $(FLAGS) $(GTKLIB) test_mystr.o mystr.o -o test_str
+
+test_gtk.o :$(TEST)/test_gtk.c
+	$(CC) $(FLAGS) -c  $(TEST)/test_gtk.c $(GTKLIB)
+
+test_gtk: test_gtk.o
+	$(CC) $(FLAGS) test_gtk.o -o test_gtk $(GTKLIB)
+
+
+test_btree.o : $(TEST)/test_btree.c
+	$(CC) $(FLAGS) -c $(TEST)/test_btree.c
+
+test_btree : test_btree.o btree.o
+	$(CC) $(FLAGS) test_btree.o btree.o -o test_btree
+
 
 clean: 
 	$(info Apagando .o)
